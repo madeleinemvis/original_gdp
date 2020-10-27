@@ -8,9 +8,13 @@ def main():
     NUMBER_OF_GOOGLE_RESULTS_WANTED = 25
     MAXIMUM_URL_CRAWL_DEPTH = 3
 
+    # Using a dictionary of mapping URL to data for an initial data storage method, will likely need to change
+    # very soon
+    URL_data = namedtuple('URL_data', 'raw_HTML meta_data text_body cleaned_tokens')
+    scraped_data = {}
+        
     # start with the intitial URL
     start_URL = ""
-
 
     # scrape the URL
     scraper = Scraper()
@@ -26,7 +30,11 @@ def main():
     tokens = processor.create_tokens_from_text(main_text)
     cleaned_tokens = processor.clean_tokens(tokens)
 
-    key_words = processor.calculate_key_words(cleaned_tokens, NUMBER_OF_KEY_WORDS) 
+    # store all of the inital data
+    scraped_data[start_URL] = URL_data(raw_HTML=initial_html, meta_data=meta_data, text_body=main_text, cleaned_tokens=cleaned_tokens)
+    
+    # calculate key words from manefesto
+    key_words = processor.calculate_key_words(scraped_data[start_URL].cleaned_tokens, NUMBER_OF_KEY_WORDS) 
 
     # look to crawl with the now know data
     crawler = Crawler()
@@ -36,14 +44,13 @@ def main():
 
     # do some similarity checking for the documents so far crawled
 
+
+
+
     # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
     final_crawled_urls = crawler.recursive_url_crawl(urls, MAXIMUM_URL_CRAWL_DEPTH)
     urls.extend(final_crawled_urls)
-
-    # building a dictionary of url to data for that document
-    # we now need a data storage method of some sort as there could potentially be a large volume of data here
-    scraped_data = {}
-    URL_data = namedtuple('URL_data', 'raw_HTML meta_data text_body cleaned_tokens')
+    
     # this for loop would likely need to be its own method and could be very different, this is just an intial idea
     for url in urls:
         html = scraper.scape_url(url)
