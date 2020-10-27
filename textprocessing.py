@@ -1,4 +1,3 @@
-# from typing import TypedDict
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 from collections import Counter
@@ -12,13 +11,18 @@ class TextProcessor:
     # Maddy
     # method for taking a string in HTML format and returning a string of the main body
     def extract_main_body_from_HTML(self, html_string: str) -> str:
-        return None
+        return ""
 
     # Maddy
-    # method for creating a dictionary of meta data from a string in HTML format. 
-    # Could make the dictionary its own class for ease going forward
-    # def extract_meta_data_from_HTML(self, html_string: str) -> TypedDict:
-    #     return None
+    # method for creating a list of strings of meta data from a string in HTML format. 
+    # Could make the output its own class for ease going forward
+    def extract_meta_data_from_HTML(self, html_string: str) -> [str]:
+        return []
+
+    # Alex Ll
+    # Method for extracting all of the useful URLs from a HTML document
+    def extract_urls_from_HTML(self, html_string:str) -> [str]:
+        return []
 
     # method for taking an input string a return all the tokens
     def create_tokens_from_text(self, text: str) -> [str]:
