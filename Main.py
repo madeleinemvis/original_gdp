@@ -26,27 +26,25 @@ def main():
     NUMBER_OF_GOOGLE_RESULTS_WANTED = 25
     MAXIMUM_URL_CRAWL_DEPTH = 3
 
+    processor = TextProcessor() 
+    crawler = Crawler() 
+
     # Using a dictionary of mapping URL to data for an initial data storage method, will likely need to change
     # very soon
-    
-    scraped_data = {}
+    scrapped_data = {}
         
     # start with the intitial URL
     start_URL = ""
-    scraped_data[start_URL] = get_all_data_from_url(start_URL)  
+    scrapped_data[start_URL] = get_all_data_from_url(start_URL)  
 
-    processor = TextProcessor()  
-    
     # find all URLs in initial document
-    urls = processor.extract_urls_from_HTML(scraped_data[start_URL].raw_HTML)
+    urls = processor.extract_urls_from_HTML(scrapped_data[start_URL].raw_HTML)
     
     # calculate key words from manefesto
-    key_words = processor.calculate_key_words(scraped_data[start_URL].cleaned_tokens, NUMBER_OF_KEY_WORDS) 
+    key_words = processor.calculate_key_words(scrapped_data[start_URL].cleaned_tokens, NUMBER_OF_KEY_WORDS) 
 
-    # look to crawl with the now know data
-    crawler = Crawler()
+    # look to crawl with the new data
     crawled_urls = crawler.crawl_google_with_key_words(key_words, NUMBER_OF_GOOGLE_RESULTS_WANTED)
-    
     urls.extend(crawled_urls)
 
     # do some similarity checking for the documents so far crawled
@@ -58,7 +56,7 @@ def main():
     
     # retrieve and store all the data about a URL
     for url in urls:
-        scraped_data[url] = get_all_data_from_url(url)
+        scrapped_data[url] = get_all_data_from_url(url)
 
     # perform analysis on the scraped data 
 
