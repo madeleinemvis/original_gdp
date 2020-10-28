@@ -1,7 +1,8 @@
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 from collections import Counter
-import re, string
+from bs4 import BeautifulSoup
+import re, string, requests
 
 class TextProcessor:
     
@@ -22,7 +23,30 @@ class TextProcessor:
     # Alex Ll
     # Method for extracting all of the useful URLs from a HTML document
     def extract_urls_from_HTML(self, html_string:str) -> [str]:
-        return []
+        # list of valid urls to be returned
+        valid_urls = []
+
+        # setting up beautiful soup parser and scraping <a> tags
+        soup = BeautifulSoup(html_string, 'html.parser')
+        tags = soup.find_all('a')
+
+        # scraping url links from <a> tags
+        for url_link in tags:
+            url_new = url_link.get('href')
+            flag = False
+
+            # checking if url already exists in return list
+            for item in valid_urls:
+                if url_new == item:
+                    flag = True
+
+            # checking if url is not empty and starts with 'http'
+            if (url_new is not None) and (flag is False) and (str(url_new).startswith('http')):
+                
+                # append valid url to return list
+                valid_urls.append(url_new)
+
+        return valid_urls
 
     # method for taking an input string a return all the tokens
     def create_tokens_from_text(self, text: str) -> [str]:
