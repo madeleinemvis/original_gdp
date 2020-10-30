@@ -1,3 +1,6 @@
+from bs4 import BeautifulSoup
+import requests
+
 # class for crawling and scraping the internet
 class Crawler:
     def __init__(self):
@@ -21,4 +24,5 @@ class Scraper:
     # Alex Ll
     # method that returns all the HTML data from a URL
     def scape_url(self, URL: str) -> str:
-        return ""
+        request = requests.get(URL)
+        return request.text
