@@ -1,17 +1,31 @@
+import re
+import string
+from collections import Counter
+
+from bs4.element import Comment
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
-from collections import Counter
-import re, string
+
 
 class TextProcessor:
-    
+
     def __init__(self):
         pass
 
     # Maddy
+    # returns presence of tags in returned text, to be removed from main body
+    def tag_visible(self) -> bool:
+        if self.parent.name in ['style', 'script', 'head', 'title', 'meta', '[document]']:
+            return False
+        if isinstance(self, Comment):
+            return False
+        return True
+
     # method for taking a string in HTML format and returning a string of the main body
-    def extract_main_body_from_HTML(self, html_string: str) -> str:
-        return ""
+    def extract_main_body_from_html(self, html_string: str) -> str:
+        texts = html_string.findAll(text=True)
+        visible_texts = filter(self.tag_visible, texts)
+        return u" ".join(t.strip() for t in visible_texts)
 
     # Maddy
     # method for creating a list of strings of meta data from a string in HTML format. 
@@ -21,7 +35,7 @@ class TextProcessor:
 
     # Alex Ll
     # Method for extracting all of the useful URLs from a HTML document
-    def extract_urls_from_HTML(self, html_string:str) -> [str]:
+    def extract_urls_from_HTML(self, html_string: str) -> [str]:
         return []
 
     # method for taking an input string a return all the tokens
@@ -39,24 +53,22 @@ class TextProcessor:
         stripped = list(filter(None, stripped))
 
         # make all tokens lower case
-        stripped = list(map(lambda x : x.lower(), stripped))
+        stripped = list(map(lambda x: x.lower(), stripped))
 
         # removing all stop words
         stop_words = set(stopwords.words('english'))
         stripped = [s for s in stripped if not s in stop_words]
 
         # removing all tokens that are just digits
-        stripped = [s for s in stripped if not re.search(r'\d',s)]
+        stripped = [s for s in stripped if not re.search(r'\d', s)]
 
         # stemming the remaining tokens
         porter = PorterStemmer()
         stripped = [porter.stem(token) for token in stripped]
 
         return stripped
-        
+
     def calculate_key_words(self, clean_tokens: [str], number_of_key_words: int) -> [str]:
         c = Counter(clean_tokens)
         ordered_terms = list(c.keys())
         return ordered_terms[:number_of_key_words]
-
-        
