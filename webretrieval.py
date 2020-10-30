@@ -3,7 +3,7 @@ class Crawler:
     def __init__(self):
         pass
 
-    # Alex Ll
+    # Maddy
     # not sure how we want to use this method yet
     def crawl_google_with_key_words(self, key_words: [str], urls_returned: int) -> [str]:
         return []
@@ -18,6 +18,7 @@ class Scraper:
     def __init__(self):
         pass
     
+    # Alex Ll
     # method that returns all the HTML data from a URL
     def scape_url(self, URL: str) -> str:
         return ""
