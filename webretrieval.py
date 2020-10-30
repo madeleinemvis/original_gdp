@@ -1,3 +1,6 @@
+from bs4 import BeautifulSoup
+import requests
+
 # class for crawling and scraping the internet
 from googlesearch import search
 import requests.exceptions
@@ -8,6 +11,7 @@ class Crawler:
     def __init__(self):
         pass
 
+    # Maddy
     # not sure how we want to use this method yet
     def crawl_google_with_key_words(self, key_words: [str], urls_returned: int) -> [str]:
         return search(key_words, tld="com", lang="en", num=urls_returned, start=0, stop=urls_returned, pause=1.0)
@@ -21,10 +25,9 @@ class Crawler:
 class Scraper:
     def __init__(self):
         pass
-
+    
+    # Alex Ll
     # method that returns all the HTML data from a URL
-    @staticmethod
-    def scape_url(url: str) -> str:
-        html_text = requests.get(url)
-        soup = BeautifulSoup(html_text.content, 'html.parser')
-        return str(soup)
+    def scape_url(self, URL: str) -> str:
+        request = requests.get(URL)
+        return request.text
