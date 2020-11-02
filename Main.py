@@ -8,12 +8,12 @@ def get_all_data_from_url(url: str) -> namedtuple:
 
     # scrape the URL
     scraper = Scraper()
-    initial_html = scraper.scape_url(url)
+    initial_html = scraper.scrape_url(url)
 
     # extract the meta data and main body of text from the scraped HTML 
     processor = TextProcessor()
     meta_data = processor.extract_meta_data_from_HTML(initial_html)  # to be ignored
-    main_text = processor.extract_main_body_from_HTML(initial_html)
+    main_text = processor.extract_main_body_from_html(initial_html)
 
     # make the tokens from the main text, and create a clean form
     tokens = processor.create_tokens_from_text(main_text)
@@ -36,16 +36,26 @@ def main():
     # very soon
     scraped_data = {}
 
+    print("-------- MANIFESTO --------")
+    print("*** SCRAPING ***")
     # start with the initial URL
-    start_URL = ""
-    scraped_data[start_URL] = get_all_data_from_url(start_URL)
+    start_url = "https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/?fbclid=IwAR017eZePLsduO5ZaxM3X8dFkipeQqy58Go8eL3SkuQ4YFtRVSjfBwDMD0A"
+    """ Other URLS:
+    - https://vactruth.com/2018/08/30/vaccine-induced-autism/ # faulty (Forbidden with crawler)
+    - https://vactruth.com/2018/05/02/alfie-evans-timeline/
+    - https://vactruth.com/2019/06/07/the-vaccination-that-never-should-have-been-approved/
+    - https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/?fbclid=IwAR017eZePLsduO5ZaxM3X8dFkipeQqy58Go8eL3SkuQ4YFtRVSjfBwDMD0A
+    """
+    scraped_data[start_url] = get_all_data_from_url(start_url)
 
     # find all URLs in initial document
-    urls = processor.extract_urls_from_HTML(scraped_data[start_URL].raw_HTML)
+    urls = processor.extract_urls_from_html(scraped_data[start_url].raw_HTML)
 
+    print("*** KEYWORDS ***")
     # calculate key words from manifesto
-    key_words = processor.calculate_key_words(scraped_data[start_URL].cleaned_tokens, NUMBER_OF_KEY_WORDS)
+    key_words = processor.calculate_key_words(scraped_data[start_url].cleaned_tokens, NUMBER_OF_KEY_WORDS)
 
+    print("-------- CRAWLING --------")
     # look to crawl with the new data
     crawled_urls = crawler.crawl_google_with_key_words(key_words, NUMBER_OF_GOOGLE_RESULTS_WANTED)
     urls.extend(crawled_urls)
@@ -60,6 +70,7 @@ def main():
     final_crawled_urls = crawler.recursive_url_crawl(urls, MAXIMUM_URL_CRAWL_DEPTH)
     urls.extend(final_crawled_urls)
 
+    print("-------- SCRAPING & STORING --------")
     # retrieve and store all the data about a URL
     for url in urls:
         scraped_data[url] = get_all_data_from_url(url)

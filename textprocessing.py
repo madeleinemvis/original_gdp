@@ -2,12 +2,11 @@ import re
 import string
 from collections import Counter
 
+from bs4 import BeautifulSoup
 from bs4.element import Comment
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
-from collections import Counter
-from bs4 import BeautifulSoup
-import re, string, requests
+
 
 class TextProcessor:
 
@@ -16,18 +15,20 @@ class TextProcessor:
 
     # Maddy
     # returns presence of tags in returned text, to be removed from main body
-    def tag_visible(self) -> bool:
-        if self.parent.name in ['style', 'script', 'head', 'title', 'meta', '[document]']:
+    def tag_visible(self, texts) -> bool:
+        if texts.parent.name in ['style', 'script', 'head', 'title', 'meta', '[document]']:
             return False
-        if isinstance(self, Comment):
+        if isinstance(texts, Comment):
             return False
         return True
 
     # method for taking a string in HTML format and returning a string of the main body
     def extract_main_body_from_html(self, html_string: str) -> str:
-        texts = html_string.findAll(text=True)
+        soup = BeautifulSoup(html_string, "html.parser")
+        texts = soup.findAll(text=True)
         visible_texts = filter(self.tag_visible, texts)
-        return u" ".join(t.strip() for t in visible_texts)
+        body = u" ".join(t.string.strip() for t in visible_texts)
+        return body
 
     # Maddy
     # method for creating a list of strings of meta data from a string in HTML format. 
@@ -37,7 +38,7 @@ class TextProcessor:
 
     # Alex Ll
     # Method for extracting all of the useful URLs from a HTML document
-    def extract_urls_from_HTML(self, html_string:str) -> [str]:
+    def extract_urls_from_html(self, html_string: str) -> [str]:
         # list of valid urls to be returned
         valid_urls = []
 
@@ -57,7 +58,6 @@ class TextProcessor:
 
             # checking if url is not empty and starts with 'http'
             if (url_new is not None) and (flag is False) and (str(url_new).startswith('http')):
-                
                 # append valid url to return list
                 valid_urls.append(url_new)
 

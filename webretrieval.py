@@ -14,7 +14,8 @@ class Crawler:
     # Maddy
     # not sure how we want to use this method yet
     def crawl_google_with_key_words(self, key_words: [str], urls_returned: int) -> [str]:
-        return search(key_words, tld="com", lang="en", num=urls_returned, start=0, stop=urls_returned, pause=1.0)
+        google_result = search(str(key_words), tld="com", lang="en", num=urls_returned, start=0, stop=urls_returned, pause=2.0)
+        return google_result
 
     # Alex Ll
     # recursively crawl a set of URLs with batch checking similarities
