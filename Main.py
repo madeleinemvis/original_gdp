@@ -52,6 +52,9 @@ def main():
     """
     scraped_data[start_url] = get_all_data_from_url(start_url)
 
+    alt_url = "https://www.bbc.co.uk/news/uk-54779430"
+    scraped_data[alt_url] = get_all_data_from_url(alt_url)
+
     # find all URLs in initial document
     urls = processor.extract_urls_from_html(scraped_data[start_url].raw_HTML)
 
@@ -71,9 +74,9 @@ def main():
         scraped_data[url] = get_all_data_from_url(url)
         # TODO: Store URL data
 
-    print(scraped_data[start_url])
     analyser.create_topic_model(scraped_data)
-    print(analyser.check_similarity(scraped_data[start_url]))
+    print("Similar Doc:", analyser.check_similarity(scraped_data[start_url]))
+    print("Non-similar doc:", analyser.check_similarity(scraped_data[alt_url]))
 
     # crawling with Twitter, returns JSON object
     crawled_tweets = crawler.twitter_crawl(key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
