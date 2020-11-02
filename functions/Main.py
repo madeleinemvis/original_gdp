@@ -1,5 +1,5 @@
-from webretrieval import Crawler, Scraper
-from textprocessing import TextProcessor
+from functions.webretrieval import Crawler, Scraper
+from functions.textprocessing import TextProcessor
 from collections import namedtuple
 
 
