@@ -30,8 +30,8 @@ class NLP_Analyser:
     # Method that creates the topic model from a list of documents
     # Assumed that the documents have not been cleaned - will be cleaned as a result
     def create_topic_model(self, documents):
-        cleaned_documents = [
-            gensim.utils.simple_preprocess(doc) for doc in documents]
+        cleaned_documents = [documents[key][3]
+                             for key in documents.keys() if documents[key] is not None]
 
         # Build the bigram and trigram models
         bigram = gensim.models.Phrases(
@@ -40,28 +40,45 @@ class NLP_Analyser:
             bigram[cleaned_documents], threshold=100)
 
         # Faster way to get a sentence clubbed as a bi or trigram
-        bigram_mod = gensim.models.phrases.Phraser(bigram)
-        trigram_mod = gensim.models.phrases.Phraser(trigram)
+        self.bigram_mod = gensim.models.phrases.Phraser(bigram)
+        self.trigram_mod = gensim.models.phrases.Phraser(trigram)
 
         docs_nostops = self.__remove_stopwords(cleaned_documents)
-        docs_bigrams = self.__make_bigrams(docs_nostops, bigram_mod)
-        docs_lemmatised = self.__lemmatise(docs_bigrams)
+        docs_trigrams = self.__make_trigrams(
+            docs_nostops, self.bigram_mod, self.trigram_mod)
+        docs_lemmatised = self.__lemmatise(docs_trigrams)
 
-        id2word = corpora.Dictionary(docs_lemmatised)
-        corpus = [id2word.doc2bow(doc) for doc in docs_lemmatised]
-        self.lda_model = gensim.models.ldamodel.LdaModel(corpus=corpus,
-                                                         id2word=id2word,
-                                                         num_topics=10,
+        self.id2word = corpora.Dictionary(docs_lemmatised)
+        self.corpus = [self.id2word.doc2bow(doc) for doc in docs_lemmatised]
+        self.lda_model = gensim.models.ldamodel.LdaModel(corpus=self.corpus,
+                                                         id2word=self.id2word,
+                                                         num_topics=5,
                                                          random_state=100)
 
         self.docs_topics = [self.lda_model.get_document_topics(
-            doc, minimum_probability=0) for doc in corpus]
+            doc, minimum_probability=0) for doc in self.corpus]
+
+    def check_similarity(self, document):
+        doc_nostops = self.__remove_stopwords(document)
+        doc_trigrams = self.__make_trigrams(
+            doc_nostops, self.bigram_mod, self.trigram_mod)
+        doc_lemmatised = self.__lemmatise(doc_trigrams)
+
+        doc_bow = self.id2word.doc2bow(doc_lemmatised[1])
+        doc_topics = self.lda_model.get_document_topics(
+            doc_bow, minimum_probability=0)
+
+        similarity = 0
+
+        for model_doc_topics in self.docs_topics:
+            print(cossim(model_doc_topics, doc_topics))
+            similarity += cossim(model_doc_topics, doc_topics)
+
+        similarity /= len(self.docs_topics)
+        return similarity
 
     def __remove_stopwords(self, documents):
         return [[word for word in document if word not in self.stopwords] for document in documents]
-
-    def __make_bigrams(self, documents, bigram_mod):
-        return [bigram_mod[document] for document in documents]
 
     def __make_trigrams(self, documents, bigram_mod, trigram_mod):
         return [trigram_mod[bigram_mod[document]] for document in documents]

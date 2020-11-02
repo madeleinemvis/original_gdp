@@ -1,3 +1,4 @@
+from analysis import NLP_Analyser
 from webretrieval import Crawler, Scraper
 from textprocessing import TextProcessor
 from collections import namedtuple
@@ -5,6 +6,8 @@ from collections import namedtuple
 
 def get_all_data_from_url(url: str) -> namedtuple:
     URL_data = namedtuple('URL_data', 'raw_HTML meta_data text_body cleaned_tokens')
+    if(url.endswith('.pdf')):
+        return
 
     # scrape the URL
     scraper = Scraper()
@@ -31,6 +34,7 @@ def main():
 
     processor = TextProcessor()
     crawler = Crawler()
+    analyser = NLP_Analyser()
 
     # Using a dictionary of mapping URL to data for an initial data storage method, will likely need to change
     # very soon
@@ -39,12 +43,12 @@ def main():
     print("-------- MANIFESTO --------")
     print("*** SCRAPING ***")
     # start with the initial URL
-    start_url = "https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/?fbclid=IwAR017eZePLsduO5ZaxM3X8dFkipeQqy58Go8eL3SkuQ4YFtRVSjfBwDMD0A"
+    start_url = "https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/"
     """ Other URLS:
     - https://vactruth.com/2018/08/30/vaccine-induced-autism/ # faulty (Forbidden with crawler)
     - https://vactruth.com/2018/05/02/alfie-evans-timeline/
     - https://vactruth.com/2019/06/07/the-vaccination-that-never-should-have-been-approved/
-    - https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/?fbclid=IwAR017eZePLsduO5ZaxM3X8dFkipeQqy58Go8eL3SkuQ4YFtRVSjfBwDMD0A
+    - https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/
     """
     scraped_data[start_url] = get_all_data_from_url(start_url)
 
@@ -56,9 +60,20 @@ def main():
     key_words = processor.calculate_key_words(scraped_data[start_url].cleaned_tokens, NUMBER_OF_KEY_WORDS)
 
     print("-------- CRAWLING --------")
+    urls_google = []
     # look to crawl with the new data
     crawled_urls = crawler.crawl_google_with_key_words(key_words, NUMBER_OF_GOOGLE_RESULTS_WANTED)
-    urls.extend(crawled_urls)
+    urls_google.extend(crawled_urls)
+
+    print("-------- SCRAPING & STORING --------")
+    # retrieve and store all the data about a URL
+    for url in urls_google:
+        scraped_data[url] = get_all_data_from_url(url)
+        # TODO: Store URL data
+
+    print(scraped_data[start_url])
+    analyser.create_topic_model(scraped_data)
+    print(analyser.check_similarity(scraped_data[start_url]))
 
     # crawling with Twitter, returns JSON object
     crawled_tweets = crawler.twitter_crawl(key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
