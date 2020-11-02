@@ -1,12 +1,12 @@
-from bs4 import BeautifulSoup
+import json
 import requests
-
-# class for crawling and scraping the internet
+import pandas as pd
 from googlesearch import search
 import requests.exceptions
-from bs4 import BeautifulSoup
+import tweepy
 
 
+# class for crawling and scraping the internet
 class Crawler:
     def __init__(self):
         pass
@@ -21,13 +21,34 @@ class Crawler:
     def recursive_url_crawl(self, urls: [str], max_depth: int) -> [str]:
         return []
 
+    def twitter_init(self):
+        with open("twitter_credentials.json", "r") as file:
+            creds = json.load(file)
+
+        auth = tweepy.OAuthHandler(creds['CONSUMER_KEY'], creds['CONSUMER_SECRET'])
+        auth.set_access_token(creds['ACCESS_TOKEN'], creds['ACCESS_SECRET'])
+        api = tweepy.API(auth, wait_on_rate_limit=True)
+        return api
+
+    def twitter_crawl(self, key_words: [str], tweets_returned: int):
+        api = self.twitter_init()
+        # Retrieves all tweets with given keywords and count
+        tweets = tweepy.Cursor(api.search, q=key_words).items(tweets_returned)
+        # Loops through tweets and retrieves data
+        tweet_list = [[tweet.id, tweet.created_at, tweet.text, tweet.favorite_count, tweet.entities['hashtags'],
+                       tweet.user.location.encode('utf8')] for tweet in tweets]
+        # Stores data into dataframe, may make it easier to store into DB
+        tweets_df = pd.DataFrame(tweet_list, columns=['tweet_id', 'created_at', 'text', 'favorite_count', 'hashtags',
+                                                      'user_location'])
+        return tweets_df.to_json()
+
 
 class Scraper:
     def __init__(self):
         pass
-    
+
     # Alex Ll
     # method that returns all the HTML data from a URL
-    def scape_url(self, URL: str) -> str:
+    def scrape_url(self, URL: str) -> str:
         request = requests.get(URL)
         return request.text

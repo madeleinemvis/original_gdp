@@ -26,6 +26,7 @@ def get_all_data_from_url(url: str) -> namedtuple:
 def main():
     NUMBER_OF_KEY_WORDS = 5
     NUMBER_OF_GOOGLE_RESULTS_WANTED = 25
+    NUMBER_OF_TWEETS_RESULTS_WANTED = 100
     MAXIMUM_URL_CRAWL_DEPTH = 3
 
     processor = TextProcessor()
@@ -49,6 +50,10 @@ def main():
     crawled_urls = crawler.crawl_google_with_key_words(key_words, NUMBER_OF_GOOGLE_RESULTS_WANTED)
     urls.extend(crawled_urls)
 
+    # crawling with Twitter, returns JSON object
+    crawled_tweets = crawler.twitter_crawl(key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
+    # TODO: Sanitise and store tweets
+
     # do some similarity checking for the documents so far crawled
 
     # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
@@ -58,8 +63,9 @@ def main():
     # retrieve and store all the data about a URL
     for url in urls:
         scraped_data[url] = get_all_data_from_url(url)
+        # TODO: Store URL data
 
-    # perform analysis on the scraped data 
+    # perform analysis on the scraped data
 
     # perform data visualisation
 
