@@ -101,5 +101,9 @@ class Scraper:
     # Alex Ll
     # method that returns all the HTML data from a URL
     def scrape_url(self, URL: str) -> str:
-        request = requests.get(URL)
+        try:
+            request = requests.get(URL)
+        except requests.ConnectionError:
+            print('---Connection Error---')
+            return ''
         return request.text
