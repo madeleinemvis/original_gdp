@@ -104,6 +104,6 @@ class Scraper:
         try:
             request = requests.get(URL)
         except requests.ConnectionError:
-            print('---Connection Error---')
+            print('Connection Error: ' + URL)
             return ''
         return request.text
