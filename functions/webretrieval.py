@@ -74,7 +74,7 @@ class Crawler:
 
     @staticmethod
     def twitter_init():
-        with open("twitter_credentials.json", "r") as file:
+        with open("../twitter_credentials.json", "r") as file:
             creds = json.load(file)
 
         auth = tweepy.OAuthHandler(creds['CONSUMER_KEY'], creds['CONSUMER_SECRET'])
@@ -85,7 +85,7 @@ class Crawler:
     def twitter_crawl(self, keywords: [str], tweets_returned: int):
         api = self.twitter_init()
         # Retrieves all tweets with given keywords and count
-        searched_tweets = tweepy.Cursor(api.search, q=keywords).items(tweets_returned)
+        searched_tweets = tweepy.Cursor(api.search, q="vaccine autism").items(100)
         tweets = []
         for tweet in searched_tweets:
             parsed_tweet = {}
@@ -95,16 +95,15 @@ class Crawler:
             parsed_tweet['favorite_count'] = tweet.favorite_count
             parsed_tweet['retweet_count'] = tweet.retweet_count
             parsed_tweet['location'] = tweet.user.location.encode('utf8')
-            parsed_tweet['sentiment'] = NLP_Analyser.get_tweet_sentiment(tweet)
+            parsed_tweet['sentiment'] = NLP_Analyser.get_tweet_sentiment(tweet.text)
 
             if tweet.retweet_count > 0:
-                if parsed_tweet not in tweets:
+                # Only appends if the tweet text is unique
+                if not any(t['text'] == parsed_tweet['text'] for t in tweets):
                     tweets.append(parsed_tweet)
             else:
                 tweets.append(parsed_tweet)
 
-        for t in tweets:  # TODO: remove
-            print(t)
         return tweets
 
 

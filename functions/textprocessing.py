@@ -64,7 +64,8 @@ class TextProcessor:
         return valid_urls
 
     # Clean tweet text by removing links, special characters
-    def clean_tweet(self, tweet:str) -> str:
+    @staticmethod
+    def clean_tweet(tweet: str) -> str:
         return ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t]) |(\w+:\/\/\S+)", " ", tweet).split())
 
     # method for taking an input string a return all the tokens
