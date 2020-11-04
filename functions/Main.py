@@ -43,7 +43,6 @@ def main():
     scraped_data = {}
 
     print("-------- MANIFESTO --------")
-    print("*** SCRAPING ***")
     # start with the initial URL
     start_url = "https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/"
     """ Other URLS:
@@ -62,7 +61,6 @@ def main():
     # find all URLs in initial document
     urls = processor.extract_urls_from_html(scraped_data[start_url].raw_HTML)
 
-    print("*** KEYWORDS ***")
     # calculate key words from manifesto
     key_words = processor.calculate_key_words(scraped_data[start_url].cleaned_tokens, NUMBER_OF_KEY_WORDS) # TODO: Testing of wild cards with Google searching
 
@@ -84,7 +82,8 @@ def main():
 
     # crawling with Twitter, returns JSON object
     crawled_tweets = crawler.twitter_crawl(key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
-
+    for tweet in crawled_tweets:
+        print(tweet)
     # do some similarity checking for the documents so far crawled
 
     # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
@@ -95,7 +94,7 @@ def main():
     # retrieve and store all the data about a URL
     for url in urls:
         scraped_data[url] = get_all_data_from_url(url)
-    
+
     # perform analysis on the scraped data
 
     # perform data visualisation

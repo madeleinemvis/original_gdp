@@ -20,7 +20,8 @@ from textblob import TextBlob
 
 class NLP_Analyser:
 
-    def get_tweet_sentiment(self, tweet):
+    @staticmethod
+    def get_tweet_sentiment(tweet: str) -> str:
         analysis = TextBlob(TextProcessor.clean_tweet(tweet))
         # set sentiment
         if analysis.sentiment.polarity > 0:
