@@ -84,7 +84,6 @@ def main():
 
     # crawling with Twitter, returns JSON object
     crawled_tweets = crawler.twitter_crawl(key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
-    # TODO: Sanitise and Store tweets
 
     # do some similarity checking for the documents so far crawled
 
@@ -96,8 +95,7 @@ def main():
     # retrieve and store all the data about a URL
     for url in urls:
         scraped_data[url] = get_all_data_from_url(url)
-        # TODO: Store URL data
-
+    
     # perform analysis on the scraped data
 
     # perform data visualisation
