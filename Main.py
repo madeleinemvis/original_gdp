@@ -6,6 +6,8 @@ from collections import namedtuple
 
 def get_all_data_from_url(url: str) -> namedtuple:
     URL_data = namedtuple('URL_data', 'raw_HTML meta_data text_body cleaned_tokens')
+    
+    # PDFs skipped, should be properly scraped through a PDF scraper
     if(url.endswith('.pdf')):
         return
 
