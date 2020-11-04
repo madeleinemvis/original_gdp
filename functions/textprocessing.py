@@ -1,9 +1,10 @@
 import re
 import string
 from collections import Counter
+from typing import Tuple
 
 from bs4 import BeautifulSoup
-from bs4.element import Comment
+from bs4.element import Comment, PageElement
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 
@@ -23,18 +24,17 @@ class TextProcessor:
         return True
 
     # method for taking a string in HTML format and returning a string of the main body
-    def extract_main_body_from_html(self, html_string: str) -> str:
+    def extract_main_body_from_html(self, html_string: str) -> Tuple[str, str]:
         soup = BeautifulSoup(html_string, "html.parser")
         texts = soup.findAll(text=True)
+        title = soup.find("title")
         visible_texts = filter(self.tag_visible, texts)
         body = u" ".join(t.string.strip() for t in visible_texts)
-        return body
+        if title is None:
+            return "None", body
+        else:
+            return str(title.text), body
 
-    # Maddy
-    # method for creating a list of strings of meta data from a string in HTML format. 
-    # Could make the output its own class for ease going forward
-    def extract_meta_data_from_HTML(self, html_string: str) -> [str]:
-        return []
 
     # Alex Ll
     # Method for extracting all of the useful URLs from a HTML document

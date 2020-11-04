@@ -1,10 +1,13 @@
+from datetime import datetime
+
 from functions.webretrieval import Crawler, Scraper
 from functions.textprocessing import TextProcessor
+from functions.API import DbAPI
 from collections import namedtuple
 
 
 def get_all_data_from_url(url: str) -> namedtuple:
-    URL_data = namedtuple('URL_data', 'raw_HTML meta_data text_body cleaned_tokens')
+    URL_data = namedtuple('URL_data', 'raw_HTML text_title, text_body cleaned_tokens')
 
     # scrape the URL
     scraper = Scraper()
@@ -12,14 +15,13 @@ def get_all_data_from_url(url: str) -> namedtuple:
 
     # extract the meta data and main body of text from the scraped HTML 
     processor = TextProcessor()
-    meta_data = processor.extract_meta_data_from_HTML(initial_html)  # to be ignored
-    main_text = processor.extract_main_body_from_html(initial_html)
+    title, main_text = processor.extract_main_body_from_html(initial_html)
 
     # make the tokens from the main text, and create a clean form
     tokens = processor.create_tokens_from_text(main_text)
     cleaned_tokens = processor.clean_tokens(tokens)
 
-    return URL_data(raw_HTML=initial_html, meta_data=meta_data, text_body=main_text, cleaned_tokens=cleaned_tokens)
+    return URL_data(raw_HTML=initial_html, text_title=title, text_body=main_text, cleaned_tokens=cleaned_tokens)
 
 
 # Function for the main workflow of the project
@@ -31,6 +33,14 @@ def main():
 
     processor = TextProcessor()
     crawler = Crawler()
+    db_api = DbAPI()
+
+    start_t = datetime.now()
+    documents_queried = db_api.find_documents("WebURLs", "body", "vaccin*")
+    time_taken = datetime.now()-start_t
+    queried_count = db_api.count_documents("WebURLs", "body", "vaccin*")
+
+    print("Time to query: ", time_taken, " for ", queried_count, " documents.")
 
     # Using a dictionary of mapping URL to data for an initial data storage method, will likely need to change
     # very soon
@@ -56,7 +66,8 @@ def main():
 
     print("*** KEYWORDS ***")
     # calculate key words from manifesto
-    key_words = processor.calculate_key_words(scraped_data[start_url].cleaned_tokens, NUMBER_OF_KEY_WORDS) # TODO: Testing of wild cards with Google searching
+    key_words = processor.calculate_key_words(scraped_data[start_url].cleaned_tokens,
+                                              NUMBER_OF_KEY_WORDS)  # TODO: Testing of wild cards with Google searching
 
     print("-------- CRAWLING --------")
     # look to crawl with the new data
@@ -65,7 +76,7 @@ def main():
 
     # crawling with Twitter, returns JSON object
     crawled_tweets = crawler.twitter_crawl(key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
-    # TODO: Sanitise and Store tweets
+    # TODO: Sanitise and Store tweets (TwitterData collection)
 
     # do some similarity checking for the documents so far crawled
 
@@ -73,11 +84,23 @@ def main():
     final_crawled_urls = crawler.recursive_url_crawl(urls, MAXIMUM_URL_CRAWL_DEPTH)
     urls.extend(final_crawled_urls)
 
-    print("-------- SCRAPING & STORING --------")
+    print("-------- WEB SCRAPING --------")
     # retrieve and store all the data about a URL
+    urls_list = []
     for url in urls:
+        start_t = datetime.now()
+        print("Scraping: " + url)
         scraped_data[url] = get_all_data_from_url(url)
-        # TODO: Store URL data
+        # Create dictionary for input
+        url_insert = {"title": getattr(scraped_data[url], "text_title"),
+                      "body": getattr(scraped_data[url], "text_body")
+                      }
+        urls_list.append(url_insert)
+        print("Time Taken: ", (datetime.now()-start_t))
+
+    print("-------- STORING --------")
+    url_col = "WebURLs"
+    db_api.insert_many(url_col, urls_list)
 
     # perform analysis on the scraped data
 
