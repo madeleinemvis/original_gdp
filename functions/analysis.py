@@ -17,9 +17,10 @@ import spacy
 from functions.textprocessing import TextProcessor
 from textblob import TextBlob
 
+
 class NLP_Analyser:
     def __init__(self):
-        with open('stopwords.txt') as f:
+        with open('../stopwords.txt') as f:
             stopwords = set()
             lines = f.readlines()
             for line in lines:
@@ -106,4 +107,3 @@ class NLP_Analyser:
             texts_out.append(
                 [token.lemma_ for token in doc if token.pos_ in allowed_postags])
         return texts_out
->>>>>>> functions/analysis.py

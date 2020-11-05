@@ -112,7 +112,7 @@ class Crawler:
         return tweets
 
 
-Data = namedtuple('Data', 'text_body cleaned_tokens html_links')
+Data = namedtuple('Data', 'text_body tokens html_links')
 
 
 class Scraper:
@@ -150,15 +150,9 @@ class Scraper:
             main_text = processor.extract_main_body_from_html(initial_html)
             urls = processor.extract_urls_from_html(initial_html)
 
-        # extract the meta data and main body of text from the scraped HTML
-        # meta_data = TextProcessor.extract_meta_data_from_html(initial_html)  # to be ignored
-
         # make the tokens from the main text, and create a clean form
         tokens = TextProcessor.create_tokens_from_text(main_text)
         cleaned_tokens = TextProcessor.clean_tokens(tokens)
 
-        # TODO do we actually need the raw html document once we have the main text from it?
-        # return URL_data(raw_HTML=initial_html, meta_data=meta_data, text_body=main_text, cleaned_tokens=cleaned_tokens)
-
-        return Data(text_body=main_text, cleaned_tokens=cleaned_tokens, html_links=urls)
+        return Data(text_body=main_text, tokens=cleaned_tokens, html_links=urls)
 

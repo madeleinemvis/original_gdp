@@ -5,7 +5,7 @@ from collections import Counter
 from bs4 import BeautifulSoup
 from bs4.element import Comment
 from nltk.corpus import stopwords
-from nltk.stem.porter import PorterStemmer
+from nltk.stem import WordNetLemmatizer
 
 
 class TextProcessor:
@@ -30,12 +30,6 @@ class TextProcessor:
         visible_texts = filter(self.tag_visible, texts)
         body = u" ".join(t.string.strip() for t in visible_texts)
         return body
-
-    # TODO do we still need this function?
-    # method for creating a list of strings of meta data from a string in HTML format.
-    @staticmethod
-    def extract_meta_data_from_html(html_string: str) -> [str]:
-        return []
 
     # Alex Ll
     # Method for extracting all of the useful URLs from a HTML document
@@ -109,14 +103,14 @@ class TextProcessor:
         # removing all tokens that are just digits
         stripped = [s for s in stripped if not re.search(r'\d', s)]
 
-        # stemming the remaining tokens
-        porter = PorterStemmer()
-        stripped = [porter.stem(token) for token in stripped]
+        # lemmatizing the remaining tokens
+        lemmatizer = WordNetLemmatizer()
+        stripped = [lemmatizer.lemmatize(token) for token in stripped]
 
         return stripped
 
     @staticmethod
-    def calculate_key_words(clean_tokens: [str], number_of_key_words: int) -> [str]:
-        c = Counter(clean_tokens)
+    def calculate_key_words(tokens: [str], number_of_key_words: int) -> [str]:
+        c = Counter(tokens)
         ordered_terms = list(c.keys())
         return ordered_terms[:number_of_key_words]
