@@ -4,6 +4,4 @@ from documents import views
 urlpatterns = [ 
     url(r'^api/documents$', views.document_list),
     url(r'^api/documents/(?P<pk>[0-9]+)$', views.document_detail),
-    url(r'^api/tweets$', views.tweets_list),
-    url(r'^api/tweets/geo$', views.tweets_geo)
 ]
