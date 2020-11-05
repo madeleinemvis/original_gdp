@@ -38,7 +38,6 @@ def main():
 
     print("-------- MANIFESTO --------")
     # start with the initial URL
-    # TODO: Being able to take in multiple URLs
     start_url = "https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/?fbclid=IwAR017eZePLsduO5ZaxM3X8dFkipeQqy58Go8eL3SkuQ4YFtRVSjfBwDMD0A"
     """ Other URLS:
     - https://vactruth.com/2018/08/30/vaccine-induced-autism/ # faulty (Forbidden with crawler) 
@@ -46,7 +45,6 @@ def main():
     - https://vactruth.com/2019/06/07/the-vaccination-that-never-should-have-been-approved/
     - https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/?fbclid=IwAR017eZePLsduO5ZaxM3X8dFkipeQqy58Go8eL3SkuQ4YFtRVSjfBwDMD0A
     """
-    # TODO: Testing faulty urls for scraping
 
     scraped_data[start_url] = get_all_data_from_url(start_url)
 
@@ -54,7 +52,7 @@ def main():
     urls = processor.extract_urls_from_html(scraped_data[start_url].raw_HTML)
 
     # calculate key words from manifesto
-    key_words = processor.calculate_key_words(scraped_data[start_url].cleaned_tokens, NUMBER_OF_KEY_WORDS) # TODO: Testing of wild cards with Google searching
+    key_words = processor.calculate_key_words(scraped_data[start_url].cleaned_tokens, NUMBER_OF_KEY_WORDS)
 
     print("-------- CRAWLING --------")
     # look to crawl with the new data
