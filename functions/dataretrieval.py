@@ -11,8 +11,8 @@ import requests
 import re
 from datetime import datetime
 
-from functions.analysis import NLP_Analyser
-from functions.textprocessing import TextProcessor
+from analysis import NLP_Analyser
+from textprocessing import TextProcessor
 
 THRESHOLD = 0.3
 

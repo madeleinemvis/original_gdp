@@ -63,8 +63,8 @@ def main(source_urls: [str]):
     print("Non-similar doc:", analyser.check_similarity(scraped_data[alt_url][3]))
 
     # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
-    final_crawled_urls = crawler.recursive_url_crawl(urls, MAXIMUM_URL_CRAWL_DEPTH)
-    urls.update(final_crawled_urls)
+    final_crawled_urls = crawler.recursive_url_crawl(urls, MAXIMUM_URL_CRAWL_DEPTH, analyser)
+    urls.extend(final_crawled_urls)
 
     # retrieve and store all the data about a URL's not yet scraped
     urls_to_scrape = [u for u in urls if u not in scraped_data.keys()]

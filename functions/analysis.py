@@ -14,7 +14,7 @@ from gensim.models import CoherenceModel
 import spacy
 
 # class for doing all the NLP analysis needed
-from functions.textprocessing import TextProcessor
+from textprocessing import TextProcessor
 from textblob import TextBlob
 
 
