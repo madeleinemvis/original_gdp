@@ -44,11 +44,7 @@ def main():
 
     print("-------- MANIFESTO --------")
     # start with the initial URL
-<<<<<<< HEAD
-    start_url = "https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/"
-=======
     start_url = "https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/?fbclid=IwAR017eZePLsduO5ZaxM3X8dFkipeQqy58Go8eL3SkuQ4YFtRVSjfBwDMD0A"
->>>>>>> 470d8fe (removed Todo lines.)
     """ Other URLS:
     - https://vactruth.com/2018/08/30/vaccine-induced-autism/ # faulty (Forbidden with crawler) 
     - https://vactruth.com/2018/05/02/alfie-evans-timeline/
