@@ -14,7 +14,7 @@ class DbManager:
 
     # Inserts a single document into a specified collection
     def insert_one(self, collection, document):
-        r = requests.post()
+        self.database[collection].insert_one(document)
 
     # Inserts a list of documents (documents must be separate dictionaries) into a specified collection
     def insert_many(self, collection, document_list):
@@ -41,6 +41,3 @@ class DbManager:
     # Returns all documents of a specific collection
     def get_all_documents(self, collection_name: str):
         return self.database[collection_name].find()
-
-    def get_stats(self):
-        return self.database.stats()

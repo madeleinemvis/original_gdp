@@ -3,8 +3,8 @@ from django.shortcuts import render
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser
 from rest_framework import status
-from documents.models import Document, Tweet
-from documents.serializers import DocumentSerializer, TweetSerializer
+from documents.models import Document
+from documents.serializers import DocumentSerializer
 from rest_framework.decorators import api_view
 
 
@@ -57,19 +57,3 @@ def document_detail(request, pk):
         count = Document.objects.all().delete()
         return JsonResponse({'message': '{} Tutorials were deleted successfully!'.format(count[0])},
                             status=status.HTTP_204_NO_CONTENT)
-
-
-# Returns all tweets
-@api_view(['GET'])
-def tweets_list():
-    tweets = Tweet.objects.all()
-    twitter_serializer = TweetSerializer(tweets, many=True)
-    return JsonResponse(twitter_serializer.data, safe=False)
-
-
-# Returns tweets with valid Geo Location (if not valid it will be null)
-@api_view(['GET'])
-def tweets_geo():
-    tweets = Tweet.objects.filter(user_location__isnull=False)
-    twitter_serializer = TweetSerializer(tweets, many=True)
-    return JsonResponse(twitter_serializer.data, safe=False)

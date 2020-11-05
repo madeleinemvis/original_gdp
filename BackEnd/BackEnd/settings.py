@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'documents.apps.DocumentsConfig',
     'frontend',
 
+    'tweets.apps.TweetsConfig',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
