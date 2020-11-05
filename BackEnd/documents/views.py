@@ -4,8 +4,8 @@ from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
 from rest_framework import status
  
-from documents.models import Document
-from documents.serializers import DocumentSerializer
+from BackEnd.documents.models import Document
+from BackEnd.documents.serializers import DocumentSerializer
 from rest_framework.decorators import api_view
 # Create your views here.
 
