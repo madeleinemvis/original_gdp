@@ -11,6 +11,10 @@ import requests
 import re
 from datetime import datetime
 
+from functions.analysis import NLP_Analyser
+from functions.textprocessing import TextProcessor
+
+THRESHOLD = 0.3
 
 # class for crawling and scraping the internet
 class Crawler:
@@ -28,8 +32,9 @@ class Crawler:
     # Alex Ll
     # recursively crawl a set of URLs with batch checking similarities
     @staticmethod
-    def recursive_url_crawl(urls: [str], max_depth: int) -> [str]:
+    def recursive_url_crawl(urls: [str], max_depth: int, analyser: NLP_Analyser) -> [str]:
         scraper = Scraper()
+        processor = TextProcessor()
         final_list = []
         for url in urls:
             # Create list of searched URL's for use by the program
@@ -43,6 +48,15 @@ class Crawler:
 
                     # Process crawl response
                     response = scraper.scrape_url(web_links)
+
+                    # Extract the cleaned tokens from the response
+                    main_text = processor.extract_main_body_from_html(response)
+                    cleaned_tokens = processor.clean_tokens(processor.create_tokens_from_text(main_text))
+
+                    # If the similarity is less than the threshold, skip
+                    if (analyser.check_similarity(cleaned_tokens) < THRESHOLD):
+                        continue
+
                     soup = BeautifulSoup(response, 'html.parser')
                     tags = soup.find_all('a')
 

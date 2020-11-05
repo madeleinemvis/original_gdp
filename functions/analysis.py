@@ -74,7 +74,7 @@ class NLP_Analyser:
     def check_similarity(self, document):
         if document is None:
             return 0
-        extracted_doc = [document[3]]
+        extracted_doc = [document]
 
         doc_nostops = self.__remove_stopwords(extracted_doc)
         doc_bigrams = self.__make_bigrams(

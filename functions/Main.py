@@ -57,8 +57,10 @@ def main(source_urls: [str]):
 
     # do some similarity checking for the documents so far crawled
     analyser.create_topic_model(scraped_data)
-    print("Similar Doc:", analyser.check_similarity(scraped_data[source_urls[0]]))
-    print("Non-similar doc:", analyser.check_similarity(scraped_data[alt_url]))
+
+    # Similarity check using the start URL and an unrelated URL - this is for testing purposes
+    print("Similar Doc:", analyser.check_similarity(scraped_data[start_url][3]))
+    print("Non-similar doc:", analyser.check_similarity(scraped_data[alt_url][3]))
 
     # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
     final_crawled_urls = crawler.recursive_url_crawl(urls, MAXIMUM_URL_CRAWL_DEPTH)
