@@ -1,34 +1,10 @@
-from functions.webretrieval import Crawler, Scraper
+from functions.dataretrieval import Crawler, Scraper
 from functions.textprocessing import TextProcessor
 from functions.analysis import NLP_Analyser
-from collections import namedtuple
-
-
-def get_all_data_from_url(url: str) -> namedtuple:
-    URL_data = namedtuple('URL_data', 'raw_HTML meta_data text_body cleaned_tokens')
-
-    # PDFs skipped, should be properly scraped through a PDF scraper
-    if(url.endswith('.pdf')):
-        return
-
-    # scrape the URL
-    scraper = Scraper()
-    initial_html = scraper.scrape_url(url)
-
-    # extract the meta data and main body of text from the scraped HTML 
-    processor = TextProcessor()
-    meta_data = processor.extract_meta_data_from_HTML(initial_html)  # to be ignored
-    main_text = processor.extract_main_body_from_html(initial_html)
-
-    # make the tokens from the main text, and create a clean form
-    tokens = processor.create_tokens_from_text(main_text)
-    cleaned_tokens = processor.clean_tokens(tokens)
-
-    return URL_data(raw_HTML=initial_html, meta_data=meta_data, text_body=main_text, cleaned_tokens=cleaned_tokens)
 
 
 # Function for the main workflow of the project
-def main():
+def main(sources: [str]):
     NUMBER_OF_KEY_WORDS = 5
     NUMBER_OF_GOOGLE_RESULTS_WANTED = 25
     NUMBER_OF_TWEETS_RESULTS_WANTED = 100
@@ -38,28 +14,22 @@ def main():
     crawler = Crawler()
     analyser = NLP_Analyser()
 
+    alt_url = "https://www.bbc.co.uk/news/uk-54779430"
+    sources.append(alt_url)
+
     # Using a dictionary of mapping URL to data for an initial data storage method, will likely need to change
     # very soon
     scraped_data = {}
 
     print("-------- MANIFESTO --------")
-    # start with the initial URL
-    start_url = "https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/?fbclid=IwAR017eZePLsduO5ZaxM3X8dFkipeQqy58Go8eL3SkuQ4YFtRVSjfBwDMD0A"
-    start_url = "https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/"
-    """ Other URLS:
-    - https://vactruth.com/2018/08/30/vaccine-induced-autism/ # faulty (Forbidden with crawler)
-    - https://vactruth.com/2018/05/02/alfie-evans-timeline/
-    - https://vactruth.com/2019/06/07/the-vaccination-that-never-should-have-been-approved/
-    - https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/
-    """
 
-    scraped_data[start_url] = get_all_data_from_url(start_url)
+    # go through each source input and store the main body text, and cleaned tokens
+    # along with the html links found
+    urls = []
+    for source in sources:
+        scraped_data[source] = Scraper.get_data_from_source(source)
 
-    alt_url = "https://www.bbc.co.uk/news/uk-54779430"
-    scraped_data[alt_url] = get_all_data_from_url(alt_url)
-
-    # find all URLs in initial document
-    urls = processor.extract_urls_from_html(scraped_data[start_url].raw_HTML)
+    # TODO add urls from all the sources
 
     # calculate key words from manifesto
     key_words = processor.calculate_key_words(scraped_data[start_url].cleaned_tokens, NUMBER_OF_KEY_WORDS)
@@ -103,4 +73,13 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # start with the initial URL
+    start_url = "https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/"
+    """ Other URLS:
+    - https://vactruth.com/2018/08/30/vaccine-induced-autism/ # faulty (Forbidden with crawler)
+    - https://vactruth.com/2018/05/02/alfie-evans-timeline/
+    - https://vactruth.com/2019/06/07/the-vaccination-that-never-should-have-been-approved/
+    - https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/
+    """
+    sources = [start_url]
+    main(sources)
