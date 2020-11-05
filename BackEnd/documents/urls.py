@@ -1,5 +1,5 @@
 from django.conf.urls import url 
-from documents import views 
+from BackEnd.documents import views
  
 urlpatterns = [ 
     url(r'^api/documents$', views.document_list),
