@@ -1,19 +1,20 @@
 # file for handling API, left blank for now
-import urllib
-
 import pymongo
+import requests
+import BackEnd.documents.views as views
 
 
-class DbAPI:
+class DbManager:
     database = None
 
     def __init__(self):
-        client = pymongo.MongoClient("mongodb+srv://gdp:gdp@propaganda.m00hm.mongodb.net/Propaganda?retryWrites=true&w=majority")
+        client = pymongo.MongoClient(
+            "mongodb+srv://gdp:gdp@propaganda.m00hm.mongodb.net/Trilateral?retryWrites=true&w=majority")
         self.database = client.CrawledData
 
     # Inserts a single document into a specified collection
     def insert_one(self, collection, document):
-        self.database[collection].insert_one(document)
+        r = requests.post()
 
     # Inserts a list of documents (documents must be separate dictionaries) into a specified collection
     def insert_many(self, collection, document_list):

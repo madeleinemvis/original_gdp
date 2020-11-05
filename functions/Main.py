@@ -2,7 +2,7 @@ from datetime import datetime
 
 from functions.webretrieval import Crawler, Scraper
 from functions.textprocessing import TextProcessor
-from functions.API import DbAPI
+from BackEnd.DbManager import DbManager
 from collections import namedtuple
 
 
@@ -33,7 +33,7 @@ def main():
 
     processor = TextProcessor()
     crawler = Crawler()
-    db_api = DbAPI()
+    db_api = DbManager()
 
     start_t = datetime.now()
     documents_queried = db_api.find_documents("WebURLs", "body", "vaccin*")
