@@ -14,7 +14,8 @@ from gensim.models import CoherenceModel
 import spacy
 
 # class for doing all the NLP analysis needed
-
+from functions.textprocessing import TextProcessor
+from textblob import TextBlob
 
 class NLP_Analyser:
     def __init__(self):
@@ -25,6 +26,17 @@ class NLP_Analyser:
                 stopwords.add(line.rstrip())
             self.stopwords = stopwords
         pass
+    
+    @staticmethod
+    def get_tweet_sentiment(tweet: str) -> str:
+        analysis = TextBlob(TextProcessor.clean_tweet(tweet))
+        # set sentiment
+        if analysis.sentiment.polarity > 0:
+            return 'positive'
+        elif analysis.sentiment.polarity == 0:
+            return 'neutral'
+        else:
+            return 'negative'
 
     # Alex Lockwood
     # Method that creates the topic model from a list of documents
@@ -94,3 +106,4 @@ class NLP_Analyser:
             texts_out.append(
                 [token.lemma_ for token in doc if token.pos_ in allowed_postags])
         return texts_out
+>>>>>>> functions/analysis.py
