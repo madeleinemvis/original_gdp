@@ -39,7 +39,7 @@ class Crawler:
         tweet_list = [[tweet.id, tweet.created_at, tweet.text, tweet.favorite_count, tweet.entities['hashtags'],
                        tweet.user.location.encode('utf8')] for tweet in tweets]
         # Stores data into dataframe, may make it easier to store into DB
-        tweets_df = pd.DataFrame(tweet_list, columns=['tweet_id', 'created_at', 'text', 'favorite_count', 'hashtags',
+        tweets_df = pd.DataFrame(tweet_list, columns=['created_at', 'text', 'favorite_count', 'hashtags',
                                                       'user_location'])
         return tweets_df.to_json()
 

@@ -17,9 +17,18 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('url', models.TextField(default='')),
                 ('raw_HTML', models.TextField(blank=True, default='')),
-                ('meta_data', models.TextField(blank=True, default='')),
                 ('text_body', models.TextField(blank=True, default='')),
                 ('cleaned_tokens', models.TextField(blank=True, default='')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Tweet',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('created_at', models.DateTimeField(blank=True)),
+                ('text', models.TextField(blank=True, default='')),
+                ('favorite_count', models.IntegerField(blank=True, default=0)),
+                ('user_location', models.TextField(blank=True, default='')),
             ],
         ),
     ]
