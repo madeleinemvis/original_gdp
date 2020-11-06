@@ -1,7 +1,10 @@
 from functions.dataretrieval import Crawler, Scraper
 from functions.textprocessing import TextProcessor
 from functions.analysis import NLP_Analyser
+<<<<<<< HEAD
 from BackEnd.DbManager import DbManager
+=======
+>>>>>>> a9456a8 (Rebased)
 
 
 # Function for the main workflow of the project
@@ -17,7 +20,6 @@ def main(source_urls: [str]):
     db_manager = DbManager()
 
     alt_url = "https://www.bbc.co.uk/news/uk-54779430"
-    source_urls.append(alt_url)
 
     # Using a dictionary of mapping URL to data for an initial data storage method, will likely need to change
     # very soon
