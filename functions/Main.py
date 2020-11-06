@@ -2,43 +2,21 @@ from datetime import datetime
 
 from functions.webretrieval import Crawler, Scraper
 from functions.textprocessing import TextProcessor
+from functions.analysis import NLP_Analyser
 from BackEnd.DbManager import DbManager
-from collections import namedtuple
-
-
-def get_all_data_from_url(url: str) -> namedtuple:
-    URL_data = namedtuple('URL_data', 'raw_HTML text_title, text_body cleaned_tokens')
-
-    # scrape the URL
-    scraper = Scraper()
-    initial_html = scraper.scrape_url(url)
-
-    # extract the meta data and main body of text from the scraped HTML 
-    processor = TextProcessor()
-    title, main_text = processor.extract_main_body_from_html(initial_html)
-
-    # make the tokens from the main text, and create a clean form
-    tokens = processor.create_tokens_from_text(main_text)
-    cleaned_tokens = processor.clean_tokens(tokens)
-
-    return URL_data(raw_HTML=initial_html, text_title=title, text_body=main_text, cleaned_tokens=cleaned_tokens)
 
 
 # Function for the main workflow of the project
 def main(source_urls: [str]):
     NUMBER_OF_KEY_WORDS = 5
     NUMBER_OF_GOOGLE_RESULTS_WANTED = 25
-    NUMBER_OF_TWEETS_RESULTS_WANTED = 100
+    NUMBER_OF_TWEETS_RESULTS_WANTED = 20
     MAXIMUM_URL_CRAWL_DEPTH = 3
 
     processor = TextProcessor()
     crawler = Crawler()
-    db_api = DbManager()
-
-    start_t = datetime.now()
-    documents_queried = db_api.find_documents("WebURLs", "body", "vaccin*")
-    time_taken = datetime.now()-start_t
-    queried_count = db_api.count_documents("WebURLs", "body", "vaccin*")
+    analyser = NLP_Analyser()
+    db_manager = DbManager()
 
     print("Time to query: ", time_taken, " for ", queried_count, " documents.")
 
@@ -64,7 +42,7 @@ def main(source_urls: [str]):
     # do we want the top 'x' keywords across the documents or do we want the top 'x' from each of the documents
     for source in source_urls:
         data = Scraper.get_data_from_source(source)
-        scraped_data[source] = Scraper.get_data_from_source(source)
+        scraped_data[source] = data
         urls.update(data.html_links)
 
     all_tokens = [t for s in scraped_data.values() for t in s.tokens]
@@ -79,43 +57,35 @@ def main(source_urls: [str]):
     # look to crawl with the new data
     urls_google = crawler.crawl_google_with_key_words(key_words, NUMBER_OF_GOOGLE_RESULTS_WANTED)
 
-    print("-------- SCRAPING & STORING --------")
+    print("-------- SCRAPING --------")
     # retrieve and store all the data about a URL
     for url in urls_google:
         scraped_data[url] = Scraper.get_data_from_source(url)
-        # TODO: Store URL data
 
+    # crawling with Twitter
+    crawled_tweets = crawler.twitter_crawl(key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
+
+    # do some similarity checking for the documents so far crawled
     analyser.create_topic_model(scraped_data)
     print("Similar Doc:", analyser.check_similarity(scraped_data[source_urls[0]]))
     print("Non-similar doc:", analyser.check_similarity(scraped_data[alt_url]))
-
-    # crawling with Twitter, returns JSON object
-    crawled_tweets = crawler.twitter_crawl(key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
-    # TODO: Sanitise and Store tweets (TwitterData collection)
-
-    # do some similarity checking for the documents so far crawled
 
     # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
     final_crawled_urls = crawler.recursive_url_crawl(urls, MAXIMUM_URL_CRAWL_DEPTH)
     urls.update(final_crawled_urls)
 
-    print("-------- WEB SCRAPING --------")
-    # retrieve and store all the data about a URL
-    urls_list = []
-    for url in urls:
-        start_t = datetime.now()
-        print("Scraping: " + url)
-        scraped_data[url] = get_all_data_from_url(url)
-        # Create dictionary for input
-        url_insert = {"title": getattr(scraped_data[url], "text_title"),
-                      "body": getattr(scraped_data[url], "text_body")
-                      }
-        urls_list.append(url_insert)
-        print("Time Taken: ", (datetime.now()-start_t))
+    # retrieve and store all the data about a URL's not yet scraped
+    urls_to_scrape = [u for u in urls if u not in scraped_data.keys()]
+    url_insert = []
+    for url in urls_to_scrape:
+        scraped_data[url] = Scraper.get_data_from_source(url)
+        url_insert.append(scraped_data[url])
 
     print("-------- STORING --------")
-    url_col = "WebURLs"
-    db_api.insert_many(url_col, urls_list)
+    db_manager.insert_many('documents_document')
+    for t in crawled_tweets:
+        print(t)
+    db_manager.insert_many('tweets_tweet', crawled_tweets)
 
     # perform analysis on the scraped data
 

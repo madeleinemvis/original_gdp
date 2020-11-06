@@ -9,7 +9,7 @@ import requests.exceptions
 import tweepy
 import requests
 import re
-
+from datetime import datetime
 
 # class for crawling and scraping the internet
 class Crawler:
@@ -91,15 +91,14 @@ class Crawler:
     def twitter_crawl(self, keywords: [str], tweets_returned: int):
         api = self.twitter_init()
         # Retrieves all tweets with given keywords and count
-        searched_tweets = tweepy.Cursor(api.search, q="vaccine autism").items(100)
+        searched_tweets = tweepy.Cursor(api.search, q="vaccine autism").items(tweets_returned)
         tweets = []
         for tweet in searched_tweets:
-            parsed_tweet = {'id': tweet.id,
-                            'created_at': tweet.created_at,
+            parsed_tweet = {'created_at': tweet.created_at,
                             'text': tweet.text,
                             'favorite_count': tweet.favorite_count,
                             'retweet_count': tweet.retweet_count,
-                            'location': TextProcessor.clean_location(tweet.user.location.encode('utf8')),
+                            'user_location': TextProcessor.clean_location(tweet.user.location.encode('utf8')),
                             'sentiment': NLP_Analyser.get_tweet_sentiment(tweet.text)}
 
             if tweet.retweet_count > 0:
@@ -112,18 +111,19 @@ class Crawler:
         return tweets
 
 
-Data = namedtuple('Data', 'text_body tokens html_links')
+Data = namedtuple('Data', 'url raw_html title text_body tokens html_links')
 
 
 class Scraper:
-
 
     # Alex Ll
     # method that returns all the HTML data from a URL
     @staticmethod
     def scrape_url(url: str) -> str:
         try:
+            start_t = datetime.now()
             request = requests.get(url)
+            print("Scraped: ", url, ". Time taken: ", datetime.now()-start_t)
         except requests.ConnectionError:
             print('Connection Error: ' + url)
             return ''
@@ -132,14 +132,17 @@ class Scraper:
     # method to get all of the text out of a pdf, but it does not clean it
     @staticmethod
     def scrape_pdf(pdf_path: str) -> str:
+        start_t = datetime.now()
         raw = parser.from_file(pdf_path)
         raw_text = raw['content']
+        print("Scraped: ", pdf_path, ". Time taken: ", datetime.now() - start_t)
         return ' '.join(raw_text.split())
 
     # method for getting raw text and cleaned tokens from a source, can be a html or '.pdf'
     @staticmethod
     def get_data_from_source(source: str) -> namedtuple:
-
+        initial_html = ''
+        title = ''
         if source.endswith('.pdf'):
             main_text = Scraper.scrape_pdf(source)
             # TODO get the urls links out of the pdf
@@ -147,12 +150,12 @@ class Scraper:
         else:
             initial_html = Scraper.scrape_url(source)
             processor = TextProcessor()
-            main_text = processor.extract_main_body_from_html(initial_html)
+            title, main_text = processor.extract_main_body_from_html(initial_html)
             urls = processor.extract_urls_from_html(initial_html)
 
         # make the tokens from the main text, and create a clean form
         tokens = TextProcessor.create_tokens_from_text(main_text)
         cleaned_tokens = TextProcessor.clean_tokens(tokens)
 
-        return Data(text_body=main_text, tokens=cleaned_tokens, html_links=urls)
-
+        return Data(url=source, raw_html=initial_html, title=title, text_body=main_text, tokens=cleaned_tokens,
+                    html_links=urls)

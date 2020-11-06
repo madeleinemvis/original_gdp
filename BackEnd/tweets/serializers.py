@@ -7,4 +7,6 @@ class TweetSerializer(serializers.ModelSerializer):
         fields = ('created_at',
                   'text',
                   'favorite_count',
-                  'user_location')
+                  'retweet_count',
+                  'user_location',
+                  'sentiment')
