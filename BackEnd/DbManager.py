@@ -1,8 +1,5 @@
 # file for handling API, left blank for now
 import pymongo
-import requests
-import BackEnd.documents.views as views
-
 
 class DbManager:
     database = None
@@ -18,6 +15,7 @@ class DbManager:
 
     # Inserts a list of documents (documents must be separate dictionaries) into a specified collection
     def insert_many(self, collection, document_list):
+        print(collection, document_list)
         self.database[collection].insert_many(document_list)
 
     # Deletes an entire collection

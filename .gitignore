@@ -13,3 +13,16 @@ env
 */*/__pycache__/
 
 */__pycache__/
+/.idea/main-project.iml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/BackEnd/requirements.txt
+/.idea/shelf/Uncommitted_changes_before_Checkout_at_05_11_2020_10_37_[Default_Changelist]/shelved.patch
+/.idea/shelf/Uncommitted_changes_before_Checkout_at_05_11_2020_10_37_[Default_Changelist]1/shelved.patch
+/.idea/shelf/Uncommitted_changes_before_Checkout_at_05_11_2020_11_55_[Default_Changelist]/shelved.patch
+/.idea/shelf/Uncommitted_changes_before_Checkout_at_05_11_2020_10_37__Default_Changelist_.xml
+/.idea/shelf/Uncommitted_changes_before_Checkout_at_05_11_2020_11_55__Default_Changelist_.xml
+/.idea/vcs.xml
+/.idea/workspace.xml

@@ -8,5 +8,7 @@ class DocumentSerializer(serializers.ModelSerializer):
         fields = ('id',
                   'url',
                   'raw_HTML',
+                  'title',
                   'text_body',
-                  'cleaned_tokens')
+                  'cleaned_tokens',
+                  'html_links')
