@@ -61,18 +61,18 @@ def main(source_urls: [str]):
     print("Non-similar doc:", analyser.check_similarity(scraped_data[alt_url]))
 
     # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
-    final_crawled_urls = crawler.recursive_url_crawl(urls, MAXIMUM_URL_CRAWL_DEPTH)
-    urls.update(final_crawled_urls)
+    # final_crawled_urls = crawler.recursive_url_crawl(urls, MAXIMUM_URL_CRAWL_DEPTH)
+    # urls.update(final_crawled_urls)
 
     # retrieve and store all the data about a URL's not yet scraped
-    urls_to_scrape = [u for u in urls if u not in scraped_data.keys()]
-    url_insert = []
-    for url in urls_to_scrape:
-        scraped_data[url] = Scraper.get_data_from_source(url)
-        url_insert.append(scraped_data[url])
+    # urls_to_scrape = [u for u in urls if u not in scraped_data.keys()]
+    # url_insert = []
+    # for url in urls_to_scrape:
+    #     scraped_data[url] = Scraper.get_data_from_source(url)
+    #     url_insert.append(scraped_data[url])
 
     print("-------- STORING --------")
-    db_manager.insert_many('documents_document') # Collection name for web pages
+    #db_manager.insert_many('documents_document') # Collection name for web pages
 
     db_manager.insert_many('tweets_tweet', crawled_tweets) # Collection name for tweets
     # perform analysis on the scraped dataS
