@@ -1,13 +1,15 @@
 # file for handling API, left blank for now
 import pymongo
 
+
 class DbManager:
     database = None
 
     def __init__(self):
-        client = pymongo.MongoClient(
+        self.client = pymongo.MongoClient(
             "mongodb+srv://gdp:gdp@propaganda.m00hm.mongodb.net/Trilateral?retryWrites=true&w=majority")
-        self.database = client.CrawledData
+        self.database = self.client.Trilateral
+        self.drop_collection('tweets_tweet')
 
     # Inserts a single document into a specified collection
     def insert_one(self, collection, document):
@@ -19,8 +21,10 @@ class DbManager:
         self.database[collection].insert_many(document_list)
 
     # Deletes an entire collection
-    def delete_collection(self, collection):
-        self.database[collection].delete_many({})
+    def drop_collection(self, collection):
+        self.database[collection].drop()
+        response = self.database.drop_collection(collection)
+        print('\n', 'drop_collection() response: ', response)
 
     # Deletes any record that holds true to the query
     def delete_tuple(self, collection, query):
@@ -39,3 +43,6 @@ class DbManager:
     # Returns all documents of a specific collection
     def get_all_documents(self, collection_name: str):
         return self.database[collection_name].find()
+
+    def get_all_collections(self):
+        return self.database.getCollectionNames
