@@ -13,11 +13,8 @@ env
 */*/__pycache__/
 
 */__pycache__/
-<<<<<<< HEAD
 
-<<<<<<< HEAD
 /node_modules
-=======
 
 
 node_modules
@@ -137,7 +134,6 @@ media/
 # **/migrations/**
 # !**/migrations
 # !**/migrations/__init__.py
->>>>>>> 4b0c39a (Initial UI)
 =======
 /.idea/main-project.iml
 /.idea/misc.xml
@@ -153,3 +149,5 @@ media/
 /.idea/vcs.xml
 /.idea/workspace.xml
 >>>>>>> 4736483 (Fixed merges, issues with HTML Crawling.)
+=======
+>>>>>>> 5649dbe (ignore)
