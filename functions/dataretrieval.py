@@ -11,6 +11,7 @@ import requests
 import re
 from datetime import datetime
 
+
 # class for crawling and scraping the internet
 class Crawler:
     def __init__(self):
@@ -20,8 +21,8 @@ class Crawler:
     # not sure how we want to use this method yet
     @staticmethod
     def crawl_google_with_key_words(key_words: [str], urls_returned: int) -> [str]:
-        google_result = search(str(key_words), tld="com", lang="en", num=urls_returned, start=0, stop=urls_returned,
-                               pause=2.0)
+        query = ' '.join(key_words)
+        google_result = search(query, tld="com", lang="en", num=urls_returned, start=0, stop=urls_returned)
         return google_result
 
     # Alex Ll
@@ -127,7 +128,7 @@ class Scraper:
         try:
             start_t = datetime.now()
             request = requests.get(url)
-            print("Scraped: ", url, ". Time taken: ", datetime.now()-start_t)
+            print("Scraped: ", url, ". Time taken: ", datetime.now() - start_t)
         except requests.ConnectionError:
             print('Connection Error: ' + url)
             return ''

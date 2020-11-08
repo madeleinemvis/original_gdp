@@ -19,7 +19,7 @@ def main(source_urls: [str]):
     db_manager = DbManager()
 
     alt_url = "https://www.bbc.co.uk/news/uk-54779430"
-    source_urls = source_urls.append(alt_url)
+    source_urls.append(alt_url)
 
     # Using a dictionary of mapping URL to data for an initial data storage method, will likely need to change
     # very soon
