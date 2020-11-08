@@ -50,28 +50,32 @@ class Crawler:
                         url_new = url_link.get('href')
                         flag = False  # Flag is true if website has been searched before
 
+
+                        new_link = str(url_new).rsplit('.', 1)[0]
                         # Check to see if website has been visited before
                         for item in url_depth:
                             for i in item:
                                 if url_new == i:
                                     flag = True
+                                old_link = i.rsplit('.', 1)[0]
+                                temp = old_link.rsplit('/', 1)
+                                old1 = 'https://' + temp[1]
+                                old2 = 'http://' + temp[1]
+                                if re.search(old1, new_link) or re.search(old2, new_link):
+                                    flag = True
+                                
+                                
 
                         # If link is not empty and has not been searched before
                         if url_new is not None and flag is False:
 
                             # If link is a valid url
                             if str(url_new).startswith('http'):
-                                old_link = web_links.rsplit('.', 1)[0]
-                                new_link = str(url_new).rsplit('.', 1)[0]
+                                # Append url to search list, will be searched next
+                                url_depth[depth_index + 1].append(url_new)
 
-                                # Check to see if current link is not from the same website that
-                                # current link was pulled from
-                                if not re.search(old_link, new_link):
-                                    # Append url to search list, will be searched next
-                                    url_depth[depth_index + 1].append(url_new)
-
-                                    # Append to list of valid sites pulled from parent site
-                                    loop.append(url_new)
+                                # Append to list of valid sites pulled from parent site
+                                loop.append(url_new)
 
             # Append loop list to final return list
             final_list.append(loop)
