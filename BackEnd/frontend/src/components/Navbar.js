@@ -1,4 +1,8 @@
 import React, { Component } from 'react';
+import {
+  BrowserRouter as Router,
+  Link
+} from "react-router-dom";
 
 class Navbar extends Component{
     render(){
@@ -6,6 +10,7 @@ class Navbar extends Component{
         
         
         <React.Fragment>
+          <Router>
             <nav className="navbar navbar-expand-sm sticky-top navbar-dark bg-dark">
                 <div className="container">
                   <a className="navbar-brand" href="#">Propaganda Analysis</a>
@@ -15,10 +20,13 @@ class Navbar extends Component{
                   <div className="collapse navbar-collapse" id="navbarNav">
                       <ul className="navbar-nav">
                         <li className="nav-item active">
-                          <a className="nav-link" href="#">Home <span className="sr-only">(current)</span></a>
+                          <Link to="/">Home</Link>
                         </li>
                         <li className="nav-item">
-                          <a className="nav-link" href="#">About</a>
+                          <Link to="/about">About</Link>
+                        </li> 
+                        <li className="nav-item">
+                          <Link to="/dashboard" disabled>Dashboard</Link>
                         </li>                      
                       </ul>
                   </div>
@@ -26,7 +34,7 @@ class Navbar extends Component{
                 
             
             </nav>
-
+          </Router>
         </React.Fragment> 
         
         

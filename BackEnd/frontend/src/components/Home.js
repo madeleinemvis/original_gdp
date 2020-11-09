@@ -1,15 +1,11 @@
-import React, {  useState, Component } from 'react';
-import { GrAdd } from 'react-icons';
+import React, {  useState } from 'react';
 
 import { 
     Button,
     Col, 
     Row, 
     Container, 
-    Jumbotron,
-    Form,
-    FormGroup,
-    FormControl
+    Jumbotron
 } from 'react-bootstrap';
 
 const Home = () => {

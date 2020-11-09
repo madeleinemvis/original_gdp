@@ -1,6 +1,6 @@
-from functions.dataretrieval import Crawler, Scraper
-from functions.textprocessing import TextProcessor
-from functions.analysis import NLP_Analyser
+from dataretrieval import Crawler, Scraper
+from textprocessing import TextProcessor
+from analysis import NLP_Analyser
 from BackEnd.DbManager import DbManager
 
 
