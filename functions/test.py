@@ -1,5 +1,5 @@
 # file for testing 
-from functions.textprocessing import TextProcessor
+from textprocessing import TextProcessor
 
 text = """Antibodies are a key part of our immune defences and stop the virus from getting inside the body's cells.
 The Imperial College London team found the number of people testing positive for antibodies has fallen by 26% 

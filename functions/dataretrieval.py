@@ -11,8 +11,8 @@ import requests
 import re
 from datetime import datetime
 
-from analysis import NLP_Analyser
-from textprocessing import TextProcessor
+from functions.analysis import NLP_Analyser
+from functions.textprocessing import TextProcessor
 
 THRESHOLD = 0.3
 
@@ -46,17 +46,14 @@ class Crawler:
             for depth_index in range(0, max_depth):
                 for web_links in url_depth[depth_index]:
 
-                    # Process crawl response
-                    response = scraper.scrape_url(web_links)
-
-                    # Extract the cleaned tokens from the response
-                    main_text = processor.extract_main_body_from_html(response)
-                    cleaned_tokens = processor.clean_tokens(processor.create_tokens_from_text(main_text))
+                    # Get data for the link
+                    data = scraper.get_data_from_source(web_links)
 
                     # If the similarity is less than the threshold, skip
-                    if (analyser.check_similarity(cleaned_tokens) < THRESHOLD):
+                    if (analyser.check_similarity(data.tokens) < THRESHOLD):
                         continue
 
+                    response = data.raw_html
                     soup = BeautifulSoup(response, 'html.parser')
                     tags = soup.find_all('a')
 
@@ -98,7 +95,7 @@ class Crawler:
 
     @staticmethod
     def twitter_init():
-        with open("../twitter_credentials.json", "r") as file:
+        with open("twitter_credentials.json", "r") as file:
             creds = json.load(file)
 
         auth = tweepy.OAuthHandler(creds['CONSUMER_KEY'], creds['CONSUMER_SECRET'])

@@ -14,13 +14,13 @@ from gensim.models import CoherenceModel
 import spacy
 
 # class for doing all the NLP analysis needed
-from textprocessing import TextProcessor
+from functions.textprocessing import TextProcessor
 from textblob import TextBlob
 
 
 class NLP_Analyser:
     def __init__(self):
-        with open('../stopwords.txt') as f:
+        with open('stopwords.txt') as f:
             stopwords = set()
             lines = f.readlines()
             for line in lines:
@@ -43,7 +43,7 @@ class NLP_Analyser:
     # Method that creates the topic model from a list of documents
     # Assumed that the documents have not been cleaned - will be cleaned as a result
     def create_topic_model(self, documents):
-        cleaned_documents = [documents[key][3]
+        cleaned_documents = [documents[key].tokens
                              for key in documents.keys() if documents[key] is not None]
 
         # Build the bigram and trigram models
