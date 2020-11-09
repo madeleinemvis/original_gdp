@@ -17,7 +17,6 @@ def main(source_urls: [str]):
     db_manager = DbManager()
 
     alt_url = "https://www.bbc.co.uk/news/uk-54779430"
-    source_urls.append(alt_url)
 
     # Using a dictionary of mapping URL to data for an initial data storage method, will likely need to change
     # very soon
@@ -55,10 +54,7 @@ def main(source_urls: [str]):
     # crawling with Twitter
     crawled_tweets = crawler.twitter_crawl(key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
 
-    # do some similarity checking for the documents so far crawled
-    analyser.create_topic_model(scraped_data)
-    print("Similar Doc:", analyser.check_similarity(scraped_data[source_urls[0]]))
-    print("Non-similar doc:", analyser.check_similarity(scraped_data[alt_url]))
+    urls.update(urls_google)
 
     # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
     final_crawled_urls = crawler.recursive_url_crawl(urls, MAXIMUM_URL_CRAWL_DEPTH)
@@ -72,9 +68,9 @@ def main(source_urls: [str]):
         url_insert.append(scraped_data[url])
 
     print("-------- STORING --------")
-    db_manager.insert_many('documents_document') # Collection name for web pages
+    db_manager.insert_many('documents_document')  # Collection name for web pages
 
-    db_manager.insert_many('tweets_tweet', crawled_tweets) # Collection name for tweets
+    db_manager.insert_many('tweets_tweet', crawled_tweets)  # Collection name for tweets
     # perform analysis on the scraped dataS
 
     # perform data visualisation

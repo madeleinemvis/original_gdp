@@ -11,24 +11,31 @@ import requests
 import re
 from datetime import datetime
 
-
 # class for crawling and scraping the internet
 class Crawler:
     def __init__(self):
+        with open('../blacklist.txt') as f:
+            regexes = []
+            lines = f.readlines()
+            for line in lines:
+                regexes.append(line.rstrip())
+            self.BLACKLIST_REGEX = '(?:%s)' % '|'.join(regexes)
         pass
 
     # Maddy
     # not sure how we want to use this method yet
-    @staticmethod
-    def crawl_google_with_key_words(key_words: [str], urls_returned: int) -> [str]:
+    def crawl_google_with_key_words(self, key_words: [str], urls_returned: int) -> [str]:
         query = ' '.join(key_words)
         google_result = search(query, tld="com", lang="en", num=urls_returned, start=0, stop=urls_returned)
-        return google_result
+        new_results = []
+        for url in google_result:
+            if not re.match(self.BLACKLIST_REGEX, url):
+                new_results.append(url)
+        return new_results
 
     # Alex Ll
     # recursively crawl a set of URLs with batch checking similarities
-    @staticmethod
-    def recursive_url_crawl(urls: [str], max_depth: int) -> [str]:
+    def recursive_url_crawl(self, urls: [str], max_depth: int) -> [str]:
         scraper = Scraper()
         final_list = []
         for url in urls:
@@ -51,7 +58,6 @@ class Crawler:
                         url_new = url_link.get('href')
                         flag = False  # Flag is true if website has been searched before
 
-
                         new_link = str(url_new).rsplit('.', 1)[0]
                         # Check to see if website has been visited before
                         for item in url_depth:
@@ -64,20 +70,18 @@ class Crawler:
                                 old2 = 'http://' + temp[1]
                                 if re.search(old1, new_link) or re.search(old2, new_link):
                                     flag = True
-                                
-                                
 
                         # If link is not empty and has not been searched before
                         if url_new is not None and flag is False:
-
                             # If link is a valid url
                             if str(url_new).startswith('http'):
-                                # Append url to search list, will be searched next
-                                url_depth[depth_index + 1].append(url_new)
+                                # If the link is not blacklisted
+                                if not re.match(self.BLACKLIST_REGEX, url_new):
+                                    # Append url to search list, will be searched next
+                                    url_depth[depth_index + 1].append(url_new)
 
-                                # Append to list of valid sites pulled from parent site
-                                loop.append(url_new)
-
+                                    # Append to list of valid sites pulled from parent site
+                                    loop.append(url_new)
             # Append loop list to final return list
             final_list.append(loop)
         return final_list

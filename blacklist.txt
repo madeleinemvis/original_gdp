@@ -1,0 +1,6 @@
+https?:\/\/(www\.)?facebook\.com\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)
+https?:\/\/(www\.)?twitter\.com\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)
+https?:\/\/(www\.)?youtu\.be\/([\w\-\_]*)(&(amp;)?[\w\?=]*)?
+https?:\/\/(www\.)?youtube\.com\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)
+https?:\/\/(www\.)?linkedin\.com\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)
+https?:\/\/(www\.)?instagram\.com\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)
