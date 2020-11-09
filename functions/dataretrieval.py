@@ -96,7 +96,8 @@ class Crawler:
     def twitter_crawl(self, keywords: [str], tweets_returned: int):
         api = self.twitter_init()
         # Retrieves all tweets with given keywords and count
-        searched_tweets = tweepy.Cursor(api.search, q="vaccine autism").items(tweets_returned)
+        query = ' '.join(keywords)
+        searched_tweets = tweepy.Cursor(api.search, q=query).items(tweets_returned)
         tweets = []
         for tweet in searched_tweets:
             parsed_tweet = {'created_at': tweet.created_at,
