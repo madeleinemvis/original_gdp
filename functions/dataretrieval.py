@@ -42,9 +42,12 @@ class Crawler:
                 for web_links in url_depth[depth_index]:
 
                     # Process crawl response
-                    response = scraper.scrape_url(web_links)
-                    soup = BeautifulSoup(response, 'html.parser')
-                    tags = soup.find_all('a')
+                    if web_links not in final_list:
+                        response = scraper.scrape_url(web_links)
+                        soup = BeautifulSoup(response, 'html.parser')
+                        tags = soup.find_all('a')
+                    else:
+                        tags = []
 
                     # Loop through web links found in response
                     for url_link in tags:
@@ -79,7 +82,8 @@ class Crawler:
                                 loop.append(url_new)
 
             # Append loop list to final return list
-            final_list.append(loop)
+            #final_list.append(loop)
+            final_list = final_list + loop
         return final_list
 
     @staticmethod
@@ -138,10 +142,14 @@ class Scraper:
     # method to get all of the text out of a pdf, but it does not clean it
     @staticmethod
     def scrape_pdf(pdf_path: str) -> str:
-        start_t = datetime.now()
-        raw = parser.from_file(pdf_path)
-        raw_text = raw['content']
-        print("Scraped: ", pdf_path, ". Time taken: ", datetime.now() - start_t)
+        try:
+            start_t = datetime.now()
+            raw = parser.from_file(pdf_path)
+            raw_text = raw['content']
+            print("Scraped: ", pdf_path, ". Time taken: ", datetime.now() - start_t)
+        except:
+            print('PDF Connection Error: ' + pdf_path)
+            return ''
         return ' '.join(raw_text.split())
 
     # method for getting raw text and cleaned tokens from a source, can be a html or '.pdf'
