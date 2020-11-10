@@ -72,12 +72,10 @@ def main(source_urls: [str]):
         url_insert.append(scraped_data[url])
 
     print("-------- STORING --------")
-    db_manager.insert_many('documents_document')
-    for t in crawled_tweets:
-        print(t)
-    db_manager.insert_many('tweets_tweet', crawled_tweets)
+    db_manager.insert_many('documents_document') # Collection name for web pages
 
-    # perform analysis on the scraped data
+    db_manager.insert_many('tweets_tweet', crawled_tweets) # Collection name for tweets
+    # perform analysis on the scraped dataS
 
     # perform data visualisation
 

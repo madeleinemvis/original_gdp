@@ -11,6 +11,7 @@ import requests
 import re
 from datetime import datetime
 
+
 # class for crawling and scraping the internet
 class Crawler:
     def __init__(self):
@@ -20,8 +21,8 @@ class Crawler:
     # not sure how we want to use this method yet
     @staticmethod
     def crawl_google_with_key_words(key_words: [str], urls_returned: int) -> [str]:
-        google_result = search(str(key_words), tld="com", lang="en", num=urls_returned, start=0, stop=urls_returned,
-                               pause=2.0)
+        query = ' '.join(key_words)
+        google_result = search(query, tld="com", lang="en", num=urls_returned, start=0, stop=urls_returned)
         return google_result
 
     # Alex Ll
@@ -50,28 +51,32 @@ class Crawler:
                         url_new = url_link.get('href')
                         flag = False  # Flag is true if website has been searched before
 
+
+                        new_link = str(url_new).rsplit('.', 1)[0]
                         # Check to see if website has been visited before
                         for item in url_depth:
                             for i in item:
                                 if url_new == i:
                                     flag = True
+                                old_link = i.rsplit('.', 1)[0]
+                                temp = old_link.rsplit('/', 1)
+                                old1 = 'https://' + temp[1]
+                                old2 = 'http://' + temp[1]
+                                if re.search(old1, new_link) or re.search(old2, new_link):
+                                    flag = True
+                                
+                                
 
                         # If link is not empty and has not been searched before
                         if url_new is not None and flag is False:
 
                             # If link is a valid url
                             if str(url_new).startswith('http'):
-                                old_link = web_links.rsplit('.', 1)[0]
-                                new_link = str(url_new).rsplit('.', 1)[0]
+                                # Append url to search list, will be searched next
+                                url_depth[depth_index + 1].append(url_new)
 
-                                # Check to see if current link is not from the same website that
-                                # current link was pulled from
-                                if not re.search(old_link, new_link):
-                                    # Append url to search list, will be searched next
-                                    url_depth[depth_index + 1].append(url_new)
-
-                                    # Append to list of valid sites pulled from parent site
-                                    loop.append(url_new)
+                                # Append to list of valid sites pulled from parent site
+                                loop.append(url_new)
 
             # Append loop list to final return list
             final_list.append(loop)
@@ -91,7 +96,8 @@ class Crawler:
     def twitter_crawl(self, keywords: [str], tweets_returned: int):
         api = self.twitter_init()
         # Retrieves all tweets with given keywords and count
-        searched_tweets = tweepy.Cursor(api.search, q="vaccine autism").items(tweets_returned)
+        query = ' '.join(keywords)
+        searched_tweets = tweepy.Cursor(api.search, q=query).items(tweets_returned)
         tweets = []
         for tweet in searched_tweets:
             parsed_tweet = {'created_at': tweet.created_at,
@@ -123,7 +129,7 @@ class Scraper:
         try:
             start_t = datetime.now()
             request = requests.get(url)
-            print("Scraped: ", url, ". Time taken: ", datetime.now()-start_t)
+            print("Scraped: ", url, ". Time taken: ", datetime.now() - start_t)
         except requests.ConnectionError:
             print('Connection Error: ' + url)
             return ''

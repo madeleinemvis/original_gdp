@@ -11,15 +11,15 @@ from rest_framework.decorators import api_view
 # Create your views here.
 # Returns all tweets
 @api_view(['GET'])
-def tweets_list():
+def tweets_list(request):
     tweets = Tweet.objects.all()
     twitter_serializer = TweetSerializer(tweets, many=True)
     return JsonResponse(twitter_serializer.data, safe=False)
 
 
-# Returns tweets with valid Geo Location (if not valid it will be null)
+# Returns tweets with Geo Locations
 @api_view(['GET'])
-def tweets_geo():
-    tweets = Tweet.objects.filter(user_location__isnull=False)
+def tweets_geo(request):
+    tweets = Tweet.objects.exclude(user_location__exact='')
     twitter_serializer = TweetSerializer(tweets, many=True)
     return JsonResponse(twitter_serializer.data, safe=False)
