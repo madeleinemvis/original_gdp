@@ -11,7 +11,6 @@ def main(source_urls: [str]):
     NUMBER_OF_TWEETS_RESULTS_WANTED = 20
     MAXIMUM_URL_CRAWL_DEPTH = 3
 
-    processor = TextProcessor()
     crawler = Crawler()
     analyser = NLP_Analyser()
     db_manager = DbManager()
@@ -29,8 +28,6 @@ def main(source_urls: [str]):
     # along with the html links found
     urls = set()
 
-    # TODO we have a problem with key words,
-    # do we want the top 'x' keywords across the documents or do we want the top 'x' from each of the documents
     for source in source_urls:
         data = Scraper.get_data_from_source(source)
         scraped_data[source] = data
@@ -46,11 +43,16 @@ def main(source_urls: [str]):
     print("-------- CRAWLING --------")
     # look to crawl with the new data
     urls_google = crawler.crawl_google_with_key_words(key_words, NUMBER_OF_GOOGLE_RESULTS_WANTED)
+    print(f"Top {NUMBER_OF_GOOGLE_RESULTS_WANTED} Google Results from Keyword {key_words}:")
+    for i, url in enumerate(urls_google):
+        print(f"[{i + 1}]: {url}")
 
     print("-------- SCRAPING --------")
     # retrieve and store all the data about a URL
     for url in urls_google:
-        scraped_data[url] = Scraper.get_data_from_source(url)
+        data = Scraper.get_data_from_source(url)
+        scraped_data[url] = data
+        urls.update(data.html_links)
 
     # crawling with Twitter
     crawled_tweets = crawler.twitter_crawl(key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
