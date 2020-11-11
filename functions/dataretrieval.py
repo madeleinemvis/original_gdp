@@ -75,11 +75,12 @@ class Crawler:
 
                             # If link is a valid url
                             if str(url_new).startswith('http'):
-                                # Append url to search list, will be searched next
-                                url_depth[depth_index + 1].append(url_new)
+                                if url_new not in final_list:
+                                    # Append url to search list, will be searched next
+                                    url_depth[depth_index + 1].append(url_new)
 
-                                # Append to list of valid sites pulled from parent site
-                                loop.append(url_new)
+                                    # Append to list of valid sites pulled from parent site
+                                    loop.append(url_new)
 
             # Append loop list to final return list
             #final_list.append(loop)
