@@ -9,6 +9,8 @@ import requests.exceptions
 import tweepy
 import requests
 import re
+import csv
+from pathlib import Path
 from datetime import datetime
 
 
@@ -92,20 +94,55 @@ class Crawler:
         api = tweepy.API(auth, wait_on_rate_limit=True)
         return api
 
-    # TODO use keywords and tweet_returned rather than "vaccine autism" & 100
+    @staticmethod
+    def location_lists_init():
+        path = Path(__file__).parent / "../Data/"
+
+        with open(path / 'countries.txt', newline='', encoding='utf8') as f:
+            reader = csv.reader(f)
+            data = list(reader)
+
+        countries = []
+        country_abbreviations = []
+
+        for line in data:
+            country = line[0]
+            bracket_location = country.index('(')
+            countries.append(country[:bracket_location - 1].strip().lower())
+            country_abbreviations.append(country[bracket_location - 1:].strip("").lower()[2:4])
+
+        country_abbreviations.sort()
+
+        with open(path / 'states.txt', newline='', encoding='utf8') as f:
+            reader = csv.reader(f)
+            data = list(reader)
+
+        states = []
+        state_abbreviations = []
+        for line in data:
+            states.append(line[0].split("-")[0].strip().lower())
+            state_abbreviations.append(line[0].split("-")[1].strip().lower())
+
+        return countries, country_abbreviations, states, state_abbreviations
+
     def twitter_crawl(self, keywords: [str], tweets_returned: int):
         api = self.twitter_init()
         # Retrieves all tweets with given keywords and count
         query = ' '.join(keywords)
         searched_tweets = tweepy.Cursor(api.search, q=query).items(tweets_returned)
+        countries, country_abbreviations, states, state_abbreviations = self.location_lists_init()
         tweets = []
+
         for tweet in searched_tweets:
             parsed_tweet = {'created_at': tweet.created_at,
                             'text': tweet.text,
                             'favorite_count': tweet.favorite_count,
                             'retweet_count': tweet.retweet_count,
-                            'user_location': TextProcessor.clean_location(tweet.user.location.encode('utf8')),
+                            'user_location': TextProcessor.clean_location(tweet.user.location,
+                                                                          countries, country_abbreviations,
+                                                                          states, state_abbreviations),
                             'sentiment': NLP_Analyser.get_tweet_sentiment(tweet.text)}
+            # print(parsed_tweet['user_location'] + "|" + parsed_tweet['text'])
 
             if tweet.retweet_count > 0:
                 # Only appends if the tweet text is unique
