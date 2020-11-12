@@ -8,3 +8,8 @@ before_script:
 # different stages in the pipeline
 stages:
   - Test
+
+pytest:
+  stage: Test
+  script:
+  - cd Testing/;pytest -v
