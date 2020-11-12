@@ -1,3 +1,4 @@
+from typing import Dict
 from functions.textprocessing import TextProcessor
 from tika import parser  # Note this module needs Java to be installed on the system to work.
 from functions.analysis import NLP_Analyser
@@ -7,9 +8,11 @@ from bs4 import BeautifulSoup
 import json
 import requests.exceptions
 import tweepy
+from urllib.parse import urlparse
 import requests
 import re
 from datetime import datetime
+
 
 # class for crawling and scraping the internet
 class Crawler:
@@ -35,9 +38,11 @@ class Crawler:
 
     # Alex Ll
     # recursively crawl a set of URLs with batch checking similarities
-    def recursive_url_crawl(self, urls: [str], max_depth: int) -> [str]:
+    def recursive_url_crawl(self, urls: [str], max_depth: int) -> dict:
         scraper = Scraper()
-        final_list = []
+        final_dict = {}
+
+        # for every base url
         for url in urls:
             # Create list of searched URL's for use by the program
             url_depth = [[] for _ in range(0, max_depth + 1)]
@@ -47,29 +52,31 @@ class Crawler:
             # Loop through all URL's in url_depth
             for depth_index in range(0, max_depth):
                 for web_links in url_depth[depth_index]:
-
                     # Process crawl response
-                    response = scraper.scrape_url(web_links)
-                    soup = BeautifulSoup(response, 'html.parser')
-                    tags = soup.find_all('a')
+                    data = scraper.get_data_from_source(web_links)
+                    tags = data.html_links
+                    final_dict[web_links] = data
 
                     # Loop through web links found in response
-                    for url_link in tags:
-                        url_new = url_link.get('href')
-                        flag = False  # Flag is true if website has been searched before
+                    for url_new in tags:
+                        # if link empty, continue
+                        if url_new is None:
+                            continue
 
-                        new_link = str(url_new).rsplit('.', 1)[0]
+                        flag = False  # Flag is true if website has been searched before
+                        parsed_url = urlparse(url_new)
+                        new_link = parsed_url.netloc + parsed_url.path
+
                         # Check to see if website has been visited before
-                        for item in url_depth:
-                            for i in item:
-                                if url_new == i:
+                        if new_link in final_dict.keys():
+                            flag = True
+                        else:
+                            for item in url_depth:
+                                parsed_check_urls = [urlparse(x) for x in item]
+                                new_parsed_links = [x.netloc + x.path for x in parsed_check_urls]
+                                if new_link in new_parsed_links:
                                     flag = True
-                                old_link = i.rsplit('.', 1)[0]
-                                temp = old_link.rsplit('/', 1)
-                                old1 = 'https://' + temp[1]
-                                old2 = 'http://' + temp[1]
-                                if re.search(old1, new_link) or re.search(old2, new_link):
-                                    flag = True
+                                    break
 
                         # If link is not empty and has not been searched before
                         if url_new is not None and flag is False:
@@ -77,14 +84,13 @@ class Crawler:
                             if str(url_new).startswith('http'):
                                 # If the link is not blacklisted
                                 if not re.match(self.BLACKLIST_REGEX, url_new):
+                                    print(new_link)
                                     # Append url to search list, will be searched next
                                     url_depth[depth_index + 1].append(url_new)
 
                                     # Append to list of valid sites pulled from parent site
                                     loop.append(url_new)
-            # Append loop list to final return list
-            final_list.append(loop)
-        return final_list
+        return final_dict
 
     @staticmethod
     def twitter_init():
@@ -125,43 +131,44 @@ Data = namedtuple('Data', 'url raw_html title text_body tokens html_links')
 
 
 class Scraper:
-
-    # Alex Ll
-    # method that returns all the HTML data from a URL
-    @staticmethod
-    def scrape_url(url: str) -> str:
-        try:
-            start_t = datetime.now()
-            request = requests.get(url)
-            print("Scraped: ", url, ". Time taken: ", datetime.now() - start_t)
-        except requests.ConnectionError:
-            print('Connection Error: ' + url)
-            return ''
-        return request.text
-
-    # method to get all of the text out of a pdf, but it does not clean it
-    @staticmethod
-    def scrape_pdf(pdf_path: str) -> str:
-        start_t = datetime.now()
-        raw = parser.from_file(pdf_path)
-        raw_text = raw['content']
-        print("Scraped: ", pdf_path, ". Time taken: ", datetime.now() - start_t)
-        return ' '.join(raw_text.split())
+    def __init__(self):
+        self.processor = TextProcessor()
 
     # method for getting raw text and cleaned tokens from a source, can be a html or '.pdf'
-    @staticmethod
-    def get_data_from_source(source: str) -> namedtuple:
+    def get_data_from_source(self, source: str, seen_urls=None) -> namedtuple:
+        if seen_urls is None:
+            seen_urls = []
+
         initial_html = ''
         title = ''
-        if source.endswith('.pdf'):
-            main_text = Scraper.scrape_pdf(source)
-            # TODO get the urls links out of the pdf
-            urls = []
+        url_regex = r"(https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}(?:[-a-zA-Z0-9(" \
+                    r")@:%_\+.~#?&//=]*))"
+
+        # request the contents of the URL and get the 'content-type' header
+        request = requests.get(source)
+        content_type = request.headers['content-type']
+
+        # if the two MIME types we are looking for aren't present, return None to indicate no data
+        if "application/pdf" not in content_type and "text/html" not in content_type:
+            return None
+
+        # scraping stage
+        start_t = datetime.now()
+        if "application/pdf" in content_type:
+            raw = request.content
+            processed_text = parser.from_buffer(raw)['content']
+            main_text = ' '.join(processed_text.split())
+            urls = re.findall(url_regex, main_text)
         else:
-            initial_html = Scraper.scrape_url(source)
-            processor = TextProcessor()
-            title, main_text = processor.extract_main_body_from_html(initial_html)
-            urls = processor.extract_urls_from_html(initial_html)
+            if 'location' in request.headers.keys():
+                if source in seen_urls:
+                    return None
+                new_seen_urls = seen_urls.append(source)
+                return self.get_data_from_source(request.headers['location'], new_seen_urls)
+            initial_html = request.text
+            title, main_text = self.processor.extract_main_body_from_html(initial_html)
+            urls = self.processor.extract_urls_from_html(initial_html)
+        print("Scraped: ", source, ". Time taken: ", datetime.now() - start_t)
 
         # make the tokens from the main text, and create a clean form
         tokens = TextProcessor.create_tokens_from_text(main_text)
@@ -169,3 +176,8 @@ class Scraper:
 
         return Data(url=source, raw_html=initial_html, title=title, text_body=main_text, tokens=cleaned_tokens,
                     html_links=urls)
+
+
+if __name__ == "__main__":
+    scraper = Scraper()
+    print(scraper.get_data_from_source("https://www.pubmedcentral.nih.gov/picrender.fcgi?artid=2480896&blobtype=pdf").html_links)

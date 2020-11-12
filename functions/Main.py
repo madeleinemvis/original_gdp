@@ -11,12 +11,9 @@ def main(source_urls: [str]):
     NUMBER_OF_TWEETS_RESULTS_WANTED = 20
     MAXIMUM_URL_CRAWL_DEPTH = 3
 
-    processor = TextProcessor()
     crawler = Crawler()
-    analyser = NLP_Analyser()
     db_manager = DbManager()
-
-    alt_url = "https://www.bbc.co.uk/news/uk-54779430"
+    scraper = Scraper()
 
     # Using a dictionary of mapping URL to data for an initial data storage method, will likely need to change
     # very soon
@@ -31,7 +28,7 @@ def main(source_urls: [str]):
     # TODO we have a problem with key words,
     # do we want the top 'x' keywords across the documents or do we want the top 'x' from each of the documents
     for source in source_urls:
-        data = Scraper.get_data_from_source(source)
+        data = scraper.get_data_from_source(source)
         scraped_data[source] = data
         urls.update(data.html_links)
 
@@ -49,22 +46,24 @@ def main(source_urls: [str]):
     print("-------- SCRAPING --------")
     # retrieve and store all the data about a URL
     for url in urls_google:
-        scraped_data[url] = Scraper.get_data_from_source(url)
+        scraped_data[url] = scraper.get_data_from_source(url)
 
     # crawling with Twitter
+    print("-------- TWITTER CRAWL --------")
     crawled_tweets = crawler.twitter_crawl(key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
 
     urls.update(urls_google)
 
+    print("-------- RECURSIVE CRAWL --------")
     # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
     final_crawled_urls = crawler.recursive_url_crawl(urls, MAXIMUM_URL_CRAWL_DEPTH)
-    urls.update(final_crawled_urls)
+    scraped_data.update(final_crawled_urls)
 
     # retrieve and store all the data about a URL's not yet scraped
     urls_to_scrape = [u for u in urls if u not in scraped_data.keys()]
     url_insert = []
     for url in urls_to_scrape:
-        scraped_data[url] = Scraper.get_data_from_source(url)
+        scraped_data[url] = scraper.get_data_from_source(url)
         url_insert.append(scraped_data[url])
 
     print("-------- STORING --------")
