@@ -96,8 +96,9 @@ class Crawler:
     def twitter_crawl(self, keywords: [str], tweets_returned: int):
         api = self.twitter_init()
         # Retrieves all tweets with given keywords and count
-        query = ' '.join(keywords)
+        query = ' '.join(keywords[:2])
         searched_tweets = tweepy.Cursor(api.search, q=query).items(tweets_returned)
+
         tweets = []
         for tweet in searched_tweets:
             parsed_tweet = {'created_at': tweet.created_at,
@@ -117,7 +118,7 @@ class Crawler:
         return tweets
 
 
-Data = namedtuple('Data', 'url raw_html title text_body tokens html_links')
+Data = namedtuple('Data', 'uid content_type url raw_html title text_body cleaned_tokens html_links')
 
 
 class Scraper:
@@ -163,5 +164,5 @@ class Scraper:
         tokens = TextProcessor.create_tokens_from_text(main_text)
         cleaned_tokens = TextProcessor.clean_tokens(tokens)
 
-        return Data(url=source, raw_html=initial_html, title=title, text_body=main_text, tokens=cleaned_tokens,
+        return Data(uid="", content_type="", url=source, raw_html=initial_html, title=title, text_body=main_text, cleaned_tokens=cleaned_tokens,
                     html_links=urls)
