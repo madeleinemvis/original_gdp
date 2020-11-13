@@ -1,8 +1,9 @@
 import re
 import string
+import os
+
 from collections import Counter
 from typing import Tuple
-
 from bs4 import BeautifulSoup
 from bs4.element import Comment, PageElement
 from nltk.corpus import stopwords
@@ -81,6 +82,45 @@ class TextProcessor:
             return location.lower()
         else:
             return ""
+
+    @staticmethod
+    def remove_emoji(location):
+        emoji_pattern = re.compile("["
+                                   u"\U0001F600-\U0001F64F"  # emoticons
+                                   u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                                   u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                                   u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                                   u"\U00002702-\U000027B0"
+                                   u"\U000024C2-\U0001F251"
+                                   "]+", flags=re.UNICODE)
+        return emoji_pattern.sub(r'', location)
+
+    @staticmethod
+    def clean_location(location,  countries, country_abbreviations, states, state_abbreviations) -> str:
+        if location is None:
+            return ""
+
+        clean_location = TextProcessor.remove_emoji(location)
+
+        punctuation = string.punctuation.replace(',', '')
+        punctuation += "1234567890"
+        if len(clean_location.split(' ')) < 4 and not any(elem in clean_location for elem in punctuation):
+            clean_location = clean_location.lower().strip()
+
+            valid = False
+            if ',' in clean_location:
+                place = clean_location.split(',')[1].strip()
+                if any(map(place.__contains__, states)) or any(map(place.__contains__, countries)):
+                    return clean_location
+                else:
+                    for word in clean_location.split(" "):
+                        if word in state_abbreviations or word in country_abbreviations:
+                            return clean_location
+            else:
+                if clean_location in countries or clean_location == "united states":
+                    return clean_location
+
+        return ""
 
     # method for taking an input string a return all the tokens
     @staticmethod

@@ -100,7 +100,7 @@ class NLP_Analyser:
         return [bigram_mod[document] for document in documents]
 
     def __lemmatise(self, documents, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV']):
-        nlp = spacy.load('en', disable=['parser', 'ner'])
+        nlp = spacy.load('en_core_web_sm', disable=['parser', 'ner'])
         texts_out = []
         for document in documents:
             doc = nlp(" ".join(document))

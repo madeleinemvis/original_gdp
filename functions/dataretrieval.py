@@ -11,6 +11,8 @@ import tweepy
 from urllib.parse import urlparse
 import requests
 import re
+import csv
+from pathlib import Path
 from datetime import datetime
 
 
@@ -53,9 +55,12 @@ class Crawler:
             for depth_index in range(0, max_depth):
                 for web_links in url_depth[depth_index]:
                     # Process crawl response
-                    data = scraper.get_data_from_source(web_links)
-                    tags = data.html_links
-                    final_dict[web_links] = data
+                    if web_links not in final_list:
+                        response = scraper.scrape_url(web_links)
+                        soup = BeautifulSoup(response, 'html.parser')
+                        tags = soup.find_all('a')
+                    else:
+                        tags = []
 
                     # Loop through web links found in response
                     for url_new in tags:
@@ -82,15 +87,17 @@ class Crawler:
                         if url_new is not None and flag is False:
                             # If link is a valid url
                             if str(url_new).startswith('http'):
-                                # If the link is not blacklisted
-                                if not re.match(self.BLACKLIST_REGEX, url_new):
-                                    print(new_link)
+                                if url_new not in final_list:
                                     # Append url to search list, will be searched next
                                     url_depth[depth_index + 1].append(url_new)
 
                                     # Append to list of valid sites pulled from parent site
                                     loop.append(url_new)
-        return final_dict
+
+            # Append loop list to final return list
+            #final_list.append(loop)
+            final_list = final_list + loop
+        return final_list
 
     @staticmethod
     def twitter_init():
@@ -102,20 +109,55 @@ class Crawler:
         api = tweepy.API(auth, wait_on_rate_limit=True)
         return api
 
-    # TODO use keywords and tweet_returned rather than "vaccine autism" & 100
+    @staticmethod
+    def location_lists_init():
+        path = Path(__file__).parent / "../Data/"
+
+        with open(path / 'countries.txt', newline='', encoding='utf8') as f:
+            reader = csv.reader(f)
+            data = list(reader)
+
+        countries = []
+        country_abbreviations = []
+
+        for line in data:
+            country = line[0]
+            bracket_location = country.index('(')
+            countries.append(country[:bracket_location - 1].strip().lower())
+            country_abbreviations.append(country[bracket_location - 1:].strip("").lower()[2:4])
+
+        country_abbreviations.sort()
+
+        with open(path / 'states.txt', newline='', encoding='utf8') as f:
+            reader = csv.reader(f)
+            data = list(reader)
+
+        states = []
+        state_abbreviations = []
+        for line in data:
+            states.append(line[0].split("-")[0].strip().lower())
+            state_abbreviations.append(line[0].split("-")[1].strip().lower())
+
+        return countries, country_abbreviations, states, state_abbreviations
+
     def twitter_crawl(self, keywords: [str], tweets_returned: int):
         api = self.twitter_init()
         # Retrieves all tweets with given keywords and count
         query = ' '.join(keywords)
         searched_tweets = tweepy.Cursor(api.search, q=query).items(tweets_returned)
+        countries, country_abbreviations, states, state_abbreviations = self.location_lists_init()
         tweets = []
+
         for tweet in searched_tweets:
             parsed_tweet = {'created_at': tweet.created_at,
                             'text': tweet.text,
                             'favorite_count': tweet.favorite_count,
                             'retweet_count': tweet.retweet_count,
-                            'user_location': TextProcessor.clean_location(tweet.user.location.encode('utf8')),
+                            'user_location': TextProcessor.clean_location(tweet.user.location,
+                                                                          countries, country_abbreviations,
+                                                                          states, state_abbreviations),
                             'sentiment': NLP_Analyser.get_tweet_sentiment(tweet.text)}
+            # print(parsed_tweet['user_location'] + "|" + parsed_tweet['text'])
 
             if tweet.retweet_count > 0:
                 # Only appends if the tweet text is unique
@@ -131,8 +173,32 @@ Data = namedtuple('Data', 'url raw_html title text_body tokens html_links')
 
 
 class Scraper:
-    def __init__(self):
-        self.processor = TextProcessor()
+
+    # Alex Ll
+    # method that returns all the HTML data from a URL
+    @staticmethod
+    def scrape_url(url: str) -> str:
+        try:
+            start_t = datetime.now()
+            request = requests.get(url)
+            print("Scraped: ", url, ". Time taken: ", datetime.now() - start_t)
+        except requests.ConnectionError:
+            print('Connection Error: ' + url)
+            return ''
+        return request.text
+
+    # method to get all of the text out of a pdf, but it does not clean it
+    @staticmethod
+    def scrape_pdf(pdf_path: str) -> str:
+        try:
+            start_t = datetime.now()
+            raw = parser.from_file(pdf_path)
+            raw_text = raw['content']
+            print("Scraped: ", pdf_path, ". Time taken: ", datetime.now() - start_t)
+        except:
+            print('PDF Connection Error: ' + pdf_path)
+            return ''
+        return ' '.join(raw_text.split())
 
     # method for getting raw text and cleaned tokens from a source, can be a html or '.pdf'
     def get_data_from_source(self, source: str, seen_urls=None) -> namedtuple:
