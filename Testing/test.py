@@ -1,6 +1,5 @@
 import pytest
 
-
 @pytest.mark.parametrize("foo,bar", [
   (1, 1),
   (2, 2),

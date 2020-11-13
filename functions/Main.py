@@ -15,8 +15,6 @@ def main(source_urls: [str]):
     analyser = NLP_Analyser()
     db_manager = DbManager()
 
-    alt_url = "https://www.bbc.co.uk/news/uk-54779430"
-    source_urls.append(alt_url)
 
     # Using a dictionary of mapping URL to data for an initial data storage method, will likely need to change
     # very soon
@@ -33,8 +31,13 @@ def main(source_urls: [str]):
         scraped_data[source] = data
         urls.update(data.html_links)
 
-    all_tokens = [t for s in scraped_data.values() for t in s.tokens]
-    key_words = TextProcessor.calculate_key_words(all_tokens, NUMBER_OF_KEY_WORDS)
+    # all_tokens = [t for s in scraped_data.values() for t in s.tokens]
+    # key_words = TextProcessor.calculate_key_words(all_tokens, NUMBER_OF_KEY_WORDS)
+    # print(f"Most frequent key_words: {key_words}")
+
+    all_sentences = " ".join([s.text_body for s in scraped_data.values()])
+    key_words = TextProcessor.calculate_keywords_with_text_rank(all_sentences, NUMBER_OF_KEY_WORDS)
+
 
     print(f"Sources in manifesto: {len(sources)}")
     print(f"Sources found in manifesto sources: {len(urls)}")
@@ -59,8 +62,6 @@ def main(source_urls: [str]):
 
     # do some similarity checking for the documents so far crawled
     analyser.create_topic_model(scraped_data)
-    print("Similar Doc:", analyser.check_similarity(scraped_data[source_urls[0]]))
-    print("Non-similar doc:", analyser.check_similarity(scraped_data[alt_url]))
 
     # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
     final_crawled_urls = crawler.recursive_url_crawl(urls, MAXIMUM_URL_CRAWL_DEPTH)
