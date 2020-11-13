@@ -55,7 +55,7 @@ class Crawler:
             for depth_index in range(0, max_depth):
                 for web_links in url_depth[depth_index]:
                     # Process crawl response
-                    if web_links not in final_list:
+                    if web_links not in final_dict:
                         response = scraper.scrape_url(web_links)
                         soup = BeautifulSoup(response, 'html.parser')
                         tags = soup.find_all('a')
@@ -72,6 +72,8 @@ class Crawler:
                         parsed_url = urlparse(url_new)
                         new_link = parsed_url.netloc + parsed_url.path
 
+
+                        new_link = str(url_new).rsplit('.', 1)[0]
                         # Check to see if website has been visited before
                         if new_link in final_dict.keys():
                             flag = True
@@ -143,7 +145,7 @@ class Crawler:
     def twitter_crawl(self, keywords: [str], tweets_returned: int):
         api = self.twitter_init()
         # Retrieves all tweets with given keywords and count
-        query = ' '.join(keywords)
+        query = ' '.join(keywords[:2])
         searched_tweets = tweepy.Cursor(api.search, q=query).items(tweets_returned)
         countries, country_abbreviations, states, state_abbreviations = self.location_lists_init()
         tweets = []
@@ -169,7 +171,7 @@ class Crawler:
         return tweets
 
 
-Data = namedtuple('Data', 'url raw_html title text_body tokens html_links')
+Data = namedtuple('Data', 'uid content_type url raw_html title text_body cleaned_tokens html_links')
 
 
 class Scraper:
@@ -240,7 +242,7 @@ class Scraper:
         tokens = TextProcessor.create_tokens_from_text(main_text)
         cleaned_tokens = TextProcessor.clean_tokens(tokens)
 
-        return Data(url=source, raw_html=initial_html, title=title, text_body=main_text, tokens=cleaned_tokens,
+        return Data(uid="", content_type="", url=source, raw_html=initial_html, title=title, text_body=main_text, cleaned_tokens=cleaned_tokens,
                     html_links=urls)
 
 

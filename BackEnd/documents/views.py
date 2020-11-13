@@ -1,3 +1,5 @@
+import json
+
 from django.shortcuts import render
 
 from django.http.response import JsonResponse
@@ -6,6 +8,7 @@ from rest_framework import status
 from documents.models import Document
 from documents.serializers import DocumentSerializer
 from rest_framework.decorators import api_view
+from filehandler import FileHandler
 
 
 # Create your views here.
@@ -23,13 +26,40 @@ def document_list(request):
         tutorials_serializer = DocumentSerializer(documents, many=True)
         return JsonResponse(tutorials_serializer.data, safe=False)
         # 'safe=False' for objects serialization
+    # Retrieving URLs and PDFs from request
     elif request.method == 'POST':
-        document_data = JSONParser().parse(request)
-        document_serializer = DocumentSerializer(data=document_data)
-        if document_serializer.is_valid():
-            document_serializer.save()
-            return JsonResponse(document_serializer.data, status=status.HTTP_201_CREATED)
-        return JsonResponse(document_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        file_handler = FileHandler()
+
+        uid = request.data['uid']
+        document_urls = request.data['urls']
+        document_pdfs = request.data['pdfs']
+        # If there are URLs
+        if document_urls:
+            print("urls")
+            # Scrapes all URLs, UID for manifesto and list of Documents (namedtuple)
+            documents = file_handler.read_docs(document_urls)
+            # Store scraped Documents
+            d_save = []
+            for d in documents:
+                # _id generated automatically
+                document = Document(uid=uid, content_type="web-page", url=d.url, raw_html=d.raw_html, title=d.title, text_body=d.text_body, cleaned_tokens=d.cleaned_tokens, html_links=d.html_links)
+                d_save.append(document)
+                print("saving document")
+                # document.save()
+            Document.objects.bulk_create(d_save)
+
+        if document_pdfs:
+            print("pdfs")
+            # Scrapes all PDFs
+            documents = file_handler.read_docs(document_pdfs)
+            # Store scraped documents
+            d_save = []
+            for d in documents:
+                # _id generated automatically
+                d_save.append(Document(uid=uid, content_type="pdf", url=d.url, raw_html=d.raw_html, title=d.title, text_body=d.text_body, cleaned_tokens=d.cleaned_tokens, html_links=d.html_links))
+            Document.objects.bulk_create(d_save)
+        return JsonResponse(data=request.data, status=status.HTTP_201_CREATED, safe=False)
+    return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
