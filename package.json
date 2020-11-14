@@ -33,6 +33,7 @@
         "react-icons": "^3.11.0",
         "react-router": "^5.2.0",
         "react-router-dom": "^5.2.0",
+        "react-scrollbars-custom": "^4.0.25",
         "reactstrap": "^8.7.1",
         "save": "^2.4.0"
     }

@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+import os
 
 from pathlib import Path
 
@@ -42,6 +43,8 @@ INSTALLED_APPS = [
     'documents.apps.DocumentsConfig',
     'frontend',
 
+    'files.apps.FilesConfig',
+
     'tweets.apps.TweetsConfig',
     'corsheaders'
 ]
@@ -58,7 +61,7 @@ MIDDLEWARE = [
     
 ]
 
-CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:8081',
 )
@@ -135,3 +138,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# https://medium.com/@emeruchecole9/uploading-images-to-rest-api-backend-in-react-js-b931376b5833
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+# https://stackoverflow.com/questions/32653518/django-rest-framework-returning-403-response-on-post-put-delete-despite-allowa
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': []
+}

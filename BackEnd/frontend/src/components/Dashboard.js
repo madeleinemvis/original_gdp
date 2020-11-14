@@ -1,41 +1,46 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Nav, NavItem, NavLink, Container } from 'reactstrap';
 import {
     BrowserRouter as Router,
     Switch,
     Route,
-    useRouteMatch
+    useRouteMatch,
+    NavLink as RRNavLink
 } from "react-router-dom";
 
+import Tweets from './Tweets';
+
+// Source: https://bezkoder.com/react-hooks-crud-axios-api/
 const Dashboard = () => {
 
     let { path, url } = useRouteMatch();
-
+   
     return (
         <React.Fragment>
             <Container>
+                <h3>Results from Analysis</h3>
                 <Router>
                     <Nav pills>
                         <NavItem>
-                            <NavLink to="/">Info</NavLink>
+                            <NavLink exact to={`${url}`} tag={RRNavLink} activeClassName="active">Info</NavLink>
                         </NavItem>
                         <NavItem>
-                            <NavLink to={`/sources`}><a>Sources</a></NavLink>
+                            <NavLink exact to={`${url}/sources`} tag={RRNavLink} activeClassName="active">Sources</NavLink>
                         </NavItem>
                         <NavItem>
-                            <NavLink href="#">Another Link</NavLink>
-                        </NavItem>
-                        <NavItem>
-                            <NavLink disabled href="#">Disabled Link</NavLink>
+                            <NavLink exact to={`${url}/tweets`} tag={RRNavLink} activeClassName="active">Tweets</NavLink>
                         </NavItem>
                     </Nav>
 
                     <Switch>
                         <Route exact path={path}>
-                            <h1>INFO</h1>
+                            <h3>Info</h3>
                         </Route>
-                        <Route path="/sources">
-                            <h1>INFO</h1>
+                        <Route exact path={`${path}/sources`}>
+                            <h3>Sources</h3>
+                        </Route>
+                        <Route exact path={`${path}/tweets`}>
+                            <Tweets />
                         </Route>
                     </Switch>  
                 </Router>
