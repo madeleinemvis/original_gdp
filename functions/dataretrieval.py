@@ -72,7 +72,6 @@ class Crawler:
                         parsed_url = urlparse(url_new)
                         new_link = parsed_url.netloc + parsed_url.path
 
-
                         new_link = str(url_new).rsplit('.', 1)[0]
                         # Check to see if website has been visited before
                         if new_link in final_dict.keys():
@@ -97,7 +96,7 @@ class Crawler:
                                     loop.append(url_new)
 
             # Append loop list to final return list
-            #final_list.append(loop)
+            # final_list.append(loop)
             final_list = final_list + loop
         return final_list
 
@@ -242,10 +241,12 @@ class Scraper:
         tokens = TextProcessor.create_tokens_from_text(main_text)
         cleaned_tokens = TextProcessor.clean_tokens(tokens)
 
-        return Data(uid="", content_type="", url=source, raw_html=initial_html, title=title, text_body=main_text, cleaned_tokens=cleaned_tokens,
+        return Data(uid="", content_type="", url=source, raw_html=initial_html, title=title, text_body=main_text,
+                    cleaned_tokens=cleaned_tokens,
                     html_links=urls)
 
 
 if __name__ == "__main__":
     scraper = Scraper()
-    print(scraper.get_data_from_source("https://www.pubmedcentral.nih.gov/picrender.fcgi?artid=2480896&blobtype=pdf").html_links)
+    print(scraper.get_data_from_source(
+        "https://www.pubmedcentral.nih.gov/picrender.fcgi?artid=2480896&blobtype=pdf").html_links)

@@ -1,6 +1,6 @@
 # file for handling API, left blank for now
 import pymongo
-
+from BackEnd.errorhandler import NoObjectsError, NoCollectionsError
 
 class DbManager:
     database = None
@@ -76,17 +76,3 @@ class DbManager:
             cleaned_tokens.extend(res)
 
         return cleaned_tokens
-
-
-class Error(Exception):
-    """Base class for other exceptions"""
-    pass
-
-
-class NoObjectsError(Error):
-    """No Documents Found in Collection"""
-    pass
-
-
-class NoCollectionsError(Error):
-    """No Collections in Database"""

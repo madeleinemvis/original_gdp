@@ -28,12 +28,14 @@ def main(source_urls: [str]):
     urls = set()
 
     all_tokens = db_manager.get_all_cleaned_tokens('some_random_hash', 'documents_document')
-    # for source in source_urls:
-    #     data = scraper.get_data_from_source(source)
-    #     scraped_data[source] = data
-    #     urls.update(data.html_links)
 
-    # all_tokens = [t for s in scraped_data.values() for t in s.tokens]
+    if not all_tokens:
+        for source in source_urls:
+            data = scraper.get_data_from_source(source)
+            scraped_data[source] = data
+            urls.update(data.html_links)
+        all_tokens = [t for s in scraped_data.values() for t in s.tokens]
+
     key_words = TextProcessor.calculate_key_words(all_tokens, NUMBER_OF_KEY_WORDS)
 
     print(f"Sources in manifesto: {len(sources)}")
