@@ -1,3 +1,5 @@
+import sys
+sys.path.append('/Users/alexllewellyn/GDP/main-project')
 from functions.dataretrieval import Crawler, Scraper
 from functions.textprocessing import TextProcessor
 from functions.analysis import NLP_Analyser
@@ -14,7 +16,7 @@ def main(source_urls: [str]):
     crawler = Crawler()
     db_manager = DbManager()
     scraper = Scraper()
-
+    
     # Using a dictionary of mapping URL to data for an initial data storage method, will likely need to change
     # very soon
     scraped_data = {}
@@ -47,7 +49,7 @@ def main(source_urls: [str]):
     print("-------- SCRAPING --------")
     # retrieve and store all the data about a URL
     for url in urls_google:
-        data = Scraper.get_data_from_source(url)
+        data = scraper.get_data_from_source(url)
         scraped_data[url] = data
         urls.update(data.html_links)
 
