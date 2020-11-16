@@ -54,7 +54,6 @@ class Crawler:
             url_depth[0].append(url)
             
 
-<<<<<<< HEAD
         # Loop through all URL's in url_depth
         for depth_index in range(0, max_depth):
             loop = []
@@ -79,38 +78,6 @@ class Crawler:
                             parent = [x.netloc for x in parsed_check_urls]
                             if len(parent) > 0:
                                 if parsed_url.netloc in parent:
-=======
-            # Loop through all URL's in url_depth
-            for depth_index in range(0, max_depth):
-                for web_links in url_depth[depth_index]:
-                    # Process crawl response
-                    if web_links not in final_dict:
-                        response = scraper.scrape_url(web_links)
-                        soup = BeautifulSoup(response, 'html.parser')
-                        tags = soup.find_all('a')
-                    else:
-                        tags = []
-
-                    # Loop through web links found in response
-                    for url_new in tags:
-                        # if link empty, continue
-                        if url_new is None:
-                            continue
-
-                        flag = False  # Flag is true if website has been searched before
-                        parsed_url = urlparse(url_new)
-                        new_link = parsed_url.netloc + parsed_url.path
-
-                        new_link = str(url_new).rsplit('.', 1)[0]
-                        # Check to see if website has been visited before
-                        if new_link in final_dict.keys():
-                            flag = True
-                        else:
-                            for item in url_depth:
-                                parsed_check_urls = [urlparse(x) for x in item]
-                                new_parsed_links = [x.netloc + x.path for x in parsed_check_urls]
-                                if new_link in new_parsed_links:
->>>>>>> 27967f730275ac16e6eaa34b25fd9387d08a910b
                                     flag = True
                                     break
                             elif new_link in new_parsed_links:
@@ -130,10 +97,6 @@ class Crawler:
                                 loop.append(link)
 
             # Append loop list to final return list
-<<<<<<< HEAD
-=======
-            # final_list.append(loop)
->>>>>>> 27967f730275ac16e6eaa34b25fd9387d08a910b
             final_list = final_list + loop
         return final_list
 
