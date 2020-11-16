@@ -95,7 +95,7 @@ class TextProcessor:
                                    u"\U00002702-\U000027B0"
                                    u"\U000024C2-\U0001F251"
                                    "]+", flags=re.UNICODE)
-        return emoji_pattern.sub(r'', location)
+        return emoji_pattern.sub(r' ', location).strip()
 
     @staticmethod
     def clean_location(location,  countries, country_abbreviations, states, state_abbreviations) -> str:
