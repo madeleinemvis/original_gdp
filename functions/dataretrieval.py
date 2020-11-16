@@ -1,3 +1,6 @@
+from gevent import monkey as curious_george
+curious_george.patch_all(thread=False, select=False)
+from typing import Dict
 from functions.textprocessing import TextProcessor
 from tika import parser  # Note this module needs Java to be installed on the system to work.
 from functions.analysis import NLP_Analyser
@@ -7,9 +10,11 @@ from bs4 import BeautifulSoup
 import json
 import requests.exceptions
 import tweepy
+from urllib.parse import urlparse
 import requests
 import re
 import csv
+import grequests
 from pathlib import Path
 from datetime import datetime
 
@@ -17,71 +22,82 @@ from datetime import datetime
 # class for crawling and scraping the internet
 class Crawler:
     def __init__(self):
+        with open('../blacklist.txt') as f:
+            regexes = []
+            lines = f.readlines()
+            for line in lines:
+                regexes.append(line.rstrip())
+            self.BLACKLIST_REGEX = '(?:%s)' % '|'.join(regexes)
         pass
 
     # Maddy
     # not sure how we want to use this method yet
-    @staticmethod
-    def crawl_google_with_key_words(key_words: [str], urls_returned: int) -> [str]:
+    def crawl_google_with_key_words(self, key_words: [str], urls_returned: int) -> [str]:
         query = ' '.join(key_words)
         google_result = search(query, tld="com", lang="en", num=urls_returned, start=0, stop=urls_returned)
-        return google_result
+        new_results = []
+        for url in google_result:
+            if not re.match(self.BLACKLIST_REGEX, url):
+                new_results.append(url)
+        return new_results
 
     # Alex Ll
     # recursively crawl a set of URLs with batch checking similarities
-    @staticmethod
-    def recursive_url_crawl(urls: [str], max_depth: int) -> [str]:
+    def recursive_url_crawl(self, urls: [str], max_depth: int) -> dict:
         scraper = Scraper()
+        final_dict = {}
         final_list = []
+        # for every base url
+        url_depth = [[] for _ in range(0, max_depth + 1)]
         for url in urls:
             # Create list of searched URL's for use by the program
-            url_depth = [[] for _ in range(0, max_depth + 1)]
             url_depth[0].append(url)
+            
+
+        # Loop through all URL's in url_depth
+        for depth_index in range(0, max_depth):
             loop = []
+            urls = url_depth[depth_index]
+            response = scraper.scrape_url(urls)
+            for i in range(len(response)):
+                for url_new in response[i]:
+                    # if link empty, continue
+                    if url_new is None:
+                        continue
+                    flag = False  # Flag is true if website has been searched before
+                    parsed_url = urlparse(url_new.get('href'))
+                    new_link = parsed_url.netloc + parsed_url.path
 
-            # Loop through all URL's in url_depth
-            for depth_index in range(0, max_depth):
-                for web_links in url_depth[depth_index]:
-
-                    # Process crawl response
-                    response = scraper.scrape_url(web_links)
-                    soup = BeautifulSoup(response, 'html.parser')
-                    tags = soup.find_all('a')
-
-                    # Loop through web links found in response
-                    for url_link in tags:
-                        url_new = url_link.get('href')
-                        flag = False  # Flag is true if website has been searched before
-
-
-                        new_link = str(url_new).rsplit('.', 1)[0]
-                        # Check to see if website has been visited before
+                    # Check to see if website has been visited before
+                    if new_link in final_dict.keys():
+                        flag = True
+                    else:
                         for item in url_depth:
-                            for i in item:
-                                if url_new == i:
+                            parsed_check_urls = [urlparse(x) for x in item]
+                            new_parsed_links = [x.netloc + x.path for x in parsed_check_urls]
+                            parent = [x.netloc for x in parsed_check_urls]
+                            if len(parent) > 0:
+                                if parsed_url.netloc in parent:
                                     flag = True
-                                old_link = i.rsplit('.', 1)[0]
-                                temp = old_link.rsplit('/', 1)
-                                old1 = 'https://' + temp[1]
-                                old2 = 'http://' + temp[1]
-                                if re.search(old1, new_link) or re.search(old2, new_link):
-                                    flag = True
-                                
-                                
-
-                        # If link is not empty and has not been searched before
-                        if url_new is not None and flag is False:
-
-                            # If link is a valid url
-                            if str(url_new).startswith('http'):
+                                    break
+                            elif new_link in new_parsed_links:
+                                flag = True
+                                break
+            
+                    # If link is not empty and has not been searched before
+                    link = url_new.get('href')
+                    if link is not None and flag is False:
+                        # If link is a valid url
+                        if str(link).startswith('http'):
+                            if link not in final_list:
                                 # Append url to search list, will be searched next
-                                url_depth[depth_index + 1].append(url_new)
+                                url_depth[depth_index + 1].append(link)
 
                                 # Append to list of valid sites pulled from parent site
-                                loop.append(url_new)
+                                loop.append(link)
 
             # Append loop list to final return list
-            final_list.append(loop)
+            final_list = final_list + loop
         return final_list
 
     @staticmethod
@@ -128,7 +144,7 @@ class Crawler:
     def twitter_crawl(self, keywords: [str], tweets_returned: int):
         api = self.twitter_init()
         # Retrieves all tweets with given keywords and count
-        query = ' '.join(keywords)
+        query = ' '.join(keywords[:2])
         searched_tweets = tweepy.Cursor(api.search, q=query).items(tweets_returned)
         countries, country_abbreviations, states, state_abbreviations = self.location_lists_init()
         tweets = []
@@ -154,7 +170,7 @@ class Crawler:
         return tweets
 
 
-Data = namedtuple('Data', 'url raw_html title text_body tokens html_links')
+Data = namedtuple('Data', 'uid content_type url raw_html title text_body cleaned_tokens html_links')
 
 
 class Scraper:
@@ -162,43 +178,95 @@ class Scraper:
     # Alex Ll
     # method that returns all the HTML data from a URL
     @staticmethod
-    def scrape_url(url: str) -> str:
-        try:
+    def scrape_url(urls) -> [str]:
+        temp = []
+        if len(urls) == 1:
+            try:
+                start_t = datetime.now()
+                request = requests.get(urls[0])
+                print("Scraped: ", urls, ". Time taken: ", datetime.now() - start_t)
+                response = request.text
+            except requests.ConnectionError:
+                response = ''
+            soup = BeautifulSoup(response, 'html.parser')
+            tags = soup.find_all('a')
+            temp.append(tags)
+        else:
             start_t = datetime.now()
-            request = requests.get(url)
-            print("Scraped: ", url, ". Time taken: ", datetime.now() - start_t)
-        except requests.ConnectionError:
-            print('Connection Error: ' + url)
-            return ''
-        return request.text
+            print("Batch Scraping",len(urls),"links: ")
+            reqs = (grequests.get(url) for url in urls)
+            resp = grequests.imap(reqs, grequests.Pool(len(urls)))
+            for r in resp:
+                soup = BeautifulSoup(r.text, 'html.parser')
+                tags = soup.find_all('a')
+                temp.append(tags)
+            print("Batch Scraping Complete.", len(temp), "Links Scraped. Time Taken: ", datetime.now() - start_t)
+        return temp
 
     # method to get all of the text out of a pdf, but it does not clean it
     @staticmethod
     def scrape_pdf(pdf_path: str) -> str:
-        start_t = datetime.now()
-        raw = parser.from_file(pdf_path)
-        raw_text = raw['content']
-        print("Scraped: ", pdf_path, ". Time taken: ", datetime.now() - start_t)
+        try:
+            start_t = datetime.now()
+            raw = parser.from_file(pdf_path)
+            raw_text = raw['content']
+            print("Scraped: ", pdf_path, ". Time taken: ", datetime.now() - start_t)
+        except:
+            print('PDF Connection Error: ' + pdf_path)
+            return ''
         return ' '.join(raw_text.split())
 
     # method for getting raw text and cleaned tokens from a source, can be a html or '.pdf'
-    @staticmethod
-    def get_data_from_source(source: str) -> namedtuple:
+    def get_data_from_source(self, source: str, seen_urls=None) -> namedtuple:
+        processor = TextProcessor()
+        if seen_urls is None:
+            seen_urls = []
+
         initial_html = ''
         title = ''
-        if source.endswith('.pdf'):
-            main_text = Scraper.scrape_pdf(source)
-            # TODO get the urls links out of the pdf
-            urls = []
+        url_regex = r"(https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}(?:[-a-zA-Z0-9(" \
+                    r")@:%_\+.~#?&//=]*))"
+
+        # request the contents of the URL and get the 'content-type' header
+        try:
+            request = requests.get(source)
+            content_type = request.headers['content-type']
+        except requests.ConnectionError:
+            print('Connection Error: ' + source)
+            content_type = []
+
+        # if the two MIME types we are looking for aren't present, return None to indicate no data
+        if "application/pdf" not in content_type and "text/html" not in content_type:
+            return None
+
+        # scraping stage
+        start_t = datetime.now()
+        if "application/pdf" in content_type:
+            raw = request.content
+            processed_text = parser.from_buffer(raw)['content']
+            main_text = ' '.join(processed_text.split())
+            urls = re.findall(url_regex, main_text)
         else:
-            initial_html = Scraper.scrape_url(source)
-            processor = TextProcessor()
+            if 'location' in request.headers.keys():
+                if source in seen_urls:
+                    return None
+                new_seen_urls = seen_urls.append(source)
+                return self.get_data_from_source(request.headers['location'], new_seen_urls)
+            initial_html = request.text
             title, main_text = processor.extract_main_body_from_html(initial_html)
             urls = processor.extract_urls_from_html(initial_html)
+        print("Scraped: ", source, ". Time taken: ", datetime.now() - start_t)
 
         # make the tokens from the main text, and create a clean form
         tokens = TextProcessor.create_tokens_from_text(main_text)
         cleaned_tokens = TextProcessor.clean_tokens(tokens)
 
-        return Data(url=source, raw_html=initial_html, title=title, text_body=main_text, tokens=cleaned_tokens,
+        return Data(uid="", content_type="", url=source, raw_html=initial_html, title=title, text_body=main_text,
+                    cleaned_tokens=cleaned_tokens,
                     html_links=urls)
+
+
+if __name__ == "__main__":
+    scraper = Scraper()
+    print(scraper.get_data_from_source(
+        "https://www.pubmedcentral.nih.gov/picrender.fcgi?artid=2480896&blobtype=pdf").html_links)
