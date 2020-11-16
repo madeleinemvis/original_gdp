@@ -54,6 +54,7 @@ class Crawler:
             url_depth[0].append(url)
             
 
+<<<<<<< HEAD
         # Loop through all URL's in url_depth
         for depth_index in range(0, max_depth):
             loop = []
@@ -78,6 +79,38 @@ class Crawler:
                             parent = [x.netloc for x in parsed_check_urls]
                             if len(parent) > 0:
                                 if parsed_url.netloc in parent:
+=======
+            # Loop through all URL's in url_depth
+            for depth_index in range(0, max_depth):
+                for web_links in url_depth[depth_index]:
+                    # Process crawl response
+                    if web_links not in final_dict:
+                        response = scraper.scrape_url(web_links)
+                        soup = BeautifulSoup(response, 'html.parser')
+                        tags = soup.find_all('a')
+                    else:
+                        tags = []
+
+                    # Loop through web links found in response
+                    for url_new in tags:
+                        # if link empty, continue
+                        if url_new is None:
+                            continue
+
+                        flag = False  # Flag is true if website has been searched before
+                        parsed_url = urlparse(url_new)
+                        new_link = parsed_url.netloc + parsed_url.path
+
+                        new_link = str(url_new).rsplit('.', 1)[0]
+                        # Check to see if website has been visited before
+                        if new_link in final_dict.keys():
+                            flag = True
+                        else:
+                            for item in url_depth:
+                                parsed_check_urls = [urlparse(x) for x in item]
+                                new_parsed_links = [x.netloc + x.path for x in parsed_check_urls]
+                                if new_link in new_parsed_links:
+>>>>>>> 27967f730275ac16e6eaa34b25fd9387d08a910b
                                     flag = True
                                     break
                             elif new_link in new_parsed_links:
@@ -97,6 +130,10 @@ class Crawler:
                                 loop.append(link)
 
             # Append loop list to final return list
+<<<<<<< HEAD
+=======
+            # final_list.append(loop)
+>>>>>>> 27967f730275ac16e6eaa34b25fd9387d08a910b
             final_list = final_list + loop
         return final_list
 
@@ -144,7 +181,7 @@ class Crawler:
     def twitter_crawl(self, keywords: [str], tweets_returned: int):
         api = self.twitter_init()
         # Retrieves all tweets with given keywords and count
-        query = ' '.join(keywords)
+        query = ' '.join(keywords[:2])
         searched_tweets = tweepy.Cursor(api.search, q=query).items(tweets_returned)
         countries, country_abbreviations, states, state_abbreviations = self.location_lists_init()
         tweets = []
@@ -170,7 +207,7 @@ class Crawler:
         return tweets
 
 
-Data = namedtuple('Data', 'url raw_html title text_body tokens html_links')
+Data = namedtuple('Data', 'uid content_type url raw_html title text_body cleaned_tokens html_links')
 
 
 class Scraper:
@@ -261,10 +298,12 @@ class Scraper:
         tokens = TextProcessor.create_tokens_from_text(main_text)
         cleaned_tokens = TextProcessor.clean_tokens(tokens)
 
-        return Data(url=source, raw_html=initial_html, title=title, text_body=main_text, tokens=cleaned_tokens,
+        return Data(uid="", content_type="", url=source, raw_html=initial_html, title=title, text_body=main_text,
+                    cleaned_tokens=cleaned_tokens,
                     html_links=urls)
 
 
 if __name__ == "__main__":
     scraper = Scraper()
-    print(scraper.get_data_from_source("https://www.pubmedcentral.nih.gov/picrender.fcgi?artid=2480896&blobtype=pdf").html_links)
+    print(scraper.get_data_from_source(
+        "https://www.pubmedcentral.nih.gov/picrender.fcgi?artid=2480896&blobtype=pdf").html_links)

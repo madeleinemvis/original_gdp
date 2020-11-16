@@ -107,7 +107,6 @@ class TextProcessor:
         if len(clean_location.split(' ')) < 4 and not any(elem in clean_location for elem in punctuation):
             clean_location = clean_location.lower().strip()
 
-            valid = False
             if ',' in clean_location:
                 place = clean_location.split(',')[1].strip()
                 if any(map(place.__contains__, states)) or any(map(place.__contains__, countries)):
