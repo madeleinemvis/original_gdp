@@ -44,7 +44,6 @@ class Crawler:
     # Alex Ll
     # recursively crawl a set of URLs with batch checking similarities
     def recursive_url_crawl(self, urls: [str], max_depth: int) -> dict:
-        print('Initial URLS: ', len(urls))
         scraper = Scraper()
         final_dict = {}
         final_list = []
@@ -59,7 +58,6 @@ class Crawler:
         for depth_index in range(0, max_depth):
             loop = []
             urls = url_depth[depth_index]
-            print('Func URLS: ', len(urls))
             response = scraper.scrape_url(urls)
             for i in range(len(response)):
                 for url_new in response[i]:
@@ -77,8 +75,9 @@ class Crawler:
                         for item in url_depth:
                             parsed_check_urls = [urlparse(x) for x in item]
                             new_parsed_links = [x.netloc + x.path for x in parsed_check_urls]
-                            if len(new_parsed_links) > 0:
-                                if parsed_url.netloc in new_parsed_links:
+                            parent = [x.netloc for x in parsed_check_urls]
+                            if len(parent) > 0:
+                                if parsed_url.netloc in parent:
                                     flag = True
                                     break
                             elif new_link in new_parsed_links:
@@ -194,20 +193,14 @@ class Scraper:
             temp.append(tags)
         else:
             start_t = datetime.now()
-            print("Batch Scraping: ")
-            #for url in urls:
-            #    print(url)
-            print('URLS: ', len(urls))
+            print("Batch Scraping",len(urls),"links: ")
             reqs = (grequests.get(url) for url in urls)
             resp = grequests.imap(reqs, grequests.Pool(len(urls)))
-            count = sum(1 for _ in resp)
             for r in resp:
-                print(count)
                 soup = BeautifulSoup(r.text, 'html.parser')
                 tags = soup.find_all('a')
                 temp.append(tags)
-                count += -1
-            print("Batch Scraping Complete. ", len(temp), " Links Scraped. Time Taken: ", datetime.now() - start_t)
+            print("Batch Scraping Complete.", len(temp), "Links Scraped. Time Taken: ", datetime.now() - start_t)
         return temp
 
     # method to get all of the text out of a pdf, but it does not clean it
@@ -235,8 +228,12 @@ class Scraper:
                     r")@:%_\+.~#?&//=]*))"
 
         # request the contents of the URL and get the 'content-type' header
-        request = requests.get(source)
-        content_type = request.headers['content-type']
+        try:
+            request = requests.get(source)
+            content_type = request.headers['content-type']
+        except requests.ConnectionError:
+            print('Connection Error: ' + source)
+            content_type = []
 
         # if the two MIME types we are looking for aren't present, return None to indicate no data
         if "application/pdf" not in content_type and "text/html" not in content_type:
