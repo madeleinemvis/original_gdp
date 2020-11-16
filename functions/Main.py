@@ -1,7 +1,7 @@
 from functions.dataretrieval import Crawler, Scraper
 from functions.textprocessing import TextProcessor
 from functions.analysis import NLP_Analyser
-from BackEnd.DbManager import DbManager
+from BackEnd.dbmanager import DbManager
 
 
 # Function for the main workflow of the project
