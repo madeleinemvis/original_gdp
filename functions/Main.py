@@ -31,7 +31,8 @@ def main(source_urls: [str]):
         urls.update(data.html_links)
 
     all_tokens = [t for s in scraped_data.values() for t in s.tokens]
-    key_words = TextProcessor.calculate_key_words(all_tokens, NUMBER_OF_KEY_WORDS)
+    all_sentences = " ".join([s.text_body for s in scraped_data.values()])
+    key_words = TextProcessor.calculate_keywords_with_text_rank(all_sentences, NUMBER_OF_KEY_WORDS)
 
     print(f"Sources in manifesto: {len(sources)}")
     print(f"Sources found in manifesto sources: {len(urls)}")
@@ -47,7 +48,7 @@ def main(source_urls: [str]):
     print("-------- SCRAPING --------")
     # retrieve and store all the data about a URL
     for url in urls_google:
-        data = Scraper.get_data_from_source(url)
+        data = scraper.get_data_from_source(url)
         scraped_data[url] = data
         urls.update(data.html_links)
 
