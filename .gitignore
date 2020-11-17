@@ -15,6 +15,7 @@ env
 */__pycache__/
 
 /node_modules
+<<<<<<< HEAD
 /.idea/main-project.iml
 /.idea/misc.xml
 /.idea/modules.xml
@@ -31,3 +32,5 @@ env
 
 /media
 .pdf
+=======
+>>>>>>> 2770a7a0c832801fd4ceece22b028552c4bd5b19
