@@ -24,14 +24,6 @@ def main(source_urls: [str]):
     scraped_data = {}
 
     print("-------- MANIFESTO --------")
-    # start with the initial URL
-    start_url = "https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/?fbclid=IwAR017eZePLsduO5ZaxM3X8dFkipeQqy58Go8eL3SkuQ4YFtRVSjfBwDMD0A"
-    """ Other URLS:
-    - https://vactruth.com/2018/08/30/vaccine-induced-autism/ # faulty (Forbidden with crawler) 
-    - https://vactruth.com/2018/05/02/alfie-evans-timeline/
-    - https://vactruth.com/2019/06/07/the-vaccination-that-never-should-have-been-approved/
-    - https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/
-    """
 
     # go through each source input and store the main body text, and cleaned tokens
     # along with the html links found
@@ -47,10 +39,9 @@ def main(source_urls: [str]):
     all_tokens = [t for s in scraped_data.values() for t in s.tokens]
     key_words = TextProcessor.calculate_key_words(all_tokens, NUMBER_OF_KEY_WORDS)
 
-    print("*** KEYWORDS ***")
-    # calculate key words from manifesto
-    key_words = processor.calculate_key_words(scraped_data[start_url].cleaned_tokens,
-                                              NUMBER_OF_KEY_WORDS)  # TODO: Testing of wild cards with Google searching
+    print(f"Sources in manifesto: {len(sources)}")
+    print(f"Sources found in manifesto sources: {len(urls)}")
+    print(f"Top {NUMBER_OF_KEY_WORDS} keywords form manifesto: {key_words}")
 
     print("-------- CRAWLING --------")
     # look to crawl with the new data
@@ -92,4 +83,13 @@ def main(source_urls: [str]):
 
 
 if __name__ == "__main__":
-    main()
+    # start with the initial URL
+    start_url = "https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/"
+    """ Other URLS:
+    - https://vactruth.com/2018/08/30/vaccine-induced-autism/ # faulty (Forbidden with crawler)
+    - https://vactruth.com/2018/05/02/alfie-evans-timeline/
+    - https://vactruth.com/2019/06/07/the-vaccination-that-never-should-have-been-approved/
+    - https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/
+    """
+    sources = [start_url]
+    main(sources)

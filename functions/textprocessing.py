@@ -36,10 +36,6 @@ class TextProcessor:
         else:
             return str(title.text), body
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 9aade0d (MongoDB API is complete. Added some testing prints to demo its functionality.)
     # Alex Ll
     # Method for extracting all of the useful URLs from a HTML document
     @staticmethod
