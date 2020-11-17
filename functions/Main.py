@@ -27,25 +27,35 @@ def main(source_urls: [str]):
     # along with the html links found
     urls = set()
 
-    all_tokens = db_manager.get_all_cleaned_tokens('some_random_hash', 'documents_document')
+    documents = db_manager.get_all_documents('some_random_hash', 'documents_document')
+    all_sentences = db_manager.get_all_main_texts('some_random_hash', 'documents_document')
+    document_html_links = db_manager.get_all_html_links('some_random_hash', 'documents_document')
 
-    if not all_tokens:
+    # if no tokens stored in database
+    if len(all_sentences) == 0:
         for source in source_urls:
             data = scraper.get_data_from_source(source)
             scraped_data[source] = data
             urls.update(data.html_links)
-        all_tokens = [t for s in scraped_data.values() for t in s.tokens]
 
-    if len(source_urls) < 5:
-        all_tokens = [t for s in scraped_data.values() for t in s.tokens]
-        key_words = TextProcessor.calculate_key_words(all_tokens, NUMBER_OF_KEY_WORDS)
-        print(f"Most frequent key_words: {key_words}")
+        # if there are less than 5 documents, scrape tokens
+        if len(source_urls) < 5:
+            all_tokens = [t for s in scraped_data.values() for t in s.tokens]
+            key_words = TextProcessor.calculate_key_words(all_tokens, NUMBER_OF_KEY_WORDS)
+            print(f"Most frequent key_words: {key_words}")
+        else:
+            all_sentences = " ".join([s.text_body for s in scraped_data.values()])
+            key_words = TextProcessor.calculate_keywords_with_text_rank(all_sentences, NUMBER_OF_KEY_WORDS)
+
+        print(f"Sources in manifesto: {len(source_urls)}")
+        print(f"Sources found in manifesto sources: {len(urls)}")
     else:
-        all_sentences = " ".join([s.text_body for s in scraped_data.values()])
+        # If texts stored in database
         key_words = TextProcessor.calculate_keywords_with_text_rank(all_sentences, NUMBER_OF_KEY_WORDS)
+        urls.update(document_html_links)
+        print(f"Sources in manifesto: {len(documents)}")
+        print(f"Sources found in manifesto sources: {len(document_html_links)}")
 
-    print(f"Sources in manifesto: {len(sources)}")
-    print(f"Sources found in manifesto sources: {len(urls)}")
     print(f"Top {NUMBER_OF_KEY_WORDS} keywords form manifesto: {key_words}")
 
     print("-------- CRAWLING GOOGLE --------")
@@ -59,9 +69,10 @@ def main(source_urls: [str]):
     # retrieve and store all the data about a URL
     for url in urls_google:
         data = scraper.get_data_from_source(url)
-        scraped_data[url] = data
-        urls.update(data.html_links)
-    urls.update(urls_google)
+        if data is not None:
+            scraped_data[url] = data
+            urls.update(data.html_links)
+            urls.update(urls_google)
 
     print("-------- SCRAPING TWITTER --------")
     # crawling with Twitter

@@ -1,6 +1,8 @@
 # file for handling API, left blank for now
 import pymongo
 from BackEnd.errorhandler import NoObjectsError, NoCollectionsError
+from ast import literal_eval
+
 
 class DbManager:
     database = None
@@ -35,26 +37,32 @@ class DbManager:
         except NoCollectionsError():
             print("No Collection, %s,  Found in Database", collection)
 
+    def drop_documents(self, uid: str, collection: str):
+        try:
+            self.database[collection].remove({"uid": uid})
+        except NoObjectsError():
+            print("No Objects, UID: %s,  Found in Collection, %", uid, collection)
+
     # Deletes any record that holds true to the query
-    def delete_tuple(self, collection, query):
+    def delete_tuple(self, collection: str, query: str):
         try:
             self.database[collection].delete_many(query)
         except NoCollectionsError():
             print("No Object, %s,  Found in Collection, %", query, collection)
 
     # Example values passed in ("WebURLs", "body" "vaccin*"))
-    def find_documents(self, collection, column, query_text):
-        query = {column: {"$regex": query_text}}
+    def find_documents(self, uid: str, collection: str, query: str):
         try:
-            documents = self.database[collection].find(query)
+            query_uid = ("uid:%s, ".join(query), uid)
+            documents = self.database[collection].find({query_uid})
             return documents
         except NoObjectsError:
-            print("No Objects Found in Collections %s", collection)
+            print("No Objects, UID: %s,  Found in Collection, %", uid, collection)
 
     # Returns all documents of a specific collection
-    def get_all_documents(self, collection: str):
+    def get_all_documents(self, uid: str, collection: str):
         try:
-            return self.database[collection].find({})
+            return list(self.database[collection].find({"uid": uid}))
         except NoObjectsError():
             print("No Collection, %s,  Found in Database", collection)
 
@@ -68,11 +76,37 @@ class DbManager:
         try:
             ini_list = list(self.database[collection].find({"uid": uid},
                                                            {"_id": 0, "cleaned_tokens": 1}))
-        except NoObjectsError:
-            print("No Objects Found in Collections %s", collection)
-        cleaned_tokens = []
-        for tokens in ini_list:
-            res = tokens['cleaned_tokens'].strip('][').split(', ')
-            cleaned_tokens.extend(res)
+            cleaned_tokens = []
+            for tokens in ini_list:
+                res = literal_eval(tokens['cleaned_tokens'])
+                cleaned_tokens.extend(res)
 
-        return cleaned_tokens
+            return cleaned_tokens
+        except NoCollectionsError:
+            print("No Collection, %s,  Found in Database", collection)
+
+    def get_all_main_texts(self, uid: str, collection: str):
+        try:
+            ini_list = list(self.database[collection].find({"uid": uid},
+                                                           {"_id": 0, "text_body": 1}))
+            main_text = []
+            for text in ini_list:
+                main_text.append(text['text_body'])
+
+            return " ".join([text for text in main_text])
+        except NoCollectionsError:
+            print("No Collection, %s,  Found in Database", collection)
+
+    def get_all_html_links(self, uid: str, collection: str):
+        try:
+            ini_list = list(self.database[collection].find({"uid": uid},
+                                                           {"_id": 0, "html_links": 1}))
+
+            html_links = []
+            for html_link in ini_list:
+                res = literal_eval(html_link['html_links'])
+                html_links.extend(res)
+
+            return html_links
+        except NoObjectsError():
+            print("No Objects, UID: %s,  Found in Collection, %", uid, collection)
