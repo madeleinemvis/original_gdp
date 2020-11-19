@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 import json
 import requests.exceptions
 import tweepy
-from urllib.parse import urlparse
+from urllib.parse import urldefrag, urlparse
 import requests
 import re
 import csv
@@ -35,10 +35,11 @@ class Crawler:
     def crawl_google_with_key_words(self, key_words: [str], urls_returned: int) -> [str]:
         query = ' '.join(key_words)
         google_result = search(query, tld="com", lang="en", num=urls_returned, start=0, stop=urls_returned)
-        new_results = []
+        new_results = set()
         for url in google_result:
             if not re.match(self.BLACKLIST_REGEX, url):
-                new_results.append(url)
+                defrag_url = urldefrag(url)[0]
+                new_results.add(defrag_url)
         return new_results
 
     # Alex Ll
@@ -52,7 +53,6 @@ class Crawler:
         for url in urls:
             # Create list of searched URL's for use by the program
             url_depth[0].append(url)
-            
 
         # Loop through all URL's in url_depth
         for depth_index in range(0, max_depth):
