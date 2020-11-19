@@ -1,7 +1,7 @@
-from dataretrieval import Crawler, Scraper
-from textprocessing import TextProcessor
-from analysis import NLP_Analyser
-from BackEnd.DbManager import DbManager
+from functions.dataretrieval import Crawler, Scraper
+from functions.textprocessing import TextProcessor
+from functions.analysis import NLP_Analyser
+from BackEnd.dbmanager import DbManager
 
 
 # Function for the main workflow of the project
@@ -15,10 +15,8 @@ def main(source_urls: [str]):
     crawler = Crawler()
     analyser = NLP_Analyser()
     db_manager = DbManager()
-
-    alt_url = "https://www.bbc.co.uk/news/uk-54779430"
-    source_urls.append(alt_url)
-
+    scraper = Scraper()
+    
     # Using a dictionary of mapping URL to data for an initial data storage method, will likely need to change
     # very soon
     scraped_data = {}
@@ -29,52 +27,82 @@ def main(source_urls: [str]):
     # along with the html links found
     urls = set()
 
-    # TODO we have a problem with key words,
-    # do we want the top 'x' keywords across the documents or do we want the top 'x' from each of the documents
-    for source in source_urls:
-        data = Scraper.get_data_from_source(source)
-        scraped_data[source] = data
-        urls.update(data.html_links)
+    documents = db_manager.get_all_documents('some_random_hash', 'documents_document')
+    all_sentences = db_manager.get_all_main_texts('some_random_hash', 'documents_document')
+    document_html_links = db_manager.get_all_html_links('some_random_hash', 'documents_document')
 
-    all_tokens = [t for s in scraped_data.values() for t in s.tokens]
-    key_words = TextProcessor.calculate_key_words(all_tokens, NUMBER_OF_KEY_WORDS)
+    # if no tokens stored in database
+    if len(all_sentences) == 0:
+        for source in source_urls:
+            data = scraper.get_data_from_source(source)
+            scraped_data[source] = data
+            urls.update(data.html_links)
 
-    print(f"Sources in manifesto: {len(sources)}")
-    print(f"Sources found in manifesto sources: {len(urls)}")
+        # if there are less than 5 documents, scrape tokens
+        if len(source_urls) < 5:
+            all_tokens = [t for s in scraped_data.values() for t in s.tokens]
+            key_words = TextProcessor.calculate_key_words(all_tokens, NUMBER_OF_KEY_WORDS)
+            print(f"Most frequent key_words: {key_words}")
+        else:
+            all_sentences = " ".join([s.text_body for s in scraped_data.values()])
+            key_words = TextProcessor.calculate_keywords_with_text_rank(all_sentences, NUMBER_OF_KEY_WORDS)
+
+        print(f"Sources in manifesto: {len(source_urls)}")
+        print(f"Sources found in manifesto sources: {len(urls)}")
+    else:
+        # If texts stored in database
+        key_words = TextProcessor.calculate_keywords_with_text_rank(all_sentences, NUMBER_OF_KEY_WORDS)
+        urls.update(document_html_links)
+        print(f"Sources in manifesto: {len(documents)}")
+        print(f"Sources found in manifesto sources: {len(document_html_links)}")
+
     print(f"Top {NUMBER_OF_KEY_WORDS} keywords form manifesto: {key_words}")
 
-    print("-------- CRAWLING --------")
+    print("-------- CRAWLING GOOGLE --------")
     # look to crawl with the new data
     urls_google = crawler.crawl_google_with_key_words(key_words, NUMBER_OF_GOOGLE_RESULTS_WANTED)
+    print(f"Top {NUMBER_OF_GOOGLE_RESULTS_WANTED} Google Results from Keyword {key_words}:")
+    for i, url in enumerate(urls_google):
+        print(f"[{i + 1}]: {url}")
 
-    print("-------- SCRAPING --------")
+    print("-------- SCRAPING GOOGLE URLS --------")
     # retrieve and store all the data about a URL
     for url in urls_google:
-        scraped_data[url] = Scraper.get_data_from_source(url)
+        data = scraper.get_data_from_source(url)
+        if data is not None:
+            scraped_data[url] = data
+            urls.update(data.html_links)
+            urls.update(urls_google)
 
+    print("-------- SCRAPING TWITTER --------")
     # crawling with Twitter
     crawled_tweets = crawler.twitter_crawl(key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
 
+    print("-------- EXAMPLE SIMILARITY CHECKING --------")
     # do some similarity checking for the documents so far crawled
-    analyser.create_topic_model(scraped_data)
-    print("Similar Doc:", analyser.check_similarity(scraped_data[source_urls[0]]))
-    print("Non-similar doc:", analyser.check_similarity(scraped_data[alt_url]))
+    # Currently throws error <- to be fixed
+    #analyser.create_topic_model(scraped_data)
+    #print("Similar Doc:", analyser.check_similarity(scraped_data["https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/"]))
+    #print("Non-similar doc:", analyser.check_similarity(scraped_data["https://www.bbc.co.uk/news/uk-54779430"]))
 
+    print("-------- RECURSIVE CRAWLING --------")
+    # Passes about 3000 links <- to be fixed
     # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
     final_crawled_urls = crawler.recursive_url_crawl(urls, MAXIMUM_URL_CRAWL_DEPTH)
-    urls.update(final_crawled_urls)
+    scraped_data.update(final_crawled_urls)
 
+    print("------- SCRAPE REMAINING URLS -------")
     # retrieve and store all the data about a URL's not yet scraped
     urls_to_scrape = [u for u in urls if u not in scraped_data.keys()]
     url_insert = []
     for url in urls_to_scrape:
-        scraped_data[url] = Scraper.get_data_from_source(url)
+        scraped_data[url] = scraper.get_data_from_source(url)
         url_insert.append(scraped_data[url])
 
     print("-------- STORING --------")
-    db_manager.insert_many('documents_document') # Collection name for web pages
+    db_manager.insert_many('documents_document')  # Collection name for web pages
 
-    db_manager.insert_many('tweets_tweet', crawled_tweets) # Collection name for tweets
+    db_manager.insert_many('tweets_tweet', crawled_tweets)  # Collection name for tweets
     # perform analysis on the scraped dataS
 
     # perform data visualisation
