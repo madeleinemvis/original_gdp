@@ -1,3 +1,5 @@
+#import sys
+#sys.path.append('/Users/alexllewellyn/GDP/main-project')
 from functions.dataretrieval import Crawler, Scraper
 from functions.textprocessing import TextProcessor
 from functions.analysis import NLP_Analyser
