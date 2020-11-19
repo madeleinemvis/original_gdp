@@ -34,7 +34,7 @@ def main(source_urls: [str]):
     # if no tokens stored in database
     if len(all_sentences) == 0:
         for source in source_urls:
-            data = scraper.get_data_from_source(source)
+            data = scraper.scrape_url(source)
             scraped_data[source] = data
             urls.update(data.html_links)
 
@@ -67,12 +67,11 @@ def main(source_urls: [str]):
 
     print("-------- SCRAPING GOOGLE URLS --------")
     # retrieve and store all the data about a URL
-    for url in urls_google:
-        data = scraper.get_data_from_source(url)
-        if data is not None:
-            scraped_data[url] = data
-            urls.update(data.html_links)
-            urls.update(urls_google)
+    data = scraper.scrape_url(urls_google)
+    if data is not None:
+        for k in data.keys():
+            scraped_data[k] = data[k]
+            urls.update(data[k].html_links)
 
     print("-------- SCRAPING TWITTER --------")
     # crawling with Twitter
@@ -94,10 +93,9 @@ def main(source_urls: [str]):
     print("------- SCRAPE REMAINING URLS -------")
     # retrieve and store all the data about a URL's not yet scraped
     urls_to_scrape = [u for u in urls if u not in scraped_data.keys()]
-    url_insert = []
-    for url in urls_to_scrape:
-        scraped_data[url] = scraper.get_data_from_source(url)
-        url_insert.append(scraped_data[url])
+    data = scraper.scrape_url(urls_to_scrape)
+    for k in data.keys():
+        scraped_data[k] = data[k]
 
     print("-------- STORING --------")
     db_manager.insert_many('documents_document')  # Collection name for web pages

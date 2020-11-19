@@ -4,12 +4,12 @@ from tika import parser  # Note this module needs Java to be installed on the sy
 from functions.analysis import NLP_Analyser
 from collections import namedtuple
 from googlesearch import search
-from bs4 import BeautifulSoup
 import json
 import requests.exceptions
 import tweepy
 from urllib.parse import urldefrag, urlparse
 import requests
+from readabilipy import simple_json_from_html_string
 import re
 import csv
 from pathlib import Path
@@ -57,16 +57,14 @@ class Crawler:
     def recursive_url_crawl(self, urls: [str], max_depth: int) -> dict:
         scraper = Scraper()
         final_dict = {}
-        final_list = []
+
         # for every base url
         url_depth = [[] for _ in range(0, max_depth + 1)]
         for url in urls:
             # Create list of searched URL's for use by the program
             url_depth[0].append(url)
-            
-        # Loop through all URL's in url_depth
+        # Loop through all URLs in url_depth
         for depth_index in range(0, max_depth):
-            loop = []
             urls = url_depth[depth_index]
             start_t = datetime.now()
             print("Batch Scraping",len(urls),"links: ")
@@ -96,22 +94,12 @@ class Crawler:
                             elif new_link in new_parsed_links:
                                 flag = True
                                 break
-            
-                    # If link is not empty and has not been searched before
-                    link = url_new.get('href')
-                    if link is not None and flag is False:
-                        # If link is a valid url
-                        if str(link).startswith('http'):
-                            if link not in final_list:
-                                # Append url to search list, will be searched next
-                                url_depth[depth_index + 1].append(link)
 
-                                # Append to list of valid sites pulled from parent site
-                                loop.append(link)
-
-            # Append loop list to final return list
-            final_list = final_list + loop
-        return final_list
+                    if flag is False:
+                        # Append url to search list, will be searched next
+                        url_depth[depth_index + 1].append(url_new)
+            final_dict.update(response)
+        return final_dict
 
 
     @staticmethod
@@ -215,21 +203,8 @@ class Scraper:
         return response
 
 
-    # method to get all of the text out of a pdf, but it does not clean it
-    @staticmethod
-    def scrape_pdf(pdf_path: str) -> str:
-        try:
-            start_t = datetime.now()
-            raw = parser.from_file(pdf_path)
-            raw_text = raw['content']
-            print("Scraped: ", pdf_path, ". Time taken: ", datetime.now() - start_t)
-        except:
-            print('PDF Connection Error: ' + pdf_path)
-            return ''
-        return ' '.join(raw_text.split())
-
     # method for getting raw text and cleaned tokens from a source, can be a html or '.pdf'
-    def get_data_from_source(self, source: str, seen_urls=None) -> namedtuple:
+    def get_data_from_source(self, source: str, response: Response, seen_urls=None) -> namedtuple:
         processor = TextProcessor()
         if seen_urls is None:
             seen_urls = []
@@ -239,35 +214,38 @@ class Scraper:
         url_regex = r"(https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}(?:[-a-zA-Z0-9(" \
                     r")@:%_\+.~#?&//=]*))"
 
-        # request the contents of the URL and get the 'content-type' header
-        try:
-            request = requests.get(source)
-            content_type = request.headers['content-type']
-        except requests.ConnectionError:
-            print('Connection Error: ' + source)
-            content_type = []
+        content_type = response.headers['content-type']
 
         # if the two MIME types we are looking for aren't present, return None to indicate no data
         if "application/pdf" not in content_type and "text/html" not in content_type:
             return None
 
         # scraping stage
-        start_t = datetime.now()
         if "application/pdf" in content_type:
-            raw = request.content
+            raw = response.content
             processed_text = parser.from_buffer(raw)['content']
             main_text = ' '.join(processed_text.split())
             urls = re.findall(url_regex, main_text)
         else:
-            if 'location' in request.headers.keys():
-                if source in seen_urls:
+            initial_html = response.text
+            if 'location' in response.headers.keys():
+                location = response.headers['location']
+                if location in seen_urls:
                     return None
-                new_seen_urls = seen_urls.append(source)
-                return self.get_data_from_source(request.headers['location'], new_seen_urls)
-            initial_html = request.text
-            title, main_text = processor.extract_main_body_from_html(initial_html)
-            urls = processor.extract_urls_from_html(initial_html)
-        print("Scraped: ", source, ". Time taken: ", datetime.now() - start_t)
+                new_seen_urls = seen_urls.append(location)
+                return self.scrape_url([location], new_seen_urls)
+            try:
+                article = simple_json_from_html_string(initial_html, use_readability=True)
+            except CalledProcessError:
+                return None
+            title = article['title']
+            main_text_unprocessed = article['plain_text']
+            if main_text_unprocessed is None:
+                return None
+            main_text = ''
+            for text in main_text_unprocessed:
+                main_text += text['text'].replace("ï¿1⁄2", "'") + " "
+            urls = processor.extract_urls_from_html(article['content'])
 
         # make the tokens from the main text, and create a clean form
         tokens = TextProcessor.create_tokens_from_text(main_text)
