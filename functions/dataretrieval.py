@@ -1,5 +1,3 @@
-from gevent import monkey as curious_george
-curious_george.patch_all(thread=False, select=False)
 from typing import Dict
 from functions.textprocessing import TextProcessor
 from tika import parser  # Note this module needs Java to be installed on the system to work.
@@ -14,10 +12,11 @@ from urllib.parse import urldefrag, urlparse
 import requests
 import re
 import csv
-import grequests
 from pathlib import Path
 from datetime import datetime
+import concurrent.futures
 
+MAX_THREADS = 50
 
 # class for crawling and scraping the internet
 class Crawler:
@@ -34,13 +33,24 @@ class Crawler:
     # not sure how we want to use this method yet
     def crawl_google_with_key_words(self, key_words: [str], urls_returned: int) -> [str]:
         query = ' '.join(key_words)
-        google_result = search(query, tld="com", lang="en", num=urls_returned, start=0, stop=urls_returned)
+        google_result = search(query, tld="com", lang="en", num=urls_returned, start=0, stop=urls_returned, pause=1)
         new_results = set()
         for url in google_result:
             if not re.match(self.BLACKLIST_REGEX, url):
                 defrag_url = urldefrag(url)[0]
                 new_results.add(defrag_url)
         return new_results
+
+    def url_cleaner(self, urls: [str]) -> [str]:
+        parent = []
+        url_depth = []
+        for url in urls:
+            link = urlparse(url)
+            net = link.netloc
+            if net not in parent:
+                parent.append(net)
+                url_depth.append(url)
+        return url_depth
 
     # Alex Ll
     # recursively crawl a set of URLs with batch checking similarities
@@ -53,12 +63,15 @@ class Crawler:
         for url in urls:
             # Create list of searched URL's for use by the program
             url_depth[0].append(url)
-
+            
         # Loop through all URL's in url_depth
         for depth_index in range(0, max_depth):
             loop = []
             urls = url_depth[depth_index]
-            response = scraper.scrape_url(urls)
+            start_t = datetime.now()
+            print("Batch Scraping",len(urls),"links: ")
+            response = scraper.downloads(urls)
+            print("Batch Scraping Complete.", len(response), "Links Scraped. Time Taken: ", datetime.now() - start_t)
             for i in range(len(response)):
                 for url_new in response[i]:
                     # if link empty, continue
@@ -99,6 +112,7 @@ class Crawler:
             # Append loop list to final return list
             final_list = final_list + loop
         return final_list
+
 
     @staticmethod
     def twitter_init():
@@ -178,30 +192,28 @@ class Scraper:
     # Alex Ll
     # method that returns all the HTML data from a URL
     @staticmethod
-    def scrape_url(urls) -> [str]:
+    def scrape_url(url) -> [str]:
         temp = []
-        if len(urls) == 1:
-            try:
-                start_t = datetime.now()
-                request = requests.get(urls[0])
-                print("Scraped: ", urls, ". Time taken: ", datetime.now() - start_t)
-                response = request.text
-            except requests.ConnectionError:
-                response = ''
-            soup = BeautifulSoup(response, 'html.parser')
-            tags = soup.find_all('a')
-            temp.append(tags)
-        else:
-            start_t = datetime.now()
-            print("Batch Scraping",len(urls),"links: ")
-            reqs = (grequests.get(url) for url in urls)
-            resp = grequests.imap(reqs, grequests.Pool(len(urls)))
-            for r in resp:
-                soup = BeautifulSoup(r.text, 'html.parser')
-                tags = soup.find_all('a')
-                temp.append(tags)
-            print("Batch Scraping Complete.", len(temp), "Links Scraped. Time Taken: ", datetime.now() - start_t)
+        try:
+            request = requests.get(url, allow_redirects=False, timeout=0.5)
+            response = request.text
+        except:
+            response = ''
+        soup = BeautifulSoup(response, 'html.parser')
+        tags = soup.find_all('a')
+        temp.append(tags)
         return temp
+    
+    @staticmethod
+    def downloads(urls):
+        response = []
+        threads = min(MAX_THREADS, len(urls))
+        with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
+            result = executor.map(Scraper.scrape_url, urls)
+        for r in result:
+            response.append(r[0])
+        return response
+
 
     # method to get all of the text out of a pdf, but it does not clean it
     @staticmethod
