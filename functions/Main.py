@@ -80,12 +80,12 @@ def main(source_urls: [str]):
 
     print("-------- EXAMPLE SIMILARITY CHECKING --------")
     # do some similarity checking for the documents so far crawled
+    # Throws errors if links weren't searched 
     #analyser.create_topic_model(scraped_data)
     #print("Similar Doc:", analyser.check_similarity(scraped_data["https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/"]))
     #print("Non-similar doc:", analyser.check_similarity(scraped_data["https://www.bbc.co.uk/news/uk-54779430"]))
 
     print("-------- RECURSIVE CRAWLING --------")
-    # Passes about 3000 links <- to be fixed
     # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
     recursive_urls = crawler.url_cleaner(urls)
     final_crawled_urls = crawler.recursive_url_crawl(recursive_urls, MAXIMUM_URL_CRAWL_DEPTH)
