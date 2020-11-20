@@ -89,7 +89,7 @@ def main(source_urls: [str]):
     # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
     recursive_urls = crawler.url_cleaner(urls)
     final_crawled_urls = crawler.recursive_url_crawl(recursive_urls, MAXIMUM_URL_CRAWL_DEPTH)
-    scraped_data.update(final_crawled_urls)
+    # scraped_data.update(final_crawled_urls)
 
     print("------- SCRAPE REMAINING URLS -------")
     # retrieve and store all the data about a URL's not yet scraped
