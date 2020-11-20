@@ -1,6 +1,6 @@
 # file for handling API, left blank for now
 import pymongo
-from BackEnd.errorhandler import NoObjectsError, NoCollectionsError
+from errorhandler import NoObjectsError, NoCollectionsError
 from ast import literal_eval
 
 

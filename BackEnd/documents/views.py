@@ -33,19 +33,14 @@ def document_list(request):
         uid = request.data['uid']
         document_urls = request.data['urls']
         document_pdfs = request.data['pdfs']
+        zip_file = request.FILES['files']
         # If there are URLs
         if document_urls:
             print("urls")
             # Scrapes all URLs, UID for manifesto and list of Documents (namedtuple)
             documents = file_handler.read_docs(document_urls)
             # Store scraped Documents
-            d_save = []
-            for d in documents:
-                # _id generated automatically
-                document = Document(uid=uid, content_type="web-page", url=d.url, raw_html=d.raw_html, title=d.title, text_body=d.text_body, cleaned_tokens=d.cleaned_tokens, html_links=d.html_links)
-                d_save.append(document)
-                print("saving document")
-                # document.save()
+            d_save = file_handler.set_documents(uid, documents)
             Document.objects.bulk_create(d_save)
 
         if document_pdfs:
@@ -53,11 +48,16 @@ def document_list(request):
             # Scrapes all PDFs
             documents = file_handler.read_docs(document_pdfs)
             # Store scraped documents
-            d_save = []
-            for d in documents:
-                # _id generated automatically
-                d_save.append(Document(uid=uid, content_type="pdf", url=d.url, raw_html=d.raw_html, title=d.title, text_body=d.text_body, cleaned_tokens=d.cleaned_tokens, html_links=d.html_links))
+            d_save = file_handler.set_documents(uid, documents)
             Document.objects.bulk_create(d_save)
+
+        if zip_file:
+            print("zip files")
+            # Extract, read and process all documents
+            documents = file_handler.read_zip_file(uid, zip_file)
+            d_save = file_handler.set_documents(uid, documents)
+            Document.objects.bulk_create(d_save)
+
         return JsonResponse(data=request.data, status=status.HTTP_201_CREATED, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
