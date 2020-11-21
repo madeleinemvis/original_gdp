@@ -1,3 +1,5 @@
+import json
+
 from django.shortcuts import render
 
 from django.http.response import JsonResponse
@@ -6,6 +8,7 @@ from rest_framework import status
 from documents.models import Document
 from documents.serializers import DocumentSerializer
 from rest_framework.decorators import api_view
+from filehandler import FileHandler
 
 
 # Create your views here.
@@ -23,13 +26,40 @@ def document_list(request):
         tutorials_serializer = DocumentSerializer(documents, many=True)
         return JsonResponse(tutorials_serializer.data, safe=False)
         # 'safe=False' for objects serialization
+    # Retrieving URLs and PDFs from request
     elif request.method == 'POST':
-        document_data = JSONParser().parse(request)
-        document_serializer = DocumentSerializer(data=document_data)
-        if document_serializer.is_valid():
-            document_serializer.save()
-            return JsonResponse(document_serializer.data, status=status.HTTP_201_CREATED)
-        return JsonResponse(document_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        file_handler = FileHandler()
+
+        uid = request.data['uid']
+        document_urls = request.data['urls']
+        document_pdfs = request.data['pdfs']
+        zip_file = request.FILES['files']
+        # If there are URLs
+        if document_urls:
+            print("urls")
+            # Scrapes all URLs, UID for manifesto and list of Documents (namedtuple)
+            documents = file_handler.read_docs(document_urls)
+            # Store scraped Documents
+            d_save = file_handler.set_documents(uid, documents)
+            Document.objects.bulk_create(d_save)
+
+        if document_pdfs:
+            print("pdfs")
+            # Scrapes all PDFs
+            documents = file_handler.read_docs(document_pdfs)
+            # Store scraped documents
+            d_save = file_handler.set_documents(uid, documents)
+            Document.objects.bulk_create(d_save)
+
+        if zip_file:
+            print("zip files")
+            # Extract, read and process all documents
+            documents = file_handler.read_zip_file(uid, zip_file)
+            d_save = file_handler.set_documents(uid, documents)
+            Document.objects.bulk_create(d_save)
+
+        return JsonResponse(data=request.data, status=status.HTTP_201_CREATED, safe=False)
+    return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
