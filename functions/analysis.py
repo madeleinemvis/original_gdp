@@ -20,7 +20,7 @@ from textblob import TextBlob
 
 class NLP_Analyser:
     def __init__(self):
-        with open('../stopwords.txt') as f:
+        with open('../Data/stopwords.txt') as f:
             stopwords = set()
             lines = f.readlines()
             for line in lines:

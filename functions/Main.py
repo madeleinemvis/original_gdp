@@ -78,7 +78,7 @@ def main(source_urls: [str]):
     # crawling with Twitter
     crawled_tweets = crawler.twitter_crawl(key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
 
-    print("-------- EXAMPLE SIMILARITY CHECKING --------")
+    # print("-------- EXAMPLE SIMILARITY CHECKING --------")
     # do some similarity checking for the documents so far crawled
     # Throws errors if links weren't searched 
     #analyser.create_topic_model(scraped_data)
