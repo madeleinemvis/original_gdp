@@ -21,7 +21,7 @@ MAX_THREADS = 50
 # class for crawling and scraping the internet
 class Crawler:
     def __init__(self):
-        with open('../blacklist.txt') as f:
+        with open('../Data/blacklist.txt') as f:
             regexes = []
             lines = f.readlines()
             for line in lines:
