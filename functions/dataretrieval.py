@@ -278,7 +278,3 @@ class Scraper:
                     html_links=urls)
 
 
-if __name__ == "__main__":
-    scraper = Scraper()
-    print(scraper.get_data_from_source(
-        "https://www.pubmedcentral.nih.gov/picrender.fcgi?artid=2480896&blobtype=pdf").html_links)
