@@ -5,7 +5,7 @@ from BackEnd.dbmanager import DbManager
 
 
 # Function for the main workflow of the project
-def main(source_urls: [str]):
+def main(source_urls: [str], claim: str):
     NUMBER_OF_KEY_WORDS = 5
     NUMBER_OF_GOOGLE_RESULTS_WANTED = 25
     NUMBER_OF_TWEETS_RESULTS_WANTED = 20
@@ -27,9 +27,11 @@ def main(source_urls: [str]):
     # along with the html links found
     urls = set()
 
-    documents = db_manager.get_all_documents('some_random_hash', 'documents_document')
-    all_sentences = db_manager.get_all_main_texts('some_random_hash', 'documents_document')
-    document_html_links = db_manager.get_all_html_links('some_random_hash', 'documents_document')
+    documents = db_manager.get_all_documents('some_random_hash')
+    all_sentences = db_manager.get_all_main_texts('some_random_hash')
+    document_html_links = db_manager.get_all_html_links('some_random_hash')
+    claim = db_manager.get_claim('some_random_hash')
+    print("CLAIM IS: ", claim)
 
     # if no tokens stored in database
     if len(all_sentences) == 0:
@@ -120,4 +122,4 @@ if __name__ == "__main__":
     - https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/
     """
     sources = [start_url]
-    main(sources)
+    main(sources, "vaccines cause autism")

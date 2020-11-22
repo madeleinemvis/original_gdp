@@ -1,11 +1,11 @@
 import os
 import shutil
 import zipfile
-
 from dbmanager import DbManager
 import sys
 
-from documents.models import Document
+from django.utils.datastructures import MultiValueDictKeyError
+from documents.models import Document, Claim
 
 sys.path.append('../')
 from functions.dataretrieval import Scraper
@@ -15,6 +15,7 @@ class FileHandler:
     ROOT_DIR = None
     db_manager = None
     ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+    scraper = Scraper()
 
     def __init__(self):
         self.db_manager = DbManager()
@@ -22,17 +23,22 @@ class FileHandler:
     def read_docs(self, docs: [str]):
         documents = []
         for d in docs:
-            documents.append(Scraper.get_data_from_source(d))
+            documents.append(self.scraper.get_data_from_source(d))
         return documents
 
     @staticmethod
-    def set_documents(uid: str, documents):
+    def set_documents(uid: str, content_type: str, documents):
         d_save = []
         for d in documents:
             # _id generated automatically
-            d_save.append(Document(uid=uid, content_type="pdf", url=d.url, raw_html=d.raw_html, title=d.title,
+            d_save.append(Document(uid=uid, content_type=content_type, url=d.url, raw_html=d.raw_html, title=d.title,
                                    text_body=d.text_body, cleaned_tokens=d.cleaned_tokens, html_links=d.html_links))
         return d_save
+
+    @staticmethod
+    def set_claim(uid, claim):
+        c_save = Claim(uid=uid, claim=claim)
+        return c_save
 
     def read_zip_file(self, uid: str, files):
         relative_zip_dir = 'temp/{}.zip'.format(uid)
@@ -58,8 +64,8 @@ class FileHandler:
         documents = []
         extract_path = 'temp/{}/'.format(uid)
         for filename in os.listdir(extract_path):
-            with open(extract_path + filename,'rb') as f:
-                documents.append(Scraper.get_data_from_source(extract_path + filename))
+            with open(extract_path + filename, 'rb') as f:
+                documents.append(self.scraper.get_data_from_source(extract_path + filename))
 
         return documents
 
@@ -69,3 +75,23 @@ class FileHandler:
         extract_path = 'temp/{}/'.format(uid)
         shutil.rmtree(extract_path)
 
+    @staticmethod
+    def get_objects_from_request(request):
+        uid = request.data['uid']
+        claim = request.data['claim']
+        document_urls = request.data['urls']
+        document_pdfs = request.data['pdfs']
+        zip_file = None
+        try:
+            zip_file = request.FILES['files']
+        except MultiValueDictKeyError:
+            pass
+        return uid, claim, document_urls, document_pdfs, zip_file
+
+    def save_documents(self, uid: str, content_type: str, documents):
+        d_save = self.set_documents(uid, content_type, documents)
+        Document.objects.bulk_create(d_save)
+
+    def save_claim(self, uid: str, claim: str):
+        c_save = self.set_claim(uid, claim)
+        c_save.save()
