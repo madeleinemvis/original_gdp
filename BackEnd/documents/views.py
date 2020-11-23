@@ -1,15 +1,12 @@
-import json
-
-from django.shortcuts import render
-
 from django.http.response import JsonResponse
-from django.utils.datastructures import MultiValueDictKeyError
-from rest_framework.parsers import JSONParser
-from rest_framework import status
 from documents.models import Document
 from documents.serializers import DocumentSerializer
-from rest_framework.decorators import api_view
 from filehandler import FileHandler
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.parsers import JSONParser
+
+from functions.visualisation import DataVisualiser
 
 
 # Create your views here.
@@ -74,3 +71,11 @@ def document_detail(request, pk):
         count = Document.objects.all().delete()
         return JsonResponse({'message': '{} Tutorials were deleted successfully!'.format(count[0])},
                             status=status.HTTP_204_NO_CONTENT)
+
+
+def keywords_wordcloud(request):
+    if request.method() == "GET":
+        uid = request.data['uid']
+        keywords = DataVisualiser.word_cloud(uid)
+        return JsonResponse(data=keywords, status=status.HTTP_200_OK, safe=False)
+    return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
