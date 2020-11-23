@@ -1,20 +1,25 @@
+from subprocess import CalledProcessError
 from typing import Dict
 from functions.textprocessing import TextProcessor
 from tika import parser  # Note this module needs Java to be installed on the system to work.
 from functions.analysis import NLP_Analyser
 from collections import namedtuple
 from googlesearch import search
+from bs4 import BeautifulSoup
 import json
 import requests.exceptions
 import tweepy
 from urllib.parse import urldefrag, urlparse
 import requests
-from readabilipy import simple_json_from_html_string
 import re
 import csv
 from pathlib import Path
 from datetime import datetime
 import concurrent.futures
+from requests import Response
+from readabilipy import simple_json_from_html_string
+from threading import Lock
+
 
 MAX_THREADS = 50
 
@@ -66,17 +71,22 @@ class Crawler:
         # Loop through all URLs in url_depth
         for depth_index in range(0, max_depth):
             urls = url_depth[depth_index]
+            if len(urls) == 0:
+                break
             start_t = datetime.now()
-            print("Batch Scraping",len(urls),"links: ")
+
+            print("Batch Scraping", len(urls), "links: ")
             response = scraper.downloads(urls)
             print("Batch Scraping Complete.", len(response), "Links Scraped. Time Taken: ", datetime.now() - start_t)
-            for i in range(len(response)):
-                for url_new in response[i]:
+            for k in response.keys():
+                data = response[k]
+                new_links = data.html_links
+                for url_new in new_links:
                     # if link empty, continue
                     if url_new is None:
                         continue
                     flag = False  # Flag is true if website has been searched before
-                    parsed_url = urlparse(url_new.get('href'))
+                    parsed_url = urlparse(url_new)
                     new_link = parsed_url.netloc + parsed_url.path
 
                     # Check to see if website has been visited before
@@ -176,35 +186,37 @@ Data = namedtuple('Data', 'uid content_type url raw_html title text_body cleaned
 
 
 class Scraper:
+    def __init__(self):
+        self.lock = Lock()
+
+    def downloads(self, urls: [str]) -> Dict[str, Data]:
+        responses = {}
+        threads = min(MAX_THREADS, len(urls))
+        with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
+            result = executor.map(self.scrape_url, urls)
+        for r in result:
+            url = r[0]
+            data = r[1]
+            if data is not None:
+                responses[url] = data
+        return responses
 
     # Alex Ll
     # method that returns all the HTML data from a URL
-    @staticmethod
-    def scrape_url(url) -> [str]:
-        temp = []
+    def scrape_url(self, url: str, seen_urls: [str] = None) -> (str, Data):
+        data = None
         try:
-            request = requests.get(url, allow_redirects=False, timeout=0.5)
-            response = request.text
-        except:
-            response = ''
-        soup = BeautifulSoup(response, 'html.parser')
-        tags = soup.find_all('a')
-        temp.append(tags)
-        return temp
-    
-    @staticmethod
-    def downloads(urls):
-        response = []
-        threads = min(MAX_THREADS, len(urls))
-        with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
-            result = executor.map(Scraper.scrape_url, urls)
-        for r in result:
-            response.append(r[0])
-        return response
+            request_resp = requests.get(url, allow_redirects=False, timeout=1)
+            if request_resp is not None:
+                data = self.get_data_from_source(url, request_resp, seen_urls)
+        except Exception as e:
+            print(e)
+            pass
 
+        return url, data
 
     # method for getting raw text and cleaned tokens from a source, can be a html or '.pdf'
-    def get_data_from_source(self, source: str, response: Response, seen_urls=None) -> namedtuple:
+    def get_data_from_source(self, source: str, response: Response, seen_urls: [str] = None) -> namedtuple:
         processor = TextProcessor()
         if seen_urls is None:
             seen_urls = []
@@ -218,29 +230,41 @@ class Scraper:
 
         # if the two MIME types we are looking for aren't present, return None to indicate no data
         if "application/pdf" not in content_type and "text/html" not in content_type:
+            print(source, "failed content type check", content_type)
             return None
 
         # scraping stage
         if "application/pdf" in content_type:
+            content_type = "application/pdf"
             raw = response.content
             processed_text = parser.from_buffer(raw)['content']
             main_text = ' '.join(processed_text.split())
             urls = re.findall(url_regex, main_text)
         else:
+            content_type = "text/html"
             initial_html = response.text
             if 'location' in response.headers.keys():
                 location = response.headers['location']
                 if location in seen_urls:
+                    print(source, "failed recursive location check")
                     return None
                 new_seen_urls = seen_urls.append(location)
-                return self.scrape_url([location], new_seen_urls)
+                new_request = self.scrape_url(location)[1]
+                if new_request is None:
+                    return None
+                return self.scrape_url(location, new_seen_urls)[1]
             try:
+                self.lock.acquire()
                 article = simple_json_from_html_string(initial_html, use_readability=True)
             except CalledProcessError:
+                self.lock.release()
                 return None
+            finally:
+                self.lock.release()
             title = article['title']
             main_text_unprocessed = article['plain_text']
             if main_text_unprocessed is None:
+                print(source, "failed plain text check")
                 return None
             main_text = ''
             for text in main_text_unprocessed:
@@ -251,7 +275,7 @@ class Scraper:
         tokens = TextProcessor.create_tokens_from_text(main_text)
         cleaned_tokens = TextProcessor.clean_tokens(tokens)
 
-        return Data(uid="", content_type="", url=source, raw_html=initial_html, title=title, text_body=main_text,
+        return Data(uid="", content_type=content_type, url=source, raw_html=initial_html, title=title, text_body=main_text,
                     cleaned_tokens=cleaned_tokens,
                     html_links=urls)
 

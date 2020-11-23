@@ -1,6 +1,5 @@
 from functions.dataretrieval import Crawler, Scraper
 from functions.textprocessing import TextProcessor
-from functions.analysis import NLP_Analyser
 from BackEnd.dbmanager import DbManager
 
 
@@ -11,9 +10,7 @@ def main(source_urls: [str]):
     NUMBER_OF_TWEETS_RESULTS_WANTED = 20
     MAXIMUM_URL_CRAWL_DEPTH = 3
 
-    processor = TextProcessor()
     crawler = Crawler()
-    analyser = NLP_Analyser()
     db_manager = DbManager()
     scraper = Scraper()
     
@@ -67,7 +64,7 @@ def main(source_urls: [str]):
 
     print("-------- SCRAPING GOOGLE URLS --------")
     # retrieve and store all the data about a URL
-    data = scraper.scrape_url(urls_google)
+    data = scraper.downloads(urls_google)
     if data is not None:
         for k in data.keys():
             scraped_data[k] = data[k]
@@ -75,7 +72,7 @@ def main(source_urls: [str]):
 
     print("-------- SCRAPING TWITTER --------")
     # crawling with Twitter
-    crawled_tweets = crawler.twitter_crawl(key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
+    #crawled_tweets = crawler.twitter_crawl(key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
 
     print("-------- EXAMPLE SIMILARITY CHECKING --------")
     # do some similarity checking for the documents so far crawled
@@ -88,12 +85,12 @@ def main(source_urls: [str]):
     # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
     recursive_urls = crawler.url_cleaner(urls)
     final_crawled_urls = crawler.recursive_url_crawl(recursive_urls, MAXIMUM_URL_CRAWL_DEPTH)
-    # scraped_data.update(final_crawled_urls)
+    scraped_data.update(final_crawled_urls)
 
     print("------- SCRAPE REMAINING URLS -------")
     # retrieve and store all the data about a URL's not yet scraped
     urls_to_scrape = [u for u in urls if u not in scraped_data.keys()]
-    data = scraper.scrape_url(urls_to_scrape)
+    data = scraper.downloads(urls_to_scrape)
     for k in data.keys():
         scraped_data[k] = data[k]
 
