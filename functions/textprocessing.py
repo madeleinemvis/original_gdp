@@ -4,13 +4,15 @@ import os
 import spacy
 import numpy as np
 
-from collections import Counter, OrderedDict
 from typing import Tuple
 from bs4 import BeautifulSoup
 from bs4.element import Comment, PageElement
-from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 
+try:
+    from collections.abc import Counter, OrderedDict
+except ImportError:
+    from collections import Counter, OrderedDict
 
 class TextProcessor:
 
@@ -70,20 +72,7 @@ class TextProcessor:
     # Clean tweet text by removing links, special characters
     @staticmethod
     def clean_tweet(tweet: str) -> str:
-        return ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t]) |(\w+:\/\/\S+)", " ", tweet).split())
-
-    @staticmethod
-    def clean_location(location) -> str:
-        location = location.decode("utf-8")
-        if len(location) == 0:
-            return ""
-
-        characters_to_remove = string.punctuation.replace(',', '') + "1234567890"
-
-        if len(location.split(' ')) < 4 and not any(elem in location for elem in characters_to_remove):
-            return location.lower()
-        else:
-            return ""
+        return ' '.join(re.sub(r"(@[A-Za-z0-9]+)|([^0-9A-Za-z \t]) |(\w+:\/\/\S+)", " ", tweet).split())
 
     @staticmethod
     def remove_emoji(location):

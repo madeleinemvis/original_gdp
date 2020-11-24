@@ -1,20 +1,22 @@
-from typing import Dict
-from functions.textprocessing import TextProcessor
-from tika import parser  # Note this module needs Java to be installed on the system to work.
-from functions.analysis import NLP_Analyser
-from collections import namedtuple
-from googlesearch import search
-from bs4 import BeautifulSoup
 import json
 import requests.exceptions
 import tweepy
-from urllib.parse import urldefrag, urlparse
 import requests
 import re
 import csv
+import concurrent.futures
+
+from functions.textprocessing import TextProcessor
+from urllib.parse import urldefrag, urlparse
+from tika import parser  # Note this module needs Java to be installed on the system to work.
+from collections import namedtuple
+from googlesearch import search
+from bs4 import BeautifulSoup
 from pathlib import Path
 from datetime import datetime
-import concurrent.futures
+
+from functions.analysis import NLP_Analyser
+
 
 MAX_THREADS = 50
 
