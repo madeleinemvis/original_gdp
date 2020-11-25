@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from documents.models import Document
+from documents.models import Document, Claim
 
 
 class DocumentSerializer(serializers.ModelSerializer):
@@ -13,3 +13,10 @@ class DocumentSerializer(serializers.ModelSerializer):
                   'text_body',
                   'cleaned_tokens',
                   'html_links')
+
+
+class ClaimSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Claim
+        fields = ('uid',
+                  'claim')

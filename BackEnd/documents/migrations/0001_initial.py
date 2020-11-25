@@ -4,16 +4,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
     ]
+
+
 operations = [
+    migrations.CreateModel(
+        name='Claim',
+        fields=[
+            ('uid', models.TextField(blank=False, default='')),
+            ('claim', models.TextField(blank=False, default='')),
+        ]
+    ),
     migrations.CreateModel(
         name='Document',
         fields=[
-            ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
             ('uid', models.TextField(blank=False, default='')),
             ('content_type', models.TextField(blank=False, default='')),
             ('url', models.TextField(default='')),

@@ -3,6 +3,7 @@ import json
 from django.shortcuts import render
 
 from django.http.response import JsonResponse
+from django.utils.datastructures import MultiValueDictKeyError
 from rest_framework.parsers import JSONParser
 from rest_framework import status
 from documents.models import Document
@@ -29,36 +30,22 @@ def document_list(request):
     # Retrieving URLs and PDFs from request
     elif request.method == 'POST':
         file_handler = FileHandler()
-
-        uid = request.data['uid']
-        document_urls = request.data['urls']
-        document_pdfs = request.data['pdfs']
-        # If there are URLs
-        if document_urls:
-            print("urls")
-            # Scrapes all URLs, UID for manifesto and list of Documents (namedtuple)
-            documents = file_handler.read_docs(document_urls)
-            # Store scraped Documents
-            d_save = []
-            for d in documents:
-                # _id generated automatically
-                document = Document(uid=uid, content_type="web-page", url=d.url, raw_html=d.raw_html, title=d.title, text_body=d.text_body, cleaned_tokens=d.cleaned_tokens, html_links=d.html_links)
-                d_save.append(document)
-                print("saving document")
-                # document.save()
-            Document.objects.bulk_create(d_save)
-
-        if document_pdfs:
-            print("pdfs")
-            # Scrapes all PDFs
-            documents = file_handler.read_docs(document_pdfs)
-            # Store scraped documents
-            d_save = []
-            for d in documents:
-                # _id generated automatically
-                d_save.append(Document(uid=uid, content_type="pdf", url=d.url, raw_html=d.raw_html, title=d.title, text_body=d.text_body, cleaned_tokens=d.cleaned_tokens, html_links=d.html_links))
-            Document.objects.bulk_create(d_save)
-        return JsonResponse(data=request.data, status=status.HTTP_201_CREATED, safe=False)
+        uid, claim, document_urls, document_pdfs, zip_file = file_handler.get_objects_from_request(request)
+        # Fails if no UID or claim, or if no urls/pdfs/zip files in requests
+        if not ((uid is None or claim is None) or
+                (document_urls is None and document_pdfs is None and zip_file is None)):
+            file_handler.save_claim(uid, claim)
+            if document_urls:
+                documents = file_handler.read_docs(document_urls)
+                file_handler.save_documents(uid, 'web-page', documents)
+            if document_pdfs:
+                documents = file_handler.read_docs(document_pdfs)
+                file_handler.save_documents(uid, 'pdf', documents)
+            if zip_file:
+                documents = file_handler.read_zip_file(uid, zip_file)
+                # TODO: Is the content type remaining PDF?
+                file_handler.save_documents(uid, 'pdf', documents)
+            return JsonResponse(data=request.data, status=status.HTTP_201_CREATED, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
 

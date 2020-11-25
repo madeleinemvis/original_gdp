@@ -1,6 +1,4 @@
 from djongo import models
-from django import forms
-from django.contrib.postgres.fields import ArrayField
 from jsonfield import JSONField
 
 
@@ -13,3 +11,8 @@ class Document(models.Model):
     text_body = models.TextField(blank=True, default='')
     cleaned_tokens = JSONField()
     html_links = JSONField()
+
+
+class Claim(models.Model):
+    uid = models.TextField(blank=False, default='')
+    claim = models.TextField(blank=False, default='')
