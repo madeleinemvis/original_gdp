@@ -1,7 +1,7 @@
 from typing import Dict
 from functions.textprocessing import TextProcessor
 from tika import parser  # Note this module needs Java to be installed on the system to work.
-from analysis import NLP_Analyser
+from .analysis import NLP_Analyser
 from collections import namedtuple
 from googlesearch import search
 from bs4 import BeautifulSoup

@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'frontend',
 
     'files.apps.FilesConfig',
-
+    'functions.apps.FunctionsConfig',
     'tweets.apps.TweetsConfig',
     'corsheaders'
 ]
