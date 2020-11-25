@@ -76,11 +76,11 @@ class FileHandler:
         shutil.rmtree(extract_path)
 
     @staticmethod
-    def get_objects_from_request(request):
-        uid = request.data['uid']
-        claim = request.data['claim']
-        document_urls = request.data['urls']
-        document_pdfs = request.data['pdfs']
+    def get_objects_from_request(request, request_form):
+        uid = request_form.cleaned_data['uid']
+        claim = request_form.cleaned_data['claim']
+        document_urls = request_form.cleaned_data['urls']
+        document_pdfs = request_form.cleaned_data['pdfs']
         zip_file = None
         try:
             zip_file = request.FILES['files']

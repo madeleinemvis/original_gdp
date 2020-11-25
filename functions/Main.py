@@ -31,7 +31,6 @@ def main(source_urls: [str], claim: str):
     all_sentences = db_manager.get_all_main_texts('some_random_hash')
     document_html_links = db_manager.get_all_html_links('some_random_hash')
     claim = db_manager.get_claim('some_random_hash')
-    print("CLAIM IS: ", claim)
 
     # if no tokens stored in database
     if len(all_sentences) == 0:
