@@ -3,7 +3,7 @@ import string
 import spacy
 import numpy as np
 
-from typing import Tuple
+from typing import Tuple, List
 from bs4 import BeautifulSoup
 from bs4.element import Comment
 from nltk.stem import WordNetLemmatizer
@@ -156,7 +156,7 @@ class TextProcessor:
 
     # method altered from https://towardsdatascience.com/textrank-for-keyword-extraction-by-python-c0bae21bcec0
     @staticmethod
-    def calculate_keywords_with_text_rank(text, number_of_keywords=10):
+    def calculate_keywords_with_text_rank(text, number_of_keywords=10) -> List[Tuple[str, float]]:
         word_types = ['NOUN', 'PROPN']
 
         with open('../../Data/stopwords.txt') as file:
@@ -167,10 +167,9 @@ class TextProcessor:
 
         # make the sentences from the input text using spacy
         sentences = [[token.text.lower() for token in sent if token.pos_ in word_types and token.text not in stop_words
-                      and token.text not in string.punctuation]
+                      and token.text not in string.punctuation and len(token) > 1]
                      for sent in document.sents]
         sentences = list(filter(None, sentences))
-
 
         # generate a vocabulary of the text
         vocab = OrderedDict()
@@ -200,7 +199,7 @@ class TextProcessor:
             node_weight[word] = weight_matrix[index]
 
         word_ranking = OrderedDict(sorted(node_weight.items(), key=lambda t: t[1], reverse=True))
-        return [key for key, value in list(word_ranking.items())[:number_of_keywords]]
+        return [(key, value) for key, value in list(word_ranking.items())[:number_of_keywords]]
 
     # method taken from: https://towardsdatascience.com/textrank-for-keyword-extraction-by-python-c0bae21bcec0
     @staticmethod
