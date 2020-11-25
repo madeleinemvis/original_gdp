@@ -3,62 +3,37 @@ import json
 from django.shortcuts import render
 
 from django.http.response import JsonResponse
+from django.utils.datastructures import MultiValueDictKeyError
 from rest_framework.parsers import JSONParser
 from rest_framework import status
 from documents.models import Document
 from documents.serializers import DocumentSerializer
 from rest_framework.decorators import api_view
 from filehandler import FileHandler
+from documents.forms import RequestForm
 
 
-# Create your views here.
-
-@api_view(['GET', 'POST', 'DELETE'])
+@api_view(['POST'])
 def document_list(request):
-    # GET list of documents, POST a new document, DELETE all documents
-    if request.method == 'GET':
-        documents = Document.objects.all()
-
-        title = request.GET.get('title', None)
-        if title is not None:
-            documents = documents.filter(title__icontains=title)
-
-        tutorials_serializer = DocumentSerializer(documents, many=True)
-        return JsonResponse(tutorials_serializer.data, safe=False)
-        # 'safe=False' for objects serialization
-    # Retrieving URLs and PDFs from request
-    elif request.method == 'POST':
+    # POSTING URLs and PDFs from request
+    if request.method == 'POST':
         file_handler = FileHandler()
-
-        uid = request.data['uid']
-        document_urls = request.data['urls']
-        document_pdfs = request.data['pdfs']
-        zip_file = request.FILES['files']
-        # If there are URLs
-        if document_urls:
-            print("urls")
-            # Scrapes all URLs, UID for manifesto and list of Documents (namedtuple)
-            documents = file_handler.read_docs(document_urls)
-            # Store scraped Documents
-            d_save = file_handler.set_documents(uid, documents)
-            Document.objects.bulk_create(d_save)
-
-        if document_pdfs:
-            print("pdfs")
-            # Scrapes all PDFs
-            documents = file_handler.read_docs(document_pdfs)
-            # Store scraped documents
-            d_save = file_handler.set_documents(uid, documents)
-            Document.objects.bulk_create(d_save)
-
-        if zip_file:
-            print("zip files")
-            # Extract, read and process all documents
-            documents = file_handler.read_zip_file(uid, zip_file)
-            d_save = file_handler.set_documents(uid, documents)
-            Document.objects.bulk_create(d_save)
-
-        return JsonResponse(data=request.data, status=status.HTTP_201_CREATED, safe=False)
+        request_form = RequestForm(request.POST, request.FILES)
+        if request_form.is_valid():
+            uid, claim, document_urls, document_pdfs, zip_file = file_handler.get_objects_from_request(request, request_form)
+            # FAILS if no documents attached
+            if not(document_urls is None and document_pdfs is None and zip_file is None):
+                file_handler.save_claim(uid, claim)
+                if document_urls:
+                    documents = file_handler.read_docs(document_urls)
+                    file_handler.save_documents(uid, 'web-page', documents)
+                if document_pdfs:
+                    documents = file_handler.read_docs(document_pdfs)
+                    file_handler.save_documents(uid, 'pdf', documents)
+                if zip_file:
+                    documents = file_handler.read_zip_file(uid, zip_file)
+                    file_handler.save_documents(uid, 'pdf', documents)
+                return JsonResponse(data=request.data, status=status.HTTP_201_CREATED, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
 
