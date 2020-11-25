@@ -133,7 +133,7 @@ class TextProcessor:
 
         # removing all stop words
         stop_words = set()
-        with open('../Data/stopwords.txt') as f:
+        with open('../../Data/stopwords.txt') as f:
             lines = f.readlines()
             for line in lines:
                 stop_words.add(line.rstrip())
@@ -159,7 +159,7 @@ class TextProcessor:
     def calculate_keywords_with_text_rank(text, number_of_keywords=10):
         word_types = ['NOUN', 'PROPN']
 
-        with open('../Data/stopwords.txt') as file:
+        with open('../../Data/stopwords.txt') as file:
             lines = file.readlines()
             stop_words = set([line.rstrip() for line in lines])
 

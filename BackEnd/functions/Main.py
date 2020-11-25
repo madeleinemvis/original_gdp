@@ -1,6 +1,6 @@
-from functions.dataretrieval import Crawler, Scraper
-from functions.textprocessing import TextProcessor
-from functions.analysis import NLP_Analyser
+from BackEnd.functions.dataretrieval import Crawler, Scraper
+from BackEnd.functions.textprocessing import TextProcessor
+from BackEnd.functions.analysis import NLP_Analyser
 from BackEnd.dbmanager import DbManager
 
 
@@ -92,6 +92,7 @@ def main(source_urls: [str], claim: str):
     recursive_urls = crawler.url_cleaner(urls)
     final_crawled_urls = crawler.recursive_url_crawl(recursive_urls, MAXIMUM_URL_CRAWL_DEPTH)
     # scraped_data.update(final_crawled_urls)
+    # TODO does the above line need commenting out? - still working with recursive crawling with get_data_from_source()
 
     print("------- SCRAPE REMAINING URLS -------")
     # retrieve and store all the data about a URL's not yet scraped
