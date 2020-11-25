@@ -73,9 +73,11 @@ def document_detail(request, pk):
                             status=status.HTTP_204_NO_CONTENT)
 
 
+@api_view(['POST'])
 def keywords_wordcloud(request):
-    if request.method() == "GET":
+    datavisualiser = DataVisualiser()
+    if request.method == "POST":
         uid = request.data['uid']
-        keywords = DataVisualiser.word_cloud(uid)
+        keywords = datavisualiser.word_cloud(uid)
         return JsonResponse(data=keywords, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
