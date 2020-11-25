@@ -45,12 +45,12 @@ INSTALLED_APPS = [
 
     'files.apps.FilesConfig',
     'functions.apps.FunctionsConfig',
-    'tweets.apps.TweetsConfig',
-    'corsheaders'
+    'tweets.apps.TweetsConfig'
+    # 'corsheaders'
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    # 'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

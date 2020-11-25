@@ -14,13 +14,13 @@ from gensim.models import CoherenceModel
 import spacy
 
 # class for doing all the NLP analysis needed
-from functions.textprocessing import TextProcessor
+from .textprocessing import TextProcessor
 from textblob import TextBlob
 
 
 class NLP_Analyser:
     def __init__(self):
-        with open('../Data/stopwords.txt') as f:
+        with open('../../Data/stopwords.txt') as f:
             stopwords = set()
             lines = f.readlines()
             for line in lines:

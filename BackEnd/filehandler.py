@@ -80,12 +80,12 @@ class FileHandler:
         claim = request_form.cleaned_data['claim']
         document_urls = request_form.cleaned_data['urls']
         document_pdfs = request_form.cleaned_data['pdfs']
-        zip_file = None
+        files = None
         try:
-            zip_file = request.FILES['files']
+            files = request.FILES.getlist('files')
         except MultiValueDictKeyError:
             pass
-        return uid, claim, document_urls, document_pdfs, zip_file
+        return uid, claim, document_urls, document_pdfs, files
 
     def save_documents(self, uid: str, content_type: str, documents):
         d_save = self.set_documents(uid, content_type, documents)
