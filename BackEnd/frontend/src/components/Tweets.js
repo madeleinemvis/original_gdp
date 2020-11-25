@@ -9,6 +9,7 @@ import {
 import { Scrollbar } from "react-scrollbars-custom";
 
 import DB from '../services/db.service';
+import http from '../http-common';
 
 const Tweets = () => {
     
@@ -19,8 +20,9 @@ const Tweets = () => {
     }, []);
 
     const retrieveTweets = () => {
-        DB.getAll('tweets')
+        http.get('/tweets')
             .then( res => {
+                console.log('api')
                 setTweets(res.data)
                 console.log(res.data)
             })
