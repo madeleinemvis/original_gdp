@@ -72,7 +72,8 @@ def main(source_urls: [str]):
         if data is not None:
             scraped_data[url] = data
             urls.update(data.html_links)
-            urls.update(urls_google) # TODO check: this looks like it should be 'urls.add(url)' ?
+
+    urls.update(urls_google)
 
     print("-------- SCRAPING TWITTER --------")
     # crawling with Twitter
@@ -90,7 +91,7 @@ def main(source_urls: [str]):
     recursive_urls = crawler.url_cleaner(urls)
     final_crawled_urls = crawler.recursive_url_crawl(recursive_urls, MAXIMUM_URL_CRAWL_DEPTH)
     # scraped_data.update(final_crawled_urls)
-    # TODO does the above line need commenting out?
+    # TODO does the above line need commenting out? - still working with recursive crawling with get_data_from_source()
 
     print("------- SCRAPE REMAINING URLS -------")
     # retrieve and store all the data about a URL's not yet scraped
