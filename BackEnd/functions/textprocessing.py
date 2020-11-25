@@ -1,15 +1,17 @@
 import re
 import string
-import os
 import spacy
 import numpy as np
 
-from collections import Counter, OrderedDict
 from typing import Tuple
 from bs4 import BeautifulSoup
-from bs4.element import Comment, PageElement
-from nltk.corpus import stopwords
+from bs4.element import Comment
 from nltk.stem import WordNetLemmatizer
+
+try:
+    from collections.abc import Counter, OrderedDict
+except ImportError:
+    from collections import Counter, OrderedDict
 
 
 class TextProcessor:
@@ -70,20 +72,7 @@ class TextProcessor:
     # Clean tweet text by removing links, special characters
     @staticmethod
     def clean_tweet(tweet: str) -> str:
-        return ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t]) |(\w+:\/\/\S+)", " ", tweet).split())
-
-    @staticmethod
-    def clean_location(location) -> str:
-        location = location.decode("utf-8")
-        if len(location) == 0:
-            return ""
-
-        characters_to_remove = string.punctuation.replace(',', '') + "1234567890"
-
-        if len(location.split(' ')) < 4 and not any(elem in location for elem in characters_to_remove):
-            return location.lower()
-        else:
-            return ""
+        return ' '.join(re.sub(r"(@[A-Za-z0-9]+)|([^0-9A-Za-z \t]) |(\w+:\/\/\S+)", " ", tweet).split())
 
     @staticmethod
     def remove_emoji(location):
@@ -144,7 +133,7 @@ class TextProcessor:
 
         # removing all stop words
         stop_words = set()
-        with open('../stopwords.txt') as f:
+        with open('../Data/stopwords.txt') as f:
             lines = f.readlines()
             for line in lines:
                 stop_words.add(line.rstrip())
@@ -170,7 +159,7 @@ class TextProcessor:
     def calculate_keywords_with_text_rank(text, number_of_keywords=10):
         word_types = ['NOUN', 'PROPN']
 
-        with open('../stopwords.txt') as file:
+        with open('../Data/stopwords.txt') as file:
             lines = file.readlines()
             stop_words = set([line.rstrip() for line in lines])
 

@@ -31,7 +31,6 @@ def main(source_urls: [str], claim: str):
     all_sentences = db_manager.get_all_main_texts('some_random_hash')
     document_html_links = db_manager.get_all_html_links('some_random_hash')
     claim = db_manager.get_claim('some_random_hash')
-    print("CLAIM IS: ", claim)
 
     # if no tokens stored in database
     if len(all_sentences) == 0:
@@ -74,13 +73,14 @@ def main(source_urls: [str], claim: str):
         if data is not None:
             scraped_data[url] = data
             urls.update(data.html_links)
-            urls.update(urls_google)
+
+    urls.update(urls_google)
 
     print("-------- SCRAPING TWITTER --------")
     # crawling with Twitter
     crawled_tweets = crawler.twitter_crawl(key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
 
-    print("-------- EXAMPLE SIMILARITY CHECKING --------")
+    # print("-------- EXAMPLE SIMILARITY CHECKING --------")
     # do some similarity checking for the documents so far crawled
     # Throws errors if links weren't searched 
     #analyser.create_topic_model(scraped_data)
