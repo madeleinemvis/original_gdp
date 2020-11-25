@@ -8,21 +8,39 @@ import {
     Jumbotron
 } from 'react-bootstrap';
 
-
-import FileUpload from "./FileUpload";
 const Home = () => {
     // https://dev.to/fuchodeveloper/dynamic-form-fields-in-react-1h6c
+
     const [inputFields, setInputFields] = useState([
         { link: '' }
     ]);
-    const [inputFiles, setInputFiles] = useState([
-        { file: '' }
-    ])
+    const [pdfs, setPdfs] = useState([
+        { pdfs: '' }
+    ]);
+    const [files, setFiles] = useState([])
     
     const handleSubmit = e => {
         e.preventDefault();
-        console.log("inputFields", inputFields);
+        console.log(inputFields);
     };
+
+    const upload = e => {
+        e.preventDefault();
+        setFiles([])
+        var temp = []
+        var fs = e.target.files
+        var f
+        for (var i = 0; i < fs.length; i++) {
+
+            
+            f = fs[i];
+        
+            temp.push(f)
+            setFiles([...files, f])
+        }
+        
+        console.log(files)
+    }
 
     const handleInputChange = (index, event) => {
         const values = [...inputFields];
@@ -40,6 +58,23 @@ const Home = () => {
       const values = [...inputFields];
       values.splice(index, 1);
       setInputFields(values);
+    };
+
+    const handleInputChangePdf = (index, event) => {
+        const values = [...pdfs];
+        values[index].pdfs = event.target.value;
+        setPdfs(values);
+    };
+    const handleAddFieldsPDF = () => {
+        const values = [...inputFields];
+        values.push({ link: ''});
+        setInputFields(values);
+      };
+    
+    const handleRemoveFieldsPDF = index => {
+      const values = [...pdfs];
+      values.splice(index, 1);
+      setPdfs(values);
     };
 
 
@@ -66,6 +101,18 @@ const Home = () => {
                     <h3>Add your links to be analysed</h3>   
 
                     <form onSubmit={handleSubmit}>
+                        {pdfs.map((pdf, index) => (
+                            <div key={`${pdf}~${index}`}>
+                                <div className="input-group">
+                                    <input type="text" className="form-control" placeholder="PDF URL" aria-label="pdf" aria-describedby="basic-addon2" onChange={event => handleInputChangePdf(index, event)}/>
+                                    <div className="input-group-append">
+                                      <button className="btn btn-outline-secondary" type="button" onClick={() => handleAddFieldsPDF()}>+</button>
+                                      <button className="btn btn-outline-secondary" type="button" onClick={() => handleRemoveFieldsPDF(index)}>-</button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}                            
+                        <br></br>
                         {inputFields.map((inputField, index) => (
                             <div key={`${inputField}~${index}`}>
                                 <div className="input-group">
@@ -78,6 +125,9 @@ const Home = () => {
                             </div>
                         ))}                            
                         <br></br>
+                        <input type="file" id="files" onChange={upload} name="files" multiple/>
+                        <br></br>
+                        
                         <div className="submit-button">
                             <button
                               className="btn btn-primary mr-2"
@@ -90,23 +140,12 @@ const Home = () => {
                     </form>        
                     
                     <br/>
-                        
-                    <FileUpload/>                               
-                
-                
+
                 </Col>
                
             </Row>
-            
-            <Row>
-            <pre>
-                {JSON.stringify(inputFields, null, 2)}
-            </pre>
-                    
-            </Row> 
-            <Row>            
-                                
-            </Row>       
+
+     
         </Container>
     </React.Fragment> 
     )
