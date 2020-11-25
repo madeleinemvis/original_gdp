@@ -73,7 +73,8 @@ def main(source_urls: [str], claim: str):
         if data is not None:
             scraped_data[url] = data
             urls.update(data.html_links)
-            urls.update(urls_google)
+
+    urls.update(urls_google)
 
     print("-------- SCRAPING TWITTER --------")
     # crawling with Twitter
