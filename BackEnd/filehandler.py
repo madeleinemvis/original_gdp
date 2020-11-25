@@ -1,6 +1,8 @@
 import os
 import shutil
 import zipfile
+from ast import literal_eval
+
 from dbmanager import DbManager
 
 from django.utils.datastructures import MultiValueDictKeyError
@@ -19,7 +21,8 @@ class FileHandler:
     def __init__(self):
         self.db_manager = DbManager()
 
-    def read_docs(self, docs: [str]):
+    def read_docs(self, docs: str):
+        docs = literal_eval(docs)
         documents = []
         for d in docs:
             documents.append(self.scraper.get_data_from_source(d))

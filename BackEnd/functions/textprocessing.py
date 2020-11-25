@@ -133,7 +133,7 @@ class TextProcessor:
 
         # removing all stop words
         stop_words = set()
-        with open('../../Data/stopwords.txt') as f:
+        with open('../Data/stopwords.txt') as f:
             lines = f.readlines()
             for line in lines:
                 stop_words.add(line.rstrip())
