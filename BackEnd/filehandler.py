@@ -2,12 +2,11 @@ import os
 import shutil
 import zipfile
 from dbmanager import DbManager
-import sys
 
 from django.utils.datastructures import MultiValueDictKeyError
 from documents.models import Document, Claim
 
-sys.path.append('../')
+
 from functions.dataretrieval import Scraper
 
 
