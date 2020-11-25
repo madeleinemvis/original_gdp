@@ -1,18 +1,18 @@
 import re
 import string
-import os
 import spacy
 import numpy as np
 
 from typing import Tuple
 from bs4 import BeautifulSoup
-from bs4.element import Comment, PageElement
+from bs4.element import Comment
 from nltk.stem import WordNetLemmatizer
 
 try:
     from collections.abc import Counter, OrderedDict
 except ImportError:
     from collections import Counter, OrderedDict
+
 
 class TextProcessor:
 
