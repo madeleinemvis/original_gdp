@@ -1,5 +1,5 @@
 import React, {  useState } from 'react';
-
+import JSZip from 'jszip'
 import { 
     Button,
     Col, 
@@ -17,29 +17,18 @@ const Home = () => {
     const [pdfs, setPdfs] = useState([
         { pdfs: '' }
     ]);
-    const [files, setFiles] = useState([])
+    const formData = new FormData()
     
     const handleSubmit = e => {
         e.preventDefault();
-        console.log(inputFields);
+        console.log(formData);
     };
 
+    // Source: https://medium.com/@tchiayan/compressing-single-file-or-multiple-files-to-zip-format-on-client-side-6607a1eca662
     const upload = e => {
         e.preventDefault();
-        setFiles([])
-        var temp = []
-        var fs = e.target.files
-        var f
-        for (var i = 0; i < fs.length; i++) {
-
-            
-            f = fs[i];
         
-            temp.push(f)
-            setFiles([...files, f])
-        }
         
-        console.log(files)
     }
 
     const handleInputChange = (index, event) => {
@@ -66,11 +55,10 @@ const Home = () => {
         setPdfs(values);
     };
     const handleAddFieldsPDF = () => {
-        const values = [...inputFields];
-        values.push({ link: ''});
-        setInputFields(values);
-      };
-    
+        const values = [...pdfs];
+        values.push({ pdfs: ''});
+        setPdfs(values);
+    };    
     const handleRemoveFieldsPDF = index => {
       const values = [...pdfs];
       values.splice(index, 1);
@@ -99,7 +87,7 @@ const Home = () => {
                 
                 
                     <h3>Add your links to be analysed</h3>   
-
+                    <hr/>
                     <form onSubmit={handleSubmit}>
                         {pdfs.map((pdf, index) => (
                             <div key={`${pdf}~${index}`}>
