@@ -6,7 +6,7 @@ import re
 import csv
 import concurrent.futures
 
-from functions.textprocessing import TextProcessor
+from BackEnd.functions.textprocessing import TextProcessor
 from urllib.parse import urldefrag, urlparse
 from tika import parser  # Note this module needs Java to be installed on the system to work.
 from collections import namedtuple
@@ -15,7 +15,7 @@ from bs4 import BeautifulSoup
 from pathlib import Path
 from datetime import datetime
 
-from functions.analysis import NLP_Analyser
+from BackEnd.functions.analysis import NLP_Analyser
 
 
 MAX_THREADS = 50
@@ -23,7 +23,7 @@ MAX_THREADS = 50
 # class for crawling and scraping the internet
 class Crawler:
     def __init__(self):
-        with open('../Data/blacklist.txt') as f:
+        with open('../../Data/blacklist.txt') as f:
             regexes = []
             lines = f.readlines()
             for line in lines:
@@ -118,7 +118,7 @@ class Crawler:
 
     @staticmethod
     def twitter_init():
-        with open("../twitter_credentials.json", "r") as file:
+        with open("../../Data/twitter_credentials.json", "r") as file:
             creds = json.load(file)
 
         auth = tweepy.OAuthHandler(creds['CONSUMER_KEY'], creds['CONSUMER_SECRET'])
@@ -128,7 +128,7 @@ class Crawler:
 
     @staticmethod
     def location_lists_init():
-        path = Path(__file__).parent / "../Data/"
+        path = Path(__file__).parent / "../../Data/"
 
         with open(path / 'countries.txt', newline='', encoding='utf8') as f:
             reader = csv.reader(f)
