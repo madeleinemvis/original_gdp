@@ -6,7 +6,7 @@ import re
 import csv
 import concurrent.futures
 
-from BackEnd.functions.textprocessing import TextProcessor
+from .textprocessing import TextProcessor
 from urllib.parse import urldefrag, urlparse
 from tika import parser  # Note this module needs Java to be installed on the system to work.
 from collections import namedtuple
@@ -15,7 +15,7 @@ from bs4 import BeautifulSoup
 from pathlib import Path
 from datetime import datetime
 
-from BackEnd.functions.analysis import NLP_Analyser
+from .analysis import NLP_Analyser
 
 
 MAX_THREADS = 50
