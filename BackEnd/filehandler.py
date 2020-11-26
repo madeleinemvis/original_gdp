@@ -8,7 +8,7 @@ import sys
 from documents.models import Document
 
 sys.path.append('../')
-from functions.dataretrieval import Scraper
+from BackEnd.functions.dataretrieval import Scraper
 
 
 class FileHandler:

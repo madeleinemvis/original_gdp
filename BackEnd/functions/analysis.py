@@ -1,12 +1,6 @@
-import re
-import numpy as np
-import pandas as pd
-from pprint import pprint
-
 # Gensim
 import gensim
 import gensim.corpora as corpora
-from gensim.utils import simple_preprocess
 from gensim.matutils import cossim
 from gensim.models import CoherenceModel
 
@@ -14,13 +8,13 @@ from gensim.models import CoherenceModel
 import spacy
 
 # class for doing all the NLP analysis needed
-from functions.textprocessing import TextProcessor
+from BackEnd.functions.textprocessing import TextProcessor
 from textblob import TextBlob
 
 
 class NLP_Analyser:
     def __init__(self):
-        with open('../stopwords.txt') as f:
+        with open('../../Data/stopwords.txt') as f:
             stopwords = set()
             lines = f.readlines()
             for line in lines:

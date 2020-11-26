@@ -1,5 +1,5 @@
-from functions.dataretrieval import Crawler, Scraper
-from functions.textprocessing import TextProcessor
+from BackEnd.functions.dataretrieval import Crawler, Scraper
+from BackEnd.functions.textprocessing import TextProcessor
 from BackEnd.dbmanager import DbManager
 
 

@@ -144,7 +144,7 @@ class TextProcessor:
 
         # removing all stop words
         stop_words = set()
-        my_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../stopwords.txt')
+        my_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../Data/stopwords.txt')
         with open(my_path) as f:
             lines = f.readlines()
             for line in lines:
@@ -171,7 +171,7 @@ class TextProcessor:
     def calculate_keywords_with_text_rank(text, number_of_keywords=10):
         word_types = ['NOUN', 'PROPN']
 
-        my_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../stopwords.txt')
+        my_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../Data/stopwords.txt')
         with open(my_path) as file:
             lines = file.readlines()
             stop_words = set([line.rstrip() for line in lines])

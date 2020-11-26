@@ -1,11 +1,10 @@
 from subprocess import CalledProcessError
 from typing import Dict
-from functions.textprocessing import TextProcessor
+from BackEnd.functions.textprocessing import TextProcessor
 from tika import parser  # Note this module needs Java to be installed on the system to work.
-from functions.analysis import NLP_Analyser
+from BackEnd.functions.analysis import NLP_Analyser
 from collections import namedtuple
 from googlesearch import search
-from bs4 import BeautifulSoup
 import json
 import requests.exceptions
 import tweepy
@@ -26,7 +25,7 @@ MAX_THREADS = 50
 # class for crawling and scraping the internet
 class Crawler:
     def __init__(self):
-        with open('../blacklist.txt') as f:
+        with open('../../Data/blacklist.txt') as f:
             regexes = []
             lines = f.readlines()
             for line in lines:
@@ -114,7 +113,7 @@ class Crawler:
 
     @staticmethod
     def twitter_init():
-        with open("../twitter_credentials.json", "r") as file:
+        with open("../../twitter_credentials.json", "r") as file:
             creds = json.load(file)
 
         auth = tweepy.OAuthHandler(creds['CONSUMER_KEY'], creds['CONSUMER_SECRET'])
