@@ -120,7 +120,7 @@ class Crawler:
 
     @staticmethod
     def twitter_init():
-        with open("../Data/twitter_credentials.json", "r") as file:
+        with open(Path(__file__).parent.parent.parent / 'Data' / "twitter_credentials.json", "r") as file:
             creds = json.load(file)
 
         auth = tweepy.OAuthHandler(creds['CONSUMER_KEY'], creds['CONSUMER_SECRET'])
