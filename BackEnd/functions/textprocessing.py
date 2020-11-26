@@ -157,6 +157,9 @@ class TextProcessor:
 
     # method altered from https://towardsdatascience.com/textrank-for-keyword-extraction-by-python-c0bae21bcec0
     def calculate_keywords_with_text_rank(self, text, number_of_keywords=10) -> List[Tuple[str, float]]:
+        if number_of_keywords < 1:
+            return []
+
         word_types = ['NOUN', 'PROPN']
 
         document = spacy.load('en_core_web_sm')(text)

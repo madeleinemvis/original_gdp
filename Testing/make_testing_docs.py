@@ -40,8 +40,6 @@ if __name__ == "__main__":
         if not os.path.exists(folder_against):
             os.makedirs(folder_against)
 
-
-
         against_sources = []
         for_sources = []
         for source in sources:
