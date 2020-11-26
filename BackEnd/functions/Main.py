@@ -40,7 +40,8 @@ def main(source_urls: [str], claim: str):
         # if there are less than 5 documents, scrape tokens
         if len(source_urls) < 5:
             all_tokens = [t for s in scraped_data.values() for t in s.tokens]
-            key_words = TextProcessor.calculate_key_words(all_tokens, NUMBER_OF_KEY_WORDS)
+            key_words_with_scores = TextProcessor.calculate_key_words(all_tokens, NUMBER_OF_KEY_WORDS)
+            key_words = [k for k, v in key_words_with_scores]
             print(f"Most frequent key_words: {key_words}")
         else:
             all_sentences = " ".join([s.text_body for s in scraped_data.values()])

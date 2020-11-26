@@ -150,10 +150,12 @@ class TextProcessor:
         return stripped
 
     @staticmethod
-    def calculate_key_words(tokens: [str], number_of_key_words: int) -> [str]:
+    def calculate_key_words(tokens: [str], number_of_key_words: int) -> List[Tuple[str, float]]:
+        if number_of_key_words < 1:
+            return []
         c = Counter(tokens)
-        ordered_terms = list(c.keys())
-        return ordered_terms[:number_of_key_words]
+        count = list(c.items())
+        return count[:number_of_key_words]
 
     # method altered from https://towardsdatascience.com/textrank-for-keyword-extraction-by-python-c0bae21bcec0
     def calculate_keywords_with_text_rank(self, text, number_of_keywords=10) -> List[Tuple[str, float]]:
