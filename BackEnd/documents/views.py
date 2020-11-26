@@ -31,9 +31,8 @@ def document_list(request):
                     documents = file_handler.read_docs(document_pdfs)
                     file_handler.save_documents(uid, 'pdf', documents)
                 if files:
-                    for f in files:
-                        documents = file_handler.read_zip_file(uid, f)
-                        file_handler.save_documents(uid, 'pdf', documents)
+                    documents = file_handler.read_docs(files)
+                    file_handler.save_documents(uid, 'pdf', documents)
                 return JsonResponse(data=request.data, status=status.HTTP_201_CREATED, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
