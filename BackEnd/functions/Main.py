@@ -13,6 +13,7 @@ def main(source_urls: [str], claim: str):
     crawler = Crawler()
     db_manager = DbManager()
     scraper = Scraper()
+    text_processor = TextProcessor()
     
     # Using a dictionary of mapping URL to data for an initial data storage method, will likely need to change
     # very soon
@@ -43,14 +44,14 @@ def main(source_urls: [str], claim: str):
             print(f"Most frequent key_words: {key_words}")
         else:
             all_sentences = " ".join([s.text_body for s in scraped_data.values()])
-            key_words_with_scores = TextProcessor.calculate_keywords_with_text_rank(all_sentences, NUMBER_OF_KEY_WORDS)
+            key_words_with_scores = text_processor.calculate_keywords_with_text_rank(all_sentences, NUMBER_OF_KEY_WORDS)
             key_words = [word for word, score in key_words_with_scores]
 
         print(f"Sources in manifesto: {len(source_urls)}")
         print(f"Sources found in manifesto sources: {len(urls)}")
     else:
         # If texts stored in database
-        key_words_with_scores = TextProcessor.calculate_keywords_with_text_rank(all_sentences, NUMBER_OF_KEY_WORDS)
+        key_words_with_scores = text_processor.calculate_keywords_with_text_rank(all_sentences, NUMBER_OF_KEY_WORDS)
         key_words = [word for word, score in key_words_with_scores]
         urls.update(document_html_links)
         print(f"Sources in manifesto: {len(documents)}")
@@ -99,7 +100,7 @@ def main(source_urls: [str], claim: str):
     print("-------- STORING --------")
     db_manager.insert_many('documents_document')  # Collection name for web pages
 
-    db_manager.insert_many('tweets_tweet', crawled_tweets)  # Collection name for tweets
+    # db_manager.insert_many('tweets_tweet', crawled_tweets)  # Collection name for tweets
     # perform analysis on the scraped dataS
 
     # perform data visualisation

@@ -1,4 +1,4 @@
-from functions.dataretrieval import Scraper
+from BackEnd.functions.dataretrieval import Scraper
 import re
 import os
 from pathlib import Path

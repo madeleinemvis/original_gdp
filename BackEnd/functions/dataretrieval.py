@@ -32,7 +32,7 @@ MAX_THREADS = 50
 # class for crawling and scraping the internet
 class Crawler:
     def __init__(self):
-        with open('../../Data/blacklist.txt') as f:
+        with open(Path(__file__).parent.parent.parent / 'Data' / 'blacklist.txt') as f:
             regexes = []
             lines = f.readlines()
             for line in lines:
@@ -120,7 +120,7 @@ class Crawler:
 
     @staticmethod
     def twitter_init():
-        with open("../../Data/twitter_credentials.json", "r") as file:
+        with open("../Data/twitter_credentials.json", "r") as file:
             creds = json.load(file)
 
         auth = tweepy.OAuthHandler(creds['CONSUMER_KEY'], creds['CONSUMER_SECRET'])
@@ -130,9 +130,8 @@ class Crawler:
 
     @staticmethod
     def location_lists_init():
-        path = Path(__file__).parent / "../../Data/"
 
-        with open(path / 'countries.txt', newline='', encoding='utf8') as f:
+        with open(Path(__file__).parent.parent.parent / 'Data' / 'countries.txt', newline='', encoding='utf8') as f:
             reader = csv.reader(f)
             data = list(reader)
 
@@ -147,7 +146,7 @@ class Crawler:
 
         country_abbreviations.sort()
 
-        with open(path / 'states.txt', newline='', encoding='utf8') as f:
+        with open(Path(__file__).parent.parent.parent / 'Data' / 'states.txt', newline='', encoding='utf8') as f:
             reader = csv.reader(f)
             data = list(reader)
 
@@ -279,7 +278,7 @@ class Scraper:
 
         # make the tokens from the main text, and create a clean form
         tokens = TextProcessor.create_tokens_from_text(main_text)
-        cleaned_tokens = TextProcessor.clean_tokens(tokens)
+        cleaned_tokens = processor.clean_tokens(tokens)
 
         return Data(uid="", content_type=content_type, url=source, raw_html=initial_html, title=title, text_body=main_text,
                     cleaned_tokens=cleaned_tokens,
