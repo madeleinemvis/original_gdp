@@ -19,6 +19,15 @@ class TextProcessor:
     def __init__(self):
         pass
 
+    @staticmethod
+    def load_stop_words():
+        stop_words = set()
+        with open('../../Data/stopwords.txt') as f:
+            lines = f.readlines()
+            for line in lines:
+                stop_words.add(line.rstrip())
+        return stop_words
+
     # Maddy
     # returns presence of tags in returned text, to be removed from main body
     @staticmethod
@@ -132,11 +141,7 @@ class TextProcessor:
         stripped = list(map(lambda x: x.lower(), stripped))
 
         # removing all stop words
-        stop_words = set()
-        with open('../../Data/stopwords.txt') as f:
-            lines = f.readlines()
-            for line in lines:
-                stop_words.add(line.rstrip())
+        stop_words = TextProcessor.load_stop_words()
         stripped = [s for s in stripped if s not in stop_words]
 
         # removing all tokens that are just digits
@@ -159,9 +164,7 @@ class TextProcessor:
     def calculate_keywords_with_text_rank(text, number_of_keywords=10) -> List[Tuple[str, float]]:
         word_types = ['NOUN', 'PROPN']
 
-        with open('../../Data/stopwords.txt') as file:
-            lines = file.readlines()
-            stop_words = set([line.rstrip() for line in lines])
+        stop_words = TextProcessor.load_stop_words()
 
         document = spacy.load('en_core_web_sm')(text)
 
