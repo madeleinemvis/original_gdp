@@ -1,12 +1,6 @@
-import re
-import numpy as np
-import pandas as pd
-from pprint import pprint
-
 # Gensim
 import gensim
 import gensim.corpora as corpora
-from gensim.utils import simple_preprocess
 from gensim.matutils import cossim
 from gensim.models import CoherenceModel
 
