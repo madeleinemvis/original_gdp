@@ -1,5 +1,7 @@
 import re
 import string
+from pathlib import Path
+
 import spacy
 import numpy as np
 
@@ -159,7 +161,7 @@ class TextProcessor:
     def calculate_keywords_with_text_rank(text, number_of_keywords=10) -> List[Tuple[str, float]]:
         word_types = ['NOUN', 'PROPN']
 
-        with open('../../Data/stopwords.txt') as file:
+        with open(Path(__file__).parent.parent.parent / 'Data' / 'stopwords.txt') as file:
             lines = file.readlines()
             stop_words = set([line.rstrip() for line in lines])
 

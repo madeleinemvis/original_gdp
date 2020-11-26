@@ -1,8 +1,8 @@
 from subprocess import CalledProcessError
 from typing import Dict
-from BackEnd.functions.textprocessing import TextProcessor
+from .textprocessing import TextProcessor
 from tika import parser  # Note this module needs Java to be installed on the system to work.
-from BackEnd.functions.analysis import NLP_Analyser
+from .analysis import NLP_Analyser
 from collections import namedtuple
 from googlesearch import search
 import json
@@ -13,7 +13,7 @@ import re
 import csv
 import concurrent.futures
 
-from BackEnd.functions.textprocessing import TextProcessor
+from .textprocessing import TextProcessor
 from urllib.parse import urldefrag, urlparse
 from tika import parser  # Note this module needs Java to be installed on the system to work.
 from collections import namedtuple

@@ -1,18 +1,12 @@
-import json
-
-from django.shortcuts import render
+from datetime import datetime
 
 from django.http.response import JsonResponse
-from django.utils.datastructures import MultiValueDictKeyError
-from rest_framework.parsers import JSONParser
-from rest_framework import status
+from documents.forms import RequestForm
 from documents.models import Document
 from documents.serializers import DocumentSerializer
 from filehandler import FileHandler
 from rest_framework import status
 from rest_framework.decorators import api_view
-from filehandler import FileHandler
-from documents.forms import RequestForm
 from rest_framework.parsers import JSONParser
 
 from functions.visualisation import DataVisualiser
@@ -68,12 +62,14 @@ def document_detail(request, pk):
         return JsonResponse({'message': '{} Tutorials were deleted successfully!'.format(count[0])},
                             status=status.HTTP_204_NO_CONTENT)
 
-
 @api_view(['POST'])
 def keywords_wordcloud(request):
+    start_t = datetime.now()
     datavisualiser = DataVisualiser()
     if request.method == "POST":
         uid = request.data['uid']
-        keywords = datavisualiser.word_cloud(uid)
-        return JsonResponse(data=keywords, status=status.HTTP_200_OK, safe=False)
+        data = datavisualiser.word_cloud(uid)
+        response = JsonResponse(data, status=status.HTTP_200_OK, safe=False)
+        print("Time taken to complete request: ", datetime.now()-start_t)
+        return response
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
