@@ -5,7 +5,7 @@ from BackEnd.dbmanager import DbManager
 
 # Function for the main workflow of the project
 def main(source_urls: [str], claim: str):
-    NUMBER_OF_KEY_WORDS = 5
+    NUMBER_OF_KEY_WORDS = 30
     NUMBER_OF_GOOGLE_RESULTS_WANTED = 25
     NUMBER_OF_TWEETS_RESULTS_WANTED = 20
     MAXIMUM_URL_CRAWL_DEPTH = 3
@@ -43,13 +43,15 @@ def main(source_urls: [str], claim: str):
             print(f"Most frequent key_words: {key_words}")
         else:
             all_sentences = " ".join([s.text_body for s in scraped_data.values()])
-            key_words = TextProcessor.calculate_keywords_with_text_rank(all_sentences, NUMBER_OF_KEY_WORDS)
+            key_words_with_scores = TextProcessor.calculate_keywords_with_text_rank(all_sentences, NUMBER_OF_KEY_WORDS)
+            key_words = [word for word, score in key_words_with_scores]
 
         print(f"Sources in manifesto: {len(source_urls)}")
         print(f"Sources found in manifesto sources: {len(urls)}")
     else:
         # If texts stored in database
-        key_words = TextProcessor.calculate_keywords_with_text_rank(all_sentences, NUMBER_OF_KEY_WORDS)
+        key_words_with_scores = TextProcessor.calculate_keywords_with_text_rank(all_sentences, NUMBER_OF_KEY_WORDS)
+        key_words = [word for word, score in key_words_with_scores]
         urls.update(document_html_links)
         print(f"Sources in manifesto: {len(documents)}")
         print(f"Sources found in manifesto sources: {len(document_html_links)}")
@@ -107,12 +109,10 @@ def main(source_urls: [str], claim: str):
 
 if __name__ == "__main__":
     # start with the initial URL
-    start_url = "https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/"
-    """ Other URLS:
-    - https://vactruth.com/2018/08/30/vaccine-induced-autism/ # faulty (Forbidden with crawler)
-    - https://vactruth.com/2018/05/02/alfie-evans-timeline/
-    - https://vactruth.com/2019/06/07/the-vaccination-that-never-should-have-been-approved/
-    - https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/
-    """
-    sources = [start_url]
+    sources = [
+        "https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/",
+        "https://www.healthline.com/health/vaccinations/opposition",
+        "https://ec.europa.eu/health/sites/health/files/vaccination/docs/2018_vaccine_confidence_en.pdf",
+        "https://www.theguardian.com/world/2020/nov/10/coronavirus-anti-vaxxers-seek-to-discredit-pfizers-vaccine",
+        "https://www.healthline.com/health/vaccinations/opposition"]
     main(sources, "vaccines cause autism")
