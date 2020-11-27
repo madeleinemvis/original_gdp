@@ -7,6 +7,7 @@ from typing import Tuple, List
 from bs4 import BeautifulSoup
 from bs4.element import Comment
 from nltk.stem import WordNetLemmatizer
+from pathlib import Path
 
 try:
     from collections.abc import Counter, OrderedDict
@@ -17,7 +18,12 @@ except ImportError:
 class TextProcessor:
 
     def __init__(self):
-        pass
+        self.stop_words = set()
+        with open(Path(__file__).parent.parent.parent / 'Data' / 'stopwords.txt') as f:
+            lines = f.readlines()
+            for line in lines:
+                self.stop_words.add(line.rstrip())
+
 
     # Maddy
     # returns presence of tags in returned text, to be removed from main body
@@ -119,8 +125,7 @@ class TextProcessor:
 
     # method for taking a list of tokens and cleaning them. This involves removing punctuation,
     # stop word, making lower case, removing pure digit tokens, and stemming
-    @staticmethod
-    def clean_tokens(tokens: [str]) -> [str]:
+    def clean_tokens(self, tokens: [str]) -> [str]:
         # removing all punctuation
         table = str.maketrans('', '', string.punctuation)
         stripped = [t.translate(table) for t in tokens if t]
@@ -132,11 +137,7 @@ class TextProcessor:
         stripped = list(map(lambda x: x.lower(), stripped))
 
         # removing all stop words
-        stop_words = set()
-        with open('../../Data/stopwords.txt') as f:
-            lines = f.readlines()
-            for line in lines:
-                stop_words.add(line.rstrip())
+        stop_words = self.stop_words
         stripped = [s for s in stripped if s not in stop_words]
 
         # removing all tokens that are just digits
@@ -149,25 +150,25 @@ class TextProcessor:
         return stripped
 
     @staticmethod
-    def calculate_key_words(tokens: [str], number_of_key_words: int) -> [str]:
+    def calculate_key_words(tokens: [str], number_of_key_words: int) -> List[Tuple[str, float]]:
+        if number_of_key_words < 1:
+            return []
         c = Counter(tokens)
-        ordered_terms = list(c.keys())
-        return ordered_terms[:number_of_key_words]
+        count = list(c.items())
+        return count[:number_of_key_words]
 
     # method altered from https://towardsdatascience.com/textrank-for-keyword-extraction-by-python-c0bae21bcec0
-    @staticmethod
-    def calculate_keywords_with_text_rank(text, number_of_keywords=10) -> List[Tuple[str, float]]:
-        word_types = ['NOUN', 'PROPN']
+    def calculate_keywords_with_text_rank(self, text, number_of_keywords=10) -> List[Tuple[str, float]]:
+        if number_of_keywords < 1:
+            return []
 
-        with open('../../Data/stopwords.txt') as file:
-            lines = file.readlines()
-            stop_words = set([line.rstrip() for line in lines])
+        word_types = ['NOUN', 'PROPN']
 
         document = spacy.load('en_core_web_sm')(text)
 
         # make the sentences from the input text using spacy
-        sentences = [[token.text.lower() for token in sent if token.pos_ in word_types and token.text not in stop_words
-                      and token.text not in string.punctuation and len(token) > 1]
+        sentences = [[token.text.lower() for token in sent if token.pos_ in word_types and
+                      token.text not in self.stop_words and token.text not in string.punctuation and len(token) > 1]
                      for sent in document.sents]
         sentences = list(filter(None, sentences))
 

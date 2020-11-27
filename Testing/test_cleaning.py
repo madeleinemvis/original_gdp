@@ -1,5 +1,5 @@
 import pytest
-from functions.textprocessing import TextProcessor
+from BackEnd.functions.textprocessing import TextProcessor
 
 
 @pytest.mark.parametrize("raw_location, clean_location", [

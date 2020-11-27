@@ -1,7 +1,7 @@
 import pytest
-from functions.textprocessing import TextProcessor
-from functions.dataretrieval import Scraper, Crawler
+from BackEnd.functions.dataretrieval import Scraper, Crawler
 import time
+import requests
 
 
 @pytest.fixture
@@ -14,38 +14,25 @@ def get_crawler():
     return Crawler()
 
 
-# test time do scrape loads of urls is less than a benchmark TODO
-def test_url_scraping_time(get_scraper):
-    start = time.time()
-    _ = get_scraper.get_data_from_source("https://www.bbc.co.uk/")
-    assert float(time.time() - start) < 2.0
-
 # TODO check that blacklisting works for recursive crawling
-
-
-# test time to scrape a pdf
-# def test_pdf_scraping_time():
-#     start = time.time()
-#     # ERROR this link doesnt work with the current code
-#     _ = pytest.scraper.get_data_from_source("www.africau.edu/images/default/sample.pdf")
-#     assert float(time.time() - start) < 2.0
-
 
 # check that scraped url has values in all of returned places
 def test_url_scraping_values(get_scraper):
-    scraped_data = get_scraper.get_data_from_source("https://www.bbc.co.uk/")
+    url = "https://www.bbc.co.uk/"
+    response = requests.get(url)
+    scraped_data = get_scraper.get_data_from_source(url, response)
     assert scraped_data.uid == "" and scraped_data.content_type == "" and \
            all(v is not None for v in
                [scraped_data.url, scraped_data.raw_html, scraped_data.title, scraped_data.text_body, scraped_data.cleaned_tokens, scraped_data.html_links])
 
 
-# need an example pdf document
 # check that scraped pdf has values in all of returned places
-# def test_pdf_scraping_values(data):
-#     scraped_data = pytest.scraper.get_data_from_source("") # TODO
-#     assert scraped_data.uid == "" and scraped_data.content_type == "" and \
-#            all(v is not None for v in
-#                [scraped_data.url, scraped_data.raw_html, scraped_data.title, scraped_data.text_body, scraped_data.cleaned_tokens, scraped_data.html_links])
+def test_pdf_scraping_values(get_scraper):
+    scraped_data = get_scraper.get_data_from_source(
+        "https://www.pubmedcentral.nih.gov/picrender.fcgi?artid=2480896&blobtype=pdf")
+    assert scraped_data.uid == "" and scraped_data.content_type == "" and \
+           all(v is not None for v in
+               [scraped_data.url, scraped_data.raw_html, scraped_data.title, scraped_data.text_body, scraped_data.cleaned_tokens, scraped_data.html_links])
 
 
 @pytest.fixture
@@ -73,3 +60,18 @@ def test_google_returns_n_results(search_keywords_n_results, get_crawler):
 def test_twitter_returns_n_results(search_keywords_n_results, get_crawler):
     for keywords, n_results in search_keywords_n_results:
         assert len(get_crawler.twitter_crawl(keywords, n_results)) == n_results
+
+# ##### ARCHIVED TESTS BELOW #########
+
+# test time do scrape loads of urls is less than a benchmark TODO
+# def test_url_scraping_time(get_scraper):
+#     start = time.time()
+#     _ = get_scraper.get_data_from_source("https://www.bbc.co.uk/")
+#     assert float(time.time() - start) < 2.0
+
+# test time to scrape a pdf
+# def test_pdf_scraping_time():
+#     start = time.time()
+#     # ERROR this link doesnt work with the current code
+#     _ = pytest.scraper.get_data_from_source("www.africau.edu/images/default/sample.pdf")
+#     assert float(time.time() - start) < 2.0
