@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 
 import Tweets from './Tweets';
+import WordCloud from "./WordCloud";
 
 // Source: https://bezkoder.com/react-hooks-crud-axios-api/
 const Dashboard = () => {
@@ -37,7 +38,8 @@ const Dashboard = () => {
                             <h3>Info</h3>
                         </Route>
                         <Route exact path={`${path}/sources`}>
-                            <h3>Sources</h3>
+                            <h1>tester</h1>
+                            <WordCloud />
                         </Route>
                         <Route exact path={`${path}/tweets`}>
                             <Tweets />

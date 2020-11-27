@@ -19,9 +19,10 @@ def document_list(request):
         file_handler = FileHandler()
         request_form = RequestForm(request.POST, request.FILES)
         if request_form.is_valid():
-            uid, claim, document_urls, document_pdfs, zip_file = file_handler.get_objects_from_request(request, request_form)
+            uid, claim, document_urls, document_pdfs, zip_file = file_handler.get_objects_from_request(request,
+                                                                                                       request_form)
             # FAILS if no documents attached
-            if not(document_urls is None and document_pdfs is None and zip_file is None):
+            if not (document_urls is None and document_pdfs is None and zip_file is None):
                 file_handler.save_claim(uid, claim)
                 if document_urls:
                     documents = file_handler.read_docs(document_urls)
@@ -62,6 +63,7 @@ def document_detail(request, pk):
         return JsonResponse({'message': '{} Tutorials were deleted successfully!'.format(count[0])},
                             status=status.HTTP_204_NO_CONTENT)
 
+
 @api_view(['POST'])
 def keywords_wordcloud(request):
     start_t = datetime.now()
@@ -69,7 +71,8 @@ def keywords_wordcloud(request):
     if request.method == "POST":
         uid = request.data['uid']
         data = datavisualiser.word_cloud(uid)
+        print(data)
         response = JsonResponse(data, status=status.HTTP_200_OK, safe=False)
-        print("Time taken to complete request: ", datetime.now()-start_t)
+        print("Time taken to complete request: ", datetime.now() - start_t)
         return response
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
