@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import {TagCloud} from "react-tagcloud";
+import Row from "react-bootstrap";
+import Col from "react-bootstrap";
 
 const WordCloud = () => {
     const[wordCloud, setWordCloud] = useState({});
@@ -44,17 +46,21 @@ const WordCloud = () => {
     console.log("Word Cloud:", wordCloud);
     console.log("IsLoading:", isLoading);
 
-    return <div>
-        {isLoading &&
-        <div>Loading...</div>}
-        {!isLoading &&
-            <div>
-                <TagCloud
-                    minSize={10}
-                    maxSize={35}
-                    tags = { wordCloud }/>
-            </div>}
-    </div>;
+    return <React.Fragment>
+                <Row>
+                    {isLoading &&
+                        <Col>Loading...</Col>
+                    }
+                    {!isLoading &&
+                        <Col>
+                            <TagCloud
+                                minSize={10}
+                                maxSize={35}
+                                tags = { wordCloud }/>
+                        </Col>
+                    }
+                </Row>
+    </React.Fragment>;
 
 
 }

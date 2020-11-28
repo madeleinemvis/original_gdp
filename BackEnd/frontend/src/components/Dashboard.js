@@ -15,7 +15,7 @@ import WordCloud from "./WordCloud";
 const Dashboard = () => {
 
     let { path, url } = useRouteMatch();
-   
+   console.log(path);
     return (
         <React.Fragment>
             <Container>
