@@ -9,7 +9,7 @@ from pathlib import Path
 import spacy
 
 # class for doing all the NLP analysis needed
-from BackEnd.functions.textprocessing import TextProcessor
+from .textprocessing import TextProcessor
 from textblob import TextBlob
 
 

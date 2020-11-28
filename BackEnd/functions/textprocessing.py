@@ -172,6 +172,7 @@ class TextProcessor:
                      for sent in document.sents]
         sentences = list(filter(None, sentences))
 
+
         # generate a vocabulary of the text
         vocab = OrderedDict()
         i = 0

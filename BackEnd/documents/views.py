@@ -25,9 +25,9 @@ def document_list(request):
         file_handler = FileHandler()
         request_form = RequestForm(request.POST, request.FILES)
         if request_form.is_valid():
-            uid, claim, document_urls, document_pdfs, zip_file = file_handler.get_objects_from_request(request, request_form)
+            uid, claim, document_urls, document_pdfs, files = file_handler.get_objects_from_request(request, request_form)
             # FAILS if no documents attached
-            if not(document_urls is None and document_pdfs is None and zip_file is None):
+            if not(document_urls is None and document_pdfs is None and files is None):
                 file_handler.save_claim(uid, claim)
                 if document_urls:
                     documents = file_handler.read_docs(document_urls)
@@ -35,8 +35,8 @@ def document_list(request):
                 if document_pdfs:
                     documents = file_handler.read_docs(document_pdfs)
                     file_handler.save_documents(uid, 'pdf', documents)
-                if zip_file:
-                    documents = file_handler.read_zip_file(uid, zip_file)
+                if files:
+                    documents = file_handler.read_docs(files)
                     file_handler.save_documents(uid, 'pdf', documents)
                 return JsonResponse(data=request.data, status=status.HTTP_201_CREATED, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)

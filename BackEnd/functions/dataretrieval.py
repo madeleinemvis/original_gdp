@@ -1,10 +1,3 @@
-from subprocess import CalledProcessError
-from typing import Dict
-from BackEnd.functions.textprocessing import TextProcessor
-from tika import parser  # Note this module needs Java to be installed on the system to work.
-from BackEnd.functions.analysis import NLP_Analyser
-from collections import namedtuple
-from googlesearch import search
 import json
 import requests.exceptions
 import tweepy
@@ -13,7 +6,7 @@ import re
 import csv
 import concurrent.futures
 
-from BackEnd.functions.textprocessing import TextProcessor
+from .textprocessing import TextProcessor
 from urllib.parse import urldefrag, urlparse
 from tika import parser  # Note this module needs Java to be installed on the system to work.
 from collections import namedtuple
@@ -21,6 +14,8 @@ from googlesearch import search
 from bs4 import BeautifulSoup
 from pathlib import Path
 from datetime import datetime
+
+from .analysis import NLP_Analyser
 import concurrent.futures
 from requests import Response
 from readabilipy import simple_json_from_html_string
