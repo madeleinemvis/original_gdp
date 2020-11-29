@@ -1,5 +1,5 @@
 from functions.textprocessing import TextProcessor
-from BackEnd.dbmanager import DbManager
+from .dbmanager import DbManager
 
 
 # class for the data visualisation

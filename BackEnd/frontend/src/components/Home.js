@@ -1,45 +1,91 @@
-import React, {  useState } from 'react';
-import JSZip from 'jszip'
+import React, {  useState, useEffect } from 'react';
+import { Redirect } from 'react-router';
+
+
+import Loader from 'react-loader-spinner'
+
+import { v4 as uuidv4 } from 'uuid';
 import { 
     Button,
     Col, 
     Row, 
     Container, 
-    Jumbotron
+    Jumbotron,
+    Spinner
 } from 'react-bootstrap';
-
+import http from '../http-common'
 const Home = () => {
     // https://dev.to/fuchodeveloper/dynamic-form-fields-in-react-1h6c
 
+    const [redirect, setRedirect] = useState(false)
+    const [loading, setLoading] = useState(false)
+
+    var formData = new FormData()
+    const [claim, setClaim] = useState("")
+
     const [inputFields, setInputFields] = useState([
-        { link: '' }
+        { url: '' }
     ]);
     const [pdfs, setPdfs] = useState([
         { pdfs: '' }
     ]);
-    const formData = new FormData()
-    
+
+
     const handleSubmit = e => {
         e.preventDefault();
-        console.log(formData);
+        setLoading(true)
+        //Deleteing existing parts
+        var uid = uuidv4();
+        formData.delete('uid')
+        formData.delete('claim')
+        formData.delete('urls')
+        formData.delete('pdfs')
+
+        //Add uid
+        formData.append('uid',uid)
+
+        //Adding claim   
+        formData.append('claim', claim)
+
+        //urls and pdf urls    
+        formData.append('urls', JSON.stringify(inputFields).replace(/[\]}[{]/g, ''))
+        formData.append('pdfs', JSON.stringify(pdfs).replace(/[\]}[{]/g, ''))
+        
+        http.post('/documents', formData)
+        .then(res =>{
+            if(res.status === 201){                
+                setLoading(false)
+                setRedirect(true)
+            }
+            
+        })
+        .catch(e => {
+            console.log(e)
+        })
     };
 
     // Source: https://medium.com/@tchiayan/compressing-single-file-or-multiple-files-to-zip-format-on-client-side-6607a1eca662
     const upload = e => {
         e.preventDefault();
-        
-        
+        formData.delete('files')
+
+        var fs = e.target.files
+
+        for (const f of fs) {
+            //console.log(f)
+            formData.append('files', f, f.name)
+        }
     }
 
     const handleInputChange = (index, event) => {
         const values = [...inputFields];
-        values[index].link = event.target.value;
+        values[index].url = event.target.value;
         setInputFields(values);
     };
 
     const handleAddFields = () => {
         const values = [...inputFields];
-        values.push({ link: ''});
+        values.push({ url: ''});
         setInputFields(values);
       };
     
@@ -65,9 +111,15 @@ const Home = () => {
       setPdfs(values);
     };
 
-
+    if(redirect){
+        return <Dash/>
+    }
+ 
     return (
+        
+        
         <React.Fragment>
+            
         <Container>
             <Row>
                 <Col>
@@ -83,24 +135,18 @@ const Home = () => {
                         </p>
                     </Jumbotron> 
                 </Col>
+                {loading ? <Loading/>:
+
                 <Col>
-                
-                
                     <h3>Add your links to be analysed</h3>   
                     <hr/>
                     <form onSubmit={handleSubmit}>
-                        {pdfs.map((pdf, index) => (
-                            <div key={`${pdf}~${index}`}>
-                                <div className="input-group">
-                                    <input type="text" className="form-control" placeholder="PDF URL" aria-label="pdf" aria-describedby="basic-addon2" onChange={event => handleInputChangePdf(index, event)}/>
-                                    <div className="input-group-append">
-                                      <button className="btn btn-outline-secondary" type="button" onClick={() => handleAddFieldsPDF()}>+</button>
-                                      <button className="btn btn-outline-secondary" type="button" onClick={() => handleRemoveFieldsPDF(index)}>-</button>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}                            
-                        <br></br>
+                        <h5>Claim:</h5>
+                        <div className="input-group">
+                            <input type="text" className="form-control" placeholder="Claim" aria-label="claim" aria-describedby="basic-addon2" onChange={e => setClaim(e.target.value)} />
+                        </div>
+                        <br/>
+                        <h5>Links:</h5>
                         {inputFields.map((inputField, index) => (
                             <div key={`${inputField}~${index}`}>
                                 <div className="input-group">
@@ -111,10 +157,26 @@ const Home = () => {
                                     </div>
                                 </div>
                             </div>
-                        ))}                            
+                        ))}                                            
+                        <br/>
+                        <h5>PDF Links:</h5>
+                        {pdfs.map((pdf, index) => (
+                            <div key={`${pdf}~${index}`}>
+                                <div className="input-group">
+                                    <input type="text" className="form-control" placeholder="PDF URL" aria-label="pdf" aria-describedby="basic-addon2" onChange={event => handleInputChangePdf(index, event)}/>
+                                    <div className="input-group-append">
+                                      <button className="btn btn-outline-secondary" type="button" onClick={() => handleAddFieldsPDF()}>+</button>
+                                      <button className="btn btn-outline-secondary" type="button" onClick={() => handleRemoveFieldsPDF(index)}>-</button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))} 
+                                 
                         <br></br>
+
                         <input type="file" id="files" onChange={upload} name="files" multiple/>
-                        <br></br>
+                        
+                        <hr/>
                         
                         <div className="submit-button">
                             <button
@@ -130,13 +192,21 @@ const Home = () => {
                     <br/>
 
                 </Col>
+                }
                
             </Row>
-
-     
         </Container>
     </React.Fragment> 
     )
-  }
-  
+}
+
+const Dash = () =>{
+    return <Redirect to={{ pathname: "/dashboard" }}/>
+}
+
+const Loading = () =>{
+    return <Spinner animation="border" role="status">
+    <span className="sr-only">Loading...</span>
+</Spinner> 
+}
 export default Home;

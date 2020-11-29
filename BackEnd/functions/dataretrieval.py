@@ -189,7 +189,7 @@ class Scraper:
     def __init__(self):
         self.lock = Lock()
 
-    def downloads(self, urls: [str]) -> Dict[str, Data]:
+    def downloads(self, urls: [str]):
         responses = {}
         threads = min(MAX_THREADS, len(urls))
         with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
