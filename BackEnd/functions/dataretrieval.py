@@ -1,27 +1,26 @@
-from subprocess import CalledProcessError
-from typing import Dict
-from BackEnd.functions.analysis import NLP_Analyser
+import concurrent.futures
+import concurrent.futures
+import csv
 import json
+import re
+from collections import namedtuple
+from datetime import datetime
+from pathlib import Path
+from subprocess import CalledProcessError
+from threading import Lock
+from typing import Dict
+from urllib.parse import urldefrag, urlparse
+
+import requests
 import requests.exceptions
 import tweepy
-import requests
-import re
-import csv
-import concurrent.futures
-
-from BackEnd.functions.textprocessing import TextProcessor
-from urllib.parse import urldefrag, urlparse
-from tika import parser  # Note this module needs Java to be installed on the system to work.
-from collections import namedtuple
 from googlesearch import search
-from bs4 import BeautifulSoup
-from pathlib import Path
-from datetime import datetime
-import concurrent.futures
-from requests import Response
 from readabilipy import simple_json_from_html_string
-from threading import Lock
+from requests import Response
+from tika import parser  # Note this module needs Java to be installed on the system to work.
 
+from BackEnd.functions.analysis import NLP_Analyser
+from BackEnd.functions.textprocessing import TextProcessor
 
 MAX_THREADS = 50
 
