@@ -1,4 +1,6 @@
 import json
+from typing import Dict
+
 import requests.exceptions
 import tweepy
 import requests
@@ -11,20 +13,32 @@ from urllib.parse import urldefrag, urlparse
 from tika import parser  # Note this module needs Java to be installed on the system to work.
 from collections import namedtuple
 from googlesearch import search
-from bs4 import BeautifulSoup
 from pathlib import Path
 from datetime import datetime
 
 from .analysis import NLP_Analyser
 import concurrent.futures
 from requests import Response
-from readabilipy import simple_json_from_html_string
+from readability import Document
+from trafilatura import extract
 from threading import Lock
-
 
 MAX_THREADS = 50
 
+
 # class for crawling and scraping the internet
+def url_cleaner(urls: [str]) -> [str]:
+    parent = []
+    url_depth = []
+    for url in urls:
+        link = urlparse(url)
+        net = link.netloc
+        if net not in parent:
+            parent.append(net)
+            url_depth.append(url)
+    return url_depth
+
+
 class Crawler:
     def __init__(self):
         with open(Path(__file__).parent.parent.parent / 'Data' / 'blacklist.txt') as f:
@@ -46,17 +60,6 @@ class Crawler:
                 defrag_url = urldefrag(url)[0]
                 new_results.add(defrag_url)
         return new_results
-
-    def url_cleaner(self, urls: [str]) -> [str]:
-        parent = []
-        url_depth = []
-        for url in urls:
-            link = urlparse(url)
-            net = link.netloc
-            if net not in parent:
-                parent.append(net)
-                url_depth.append(url)
-        return url_depth
 
     # Alex Ll
     # recursively crawl a set of URLs with batch checking similarities
@@ -107,11 +110,11 @@ class Crawler:
                                 break
 
                     if flag is False:
-                        # Append url to search list, will be searched next
-                        url_depth[depth_index + 1].append(url_new)
+                        if not re.match(self.BLACKLIST_REGEX, url_new):
+                            # Append url to search list, will be searched next
+                            url_depth[depth_index + 1].append(url_new)
             final_dict.update(response)
         return final_dict
-
 
     @staticmethod
     def twitter_init():
@@ -125,7 +128,6 @@ class Crawler:
 
     @staticmethod
     def location_lists_init():
-
         with open(Path(__file__).parent.parent.parent / 'Data' / 'countries.txt', newline='', encoding='utf8') as f:
             reader = csv.reader(f)
             data = list(reader)
@@ -188,6 +190,7 @@ Data = namedtuple('Data', 'uid content_type url raw_html title text_body cleaned
 class Scraper:
     def __init__(self):
         self.lock = Lock()
+        self.processor = TextProcessor()
 
     def downloads(self, urls: [str]) -> Dict[str, Data]:
         responses = {}
@@ -203,21 +206,26 @@ class Scraper:
 
     # Alex Ll
     # method that returns all the HTML data from a URL
-    def scrape_url(self, url: str, seen_urls: [str] = None) -> (str, Data):
+    def scrape_url(self, url: str) -> (str, Data):
         data = None
         try:
-            request_resp = requests.get(url, allow_redirects=False, timeout=1)
-            if request_resp is not None:
-                data = self.get_data_from_source(url, request_resp, seen_urls)
+            request_resp = requests.get(url, allow_redirects=False, timeout=5)
+            data = self.get_data_from_source(url, request_resp)
         except Exception as e:
             print(e)
             pass
 
         return url, data
 
-    # method for getting raw text and cleaned tokens from a source, can be a html or '.pdf'
+    # method for getting raw text and cleaned tokens from a source, can be a html or pdf
     def get_data_from_source(self, source: str, response: Response, seen_urls: [str] = None) -> namedtuple:
-        processor = TextProcessor()
+        print("Processing:", source)
+
+        # if there is no response, no point in processing further
+        if response is None:
+            return None
+
+        # if seen_urls is default, set as an empty list to begin with
         if seen_urls is None:
             seen_urls = []
 
@@ -225,6 +233,10 @@ class Scraper:
         title = ''
         url_regex = r"(https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}(?:[-a-zA-Z0-9(" \
                     r")@:%_\+.~#?&//=]*))"
+
+        # if content-type is not in the headers, we won't be able to decipher if it is pdf or html, so skip
+        if 'content-type' not in response.headers.keys():
+            return None
 
         content_type = response.headers['content-type']
 
@@ -234,49 +246,90 @@ class Scraper:
             return None
 
         # scraping stage
+        # if the content is a pdf
         if "application/pdf" in content_type:
             content_type = "application/pdf"
+
+            # get the content and process it through Apache Tika
             raw = response.content
-            processed_text = parser.from_buffer(raw)['content']
-            main_text = ' '.join(processed_text.split())
-            urls = re.findall(url_regex, main_text)
+
+            self.lock.acquire()
+            try:
+                processed_text = parser.from_buffer(raw)['content']
+            finally:
+                self.lock.release()
+
+            # if we get a processed pdf out, get the make text and collect the urls from the text
+            if processed_text is not None:
+                main_text = ' '.join(processed_text.split())
+                urls = re.findall(url_regex, main_text)
+            else:
+                return None
+        # if the content is html
         else:
             content_type = "text/html"
+
+            # get the base html out from the page
             initial_html = response.text
+
+            # if there is no html, no point continuing with processing
+            if initial_html is None or initial_html == "":
+                return None
+
+            # if there is a location header, we have to handle redirects
             if 'location' in response.headers.keys():
                 location = response.headers['location']
+
+                # check if we have seen this url before
                 if location in seen_urls:
                     print(source, "failed recursive location check")
                     return None
+
+                # add to list of previously seen urls
                 new_seen_urls = seen_urls.append(location)
-                new_request = self.scrape_url(location)[1]
-                if new_request is None:
+
+                # try to get a new request from the redirected location
+                try:
+                    new_request_resp = requests.get(location, allow_redirects=False, timeout=5)
+                except requests.exceptions.ConnectionError:
                     return None
-                return self.scrape_url(location, new_seen_urls)[1]
+
+                # recursively call the get_data_from_source function with the new request and new seen urls list
+                return self.get_data_from_source(location, new_request_resp, new_seen_urls)
+
+            # use readability-lxml to extract a list of urls
+            url_doc = Document(initial_html).summary()
+
+            # use trafilatura in order to extract the contents of the page
             try:
-                self.lock.acquire()
-                article = simple_json_from_html_string(initial_html, use_readability=True)
-            except CalledProcessError:
-                self.lock.release()
+                doc = extract(initial_html, source, json_output=True)
+            except TypeError:
+                print(source, "produced type error")
                 return None
-            finally:
-                self.lock.release()
+
+            # if no document extracted, no point continuing
+            if doc is None:
+                print(source, "failed extraction")
+                return None
+
+            # create a dictionary from the json object returned
+            article = json.loads(doc)
+
+            # get the title and main text out of the article
             title = article['title']
-            main_text_unprocessed = article['plain_text']
-            if main_text_unprocessed is None:
+            main_text = article['text'].rstrip()
+
+            # if no main text, no point continuing
+            if main_text is None:
                 print(source, "failed plain text check")
                 return None
-            main_text = ''
-            for text in main_text_unprocessed:
-                main_text += text['text'].replace("ï¿1⁄2", "'") + " "
-            urls = processor.extract_urls_from_html(article['content'])
+
+            # collect the urls from the html extracted by readability-lxml
+            urls = self.processor.extract_urls_from_html(url_doc)
 
         # make the tokens from the main text, and create a clean form
         tokens = TextProcessor.create_tokens_from_text(main_text)
-        cleaned_tokens = processor.clean_tokens(tokens)
+        cleaned_tokens = self.processor.clean_tokens(tokens)
 
-        return Data(uid="", content_type=content_type, url=source, raw_html=initial_html, title=title, text_body=main_text,
-                    cleaned_tokens=cleaned_tokens,
-                    html_links=urls)
-
-
+        return Data(uid="", content_type=content_type, url=source, raw_html=initial_html, title=title,
+                    text_body=main_text, cleaned_tokens=cleaned_tokens, html_links=urls)
