@@ -1,9 +1,6 @@
 import React, {  useState, useEffect } from 'react';
 import { Redirect } from 'react-router';
 
-
-import Loader from 'react-loader-spinner'
-
 import { v4 as uuidv4 } from 'uuid';
 import { 
     Button,
@@ -27,7 +24,7 @@ const Home = () => {
         { url: '' }
     ]);
     const [pdfs, setPdfs] = useState([
-        { pdfs: '' }
+        { url: '' }
     ]);
 
 
@@ -47,15 +44,19 @@ const Home = () => {
         //Adding claim   
         formData.append('claim', claim)
 
-        //urls and pdf urls    
-        formData.append('urls', JSON.stringify(inputFields).replace(/[\]}[{]/g, ''))
-        formData.append('pdfs', JSON.stringify(pdfs).replace(/[\]}[{]/g, ''))
+        //urls and pdf urls 
+        var urls = formatLinks(inputFields)  
+        var pdfURL = formatLinks(pdfs)
+        
+        formData.append('urls', urls)
+        formData.append('pdfs', pdfURL)
         
         http.post('/documents', formData)
         .then(res =>{
             if(res.status === 201){                
                 setLoading(false)
                 setRedirect(true)
+                console.log(res.data)
             }
             
         })
@@ -63,6 +64,24 @@ const Home = () => {
             console.log(e)
         })
     };
+    const formatLinks = input => {
+
+        var out = "{"        
+
+        for (let i = 0; i < input.length; i++) {
+            const e = input[i];
+
+            var link =  "'url" + i.toString() + "': '" + e.url + "'"
+            if(i !== (input.length - 1)){
+                out += link +','
+            }else{
+                out += link 
+            }
+            
+        }
+        out += "}"
+        return out
+    }
 
     // Source: https://medium.com/@tchiayan/compressing-single-file-or-multiple-files-to-zip-format-on-client-side-6607a1eca662
     const upload = e => {
@@ -97,12 +116,12 @@ const Home = () => {
 
     const handleInputChangePdf = (index, event) => {
         const values = [...pdfs];
-        values[index].pdfs = event.target.value;
+        values[index].url = event.target.value;
         setPdfs(values);
     };
     const handleAddFieldsPDF = () => {
         const values = [...pdfs];
-        values.push({ pdfs: ''});
+        values.push({ url: ''});
         setPdfs(values);
     };    
     const handleRemoveFieldsPDF = index => {

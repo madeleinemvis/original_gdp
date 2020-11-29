@@ -38,6 +38,8 @@ def document_list(request):
                 #if files:
                 #    documents = file_handler.read_docs(files)
                 #    file_handler.save_documents(uid, 'pdf', documents)
+                print('----Links----\n',document_urls)
+                print('----Links with pdf----\n',document_pdfs)
                 return JsonResponse(data=request.data, status=status.HTTP_201_CREATED, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
