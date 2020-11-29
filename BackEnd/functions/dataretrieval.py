@@ -1,10 +1,6 @@
 from subprocess import CalledProcessError
 from typing import Dict
-from BackEnd.functions.textprocessing import TextProcessor
-from tika import parser  # Note this module needs Java to be installed on the system to work.
 from BackEnd.functions.analysis import NLP_Analyser
-from collections import namedtuple
-from googlesearch import search
 import json
 import requests.exceptions
 import tweepy
