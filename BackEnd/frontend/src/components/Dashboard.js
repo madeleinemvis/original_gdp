@@ -10,6 +10,7 @@ import {
 
 import Tweets from './Tweets';
 import WordCloud from "./WordCloud";
+import Card from "react-bootstrap/Card";
 
 // Source: https://bezkoder.com/react-hooks-crud-axios-api/
 const Dashboard = () => {
@@ -38,8 +39,14 @@ const Dashboard = () => {
                             <h3>Info</h3>
                         </Route>
                         <Route exact path={`${path}/sources`}>
-                            <h1>tester</h1>
-                            <WordCloud />
+                            <Container>
+                                <Card style={{ width: '22rem' }}>
+                                  <Card.Body>
+                                      <Card.Title>Word Cloud</Card.Title>
+                                      <WordCloud />
+                                  </Card.Body>
+                                </Card>
+                            </Container>
                         </Route>
                         <Route exact path={`${path}/tweets`}>
                             <Tweets />

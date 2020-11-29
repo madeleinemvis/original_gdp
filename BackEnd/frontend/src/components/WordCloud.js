@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {TagCloud} from "react-tagcloud";
-import Row from "react-bootstrap";
-import Col from "react-bootstrap";
+import { Row, Col } from 'react-bootstrap';
 
 const WordCloud = () => {
     const[wordCloud, setWordCloud] = useState({});
@@ -61,8 +60,5 @@ const WordCloud = () => {
                     }
                 </Row>
     </React.Fragment>;
-
-
 }
-
 export default WordCloud;
