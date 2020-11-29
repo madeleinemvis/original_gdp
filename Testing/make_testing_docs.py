@@ -2,6 +2,7 @@ from BackEnd.functions.dataretrieval import Scraper
 import re
 import os
 from pathlib import Path
+import requests
 
 
 def create_text_file_from_html(url, file_path):
@@ -12,7 +13,8 @@ def create_text_file_from_html(url, file_path):
     file = os.path.join(file_path, file_name + ".txt")
     if not os.path.exists(file):
         scraper = Scraper()
-        data = scraper.get_data_from_source(url)
+        request = requests.get(url)
+        data = scraper.get_data_from_source(url, request)
 
         with open(file, "w", encoding="utf-8") as f:
             f.write(data.url + "\n")

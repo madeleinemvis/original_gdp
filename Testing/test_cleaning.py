@@ -3,6 +3,11 @@ from BackEnd.functions.textprocessing import TextProcessor
 from BackEnd.functions.dataretrieval import Crawler
 
 
+@pytest.fixture
+def get_processor():
+    return TextProcessor()
+
+
 @pytest.mark.parametrize("raw_location, clean_location", [
     ("London", "London"),
     ("the coven 📍", "the coven"),
@@ -18,10 +23,41 @@ def test_emoji_cleaning(raw_location, clean_location):
 @pytest.mark.parametrize("raw_string, tokens", [
     ("absolute", "absolute".split(" ")),
     ("a short sentence", "a short sentence".split(" ")),
-    ("some! punctuation-has, been # put here", "some ! punctuation has , been put here".split(" "))
+    ("some! punctuation-has, been # put here", "some ! punctuation has , been put here".split(" ")),
+    ("", []),
+    ("123", "123".split(" ")),
+    ("    ", []),
+    ("The Vice President is also part of the Executive Branch, ready to assume the Presidency should the need arise.",
+     "The Vice President is also part of the Executive Branch ,"
+     " ready to assume the Presidency should the need arise .".split(" ")),
+    ("The +Kingdom £of Engl@nd – which after 1535 included Wales"
+     " – ceased being \"a\" separate$ sovereign @ state on (1) May 1707",
+     "The Kingdom of Engl nd which after 1535 included Wales"
+     " ceased being a separate sovereign state on 1 May 1707".split(" "))
 ])
-def test_tokenization(raw_string, tokens):
+def test_creating_tokens_from_text(raw_string, tokens):
     assert TextProcessor.create_tokens_from_text(raw_string) == tokens
+
+
+@pytest.mark.parametrize("raw_tokens, clean_tokens", [
+    (["absolute"], ["absolute"]),
+    ("a short sentence".split(" "), "short sentence".split(" ")),
+    ("some ! punctuation has , been put here ?".split(" "), "punctuation".split(" ")),
+    ([], []),
+    ("1 2 3 456".split(" "), []),
+    ("    ".split(" "), []),
+    ("The Vice President is also part of the Executive Branch ,"
+     " ready to assume the Presidency should the need arise .".split(" "),
+     "vice president executive branch ready assume presidency".split(" ")
+     ),
+    ("The Kingdom of Engl nd which after 1535 included Wales"
+     " ceased being a separate sovereign state on 1 May 1707".split(" "),
+     "kingdom engl included wale ceased separate sovereign state".split(" ")),
+     (["\n"], []),
+    (["\t \r \n     ".split(" ")], [])
+])
+def test_token_cleaning(get_processor, raw_tokens, clean_tokens):
+    assert get_processor.clean_tokens(raw_tokens) == clean_tokens
 
 
 @pytest.fixture
