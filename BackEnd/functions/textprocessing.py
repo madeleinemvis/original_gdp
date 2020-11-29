@@ -99,7 +99,7 @@ class TextProcessor:
 
         clean_location = TextProcessor.remove_emoji(location)
 
-        punctuation = string.punctuation.replace(',', '')
+        punctuation = string.punctuation.replace(',', '').replace('.', '')
         punctuation += "1234567890"
         if len(clean_location.split(' ')) < 4 and not any(elem in clean_location for elem in punctuation):
             clean_location = clean_location.lower().strip()
