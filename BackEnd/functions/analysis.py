@@ -1,14 +1,9 @@
-import re
-import numpy as np
-import pandas as pd
-from pprint import pprint
-
 # Gensim
 import gensim
 import gensim.corpora as corpora
-from gensim.utils import simple_preprocess
 from gensim.matutils import cossim
 from gensim.models import CoherenceModel
+from pathlib import Path
 
 # spacy for lemmatization
 import spacy
@@ -20,7 +15,7 @@ from textblob import TextBlob
 
 class NLP_Analyser:
     def __init__(self):
-        with open('../../Data/stopwords.txt') as f:
+        with open(Path(__file__).parent.parent.parent / 'Data' / 'stopwords.txt') as f:
             stopwords = set()
             lines = f.readlines()
             for line in lines:

@@ -1,21 +1,19 @@
 from BackEnd.functions.dataretrieval import Crawler, Scraper
 from BackEnd.functions.textprocessing import TextProcessor
-from BackEnd.functions.analysis import NLP_Analyser
 from BackEnd.dbmanager import DbManager
 
 
 # Function for the main workflow of the project
 def main(source_urls: [str], claim: str):
-    NUMBER_OF_KEY_WORDS = 5
+    NUMBER_OF_KEY_WORDS = 30
     NUMBER_OF_GOOGLE_RESULTS_WANTED = 25
     NUMBER_OF_TWEETS_RESULTS_WANTED = 20
     MAXIMUM_URL_CRAWL_DEPTH = 3
 
-    processor = TextProcessor()
     crawler = Crawler()
-    analyser = NLP_Analyser()
     db_manager = DbManager()
     scraper = Scraper()
+    text_processor = TextProcessor()
     
     # Using a dictionary of mapping URL to data for an initial data storage method, will likely need to change
     # very soon
@@ -35,24 +33,27 @@ def main(source_urls: [str], claim: str):
     # if no tokens stored in database
     if len(all_sentences) == 0:
         for source in source_urls:
-            data = scraper.get_data_from_source(source)
+            data = scraper.scrape_url(source)
             scraped_data[source] = data
             urls.update(data.html_links)
 
         # if there are less than 5 documents, scrape tokens
         if len(source_urls) < 5:
             all_tokens = [t for s in scraped_data.values() for t in s.tokens]
-            key_words = TextProcessor.calculate_key_words(all_tokens, NUMBER_OF_KEY_WORDS)
+            key_words_with_scores = TextProcessor.calculate_key_words(all_tokens, NUMBER_OF_KEY_WORDS)
+            key_words = [k for k, v in key_words_with_scores]
             print(f"Most frequent key_words: {key_words}")
         else:
             all_sentences = " ".join([s.text_body for s in scraped_data.values()])
-            key_words = TextProcessor.calculate_keywords_with_text_rank(all_sentences, NUMBER_OF_KEY_WORDS)
+            key_words_with_scores = text_processor.calculate_keywords_with_text_rank(all_sentences, NUMBER_OF_KEY_WORDS)
+            key_words = [word for word, score in key_words_with_scores]
 
         print(f"Sources in manifesto: {len(source_urls)}")
         print(f"Sources found in manifesto sources: {len(urls)}")
     else:
         # If texts stored in database
-        key_words = TextProcessor.calculate_keywords_with_text_rank(all_sentences, NUMBER_OF_KEY_WORDS)
+        key_words_with_scores = text_processor.calculate_keywords_with_text_rank(all_sentences, NUMBER_OF_KEY_WORDS)
+        key_words = [word for word, score in key_words_with_scores]
         urls.update(document_html_links)
         print(f"Sources in manifesto: {len(documents)}")
         print(f"Sources found in manifesto sources: {len(document_html_links)}")
@@ -68,17 +69,15 @@ def main(source_urls: [str], claim: str):
 
     print("-------- SCRAPING GOOGLE URLS --------")
     # retrieve and store all the data about a URL
-    for url in urls_google:
-        data = scraper.get_data_from_source(url)
-        if data is not None:
-            scraped_data[url] = data
-            urls.update(data.html_links)
-
-    urls.update(urls_google)
+    data = scraper.downloads(urls_google)
+    if data is not None:
+        for k in data.keys():
+            scraped_data[k] = data[k]
+            urls.update(data[k].html_links)
 
     print("-------- SCRAPING TWITTER --------")
     # crawling with Twitter
-    crawled_tweets = crawler.twitter_crawl(key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
+    #crawled_tweets = crawler.twitter_crawl(key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
 
     # print("-------- EXAMPLE SIMILARITY CHECKING --------")
     # do some similarity checking for the documents so far crawled
@@ -91,21 +90,18 @@ def main(source_urls: [str], claim: str):
     # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
     recursive_urls = crawler.url_cleaner(urls)
     final_crawled_urls = crawler.recursive_url_crawl(recursive_urls, MAXIMUM_URL_CRAWL_DEPTH)
-    # scraped_data.update(final_crawled_urls)
-    # TODO does the above line need commenting out? - still working with recursive crawling with get_data_from_source()
-
+    scraped_data.update(final_crawled_urls)
     print("------- SCRAPE REMAINING URLS -------")
     # retrieve and store all the data about a URL's not yet scraped
     urls_to_scrape = [u for u in urls if u not in scraped_data.keys()]
-    url_insert = []
-    for url in urls_to_scrape:
-        scraped_data[url] = scraper.get_data_from_source(url)
-        url_insert.append(scraped_data[url])
+    data = scraper.downloads(urls_to_scrape)
+    for k in data.keys():
+        scraped_data[k] = data[k]
 
     print("-------- STORING --------")
     db_manager.insert_many('documents_document')  # Collection name for web pages
 
-    db_manager.insert_many('tweets_tweet', crawled_tweets)  # Collection name for tweets
+    # db_manager.insert_many('tweets_tweet', crawled_tweets)  # Collection name for tweets
     # perform analysis on the scraped dataS
 
     # perform data visualisation
@@ -115,12 +111,10 @@ def main(source_urls: [str], claim: str):
 
 if __name__ == "__main__":
     # start with the initial URL
-    start_url = "https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/"
-    """ Other URLS:
-    - https://vactruth.com/2018/08/30/vaccine-induced-autism/ # faulty (Forbidden with crawler)
-    - https://vactruth.com/2018/05/02/alfie-evans-timeline/
-    - https://vactruth.com/2019/06/07/the-vaccination-that-never-should-have-been-approved/
-    - https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/
-    """
-    sources = [start_url]
+    sources = [
+        "https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/",
+        "https://www.healthline.com/health/vaccinations/opposition",
+        "https://ec.europa.eu/health/sites/health/files/vaccination/docs/2018_vaccine_confidence_en.pdf",
+        "https://www.theguardian.com/world/2020/nov/10/coronavirus-anti-vaxxers-seek-to-discredit-pfizers-vaccine",
+        "https://www.healthline.com/health/vaccinations/opposition"]
     main(sources, "vaccines cause autism")
