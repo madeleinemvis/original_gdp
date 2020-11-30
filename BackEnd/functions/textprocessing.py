@@ -99,7 +99,7 @@ class TextProcessor:
 
         clean_location = TextProcessor.remove_emoji(location)
 
-        punctuation = string.punctuation.replace(',', '')
+        punctuation = string.punctuation.replace(',', '').replace('.', '')
         punctuation += "1234567890"
         if len(clean_location.split(' ')) < 4 and not any(elem in clean_location for elem in punctuation):
             clean_location = clean_location.lower().strip()
@@ -128,13 +128,13 @@ class TextProcessor:
     def clean_tokens(self, tokens: [str]) -> [str]:
         # removing all punctuation
         table = str.maketrans('', '', string.punctuation)
-        stripped = [t.translate(table) for t in tokens if t]
+        stripped = [t.translate(table) for t in tokens if t and type(t) is not list]
+
+        # make all tokens lower case
+        stripped = list(map(lambda x: x.lower().rstrip(), stripped))
 
         # removing empty tokens
         stripped = list(filter(None, stripped))
-
-        # make all tokens lower case
-        stripped = list(map(lambda x: x.lower(), stripped))
 
         # removing all stop words
         stop_words = self.stop_words
