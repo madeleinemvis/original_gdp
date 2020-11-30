@@ -1,32 +1,27 @@
+import concurrent.futures
+import concurrent.futures
+import csv
 import json
+import re
+from collections import namedtuple
+from datetime import datetime
+from pathlib import Path
+from subprocess import CalledProcessError
+from threading import Lock
+from typing import Dict
+from urllib.parse import urldefrag, urlparse
+
+import requests
 import requests.exceptions
 import tweepy
-import requests
-import re
-import csv
-import concurrent.futures
-
-from typing import Dict
-
-from .textprocessing import TextProcessor
-from urllib.parse import urldefrag, urlparse
-from tika import parser  # Note this module needs Java to be installed on the system to work.
-from collections import namedtuple
 from googlesearch import search
-from bs4 import BeautifulSoup
-from pathlib import Path
-from datetime import datetime
-
-from .analysis import NLP_Analyser
-import concurrent.futures
-from requests import Response
 from readabilipy import simple_json_from_html_string
 from requests import Response
 from tika import parser  # Note this module needs Java to be installed on the system to work.
 
 from .analysis import NLP_Analyser
 from .textprocessing import TextProcessor
-from threading import Lock
+
 MAX_THREADS = 50
 
 # class for crawling and scraping the internet
@@ -195,7 +190,7 @@ class Scraper:
         self.lock = Lock()
 
     def downloads(self, urls: [str]) -> Dict[str, Data]:
-        print(urls)
+        print("URLS:", urls)
         responses = {}
         threads = min(MAX_THREADS, len(urls))
         with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
@@ -212,11 +207,11 @@ class Scraper:
     def scrape_url(self, url: str, seen_urls: [str] = None) -> (str, Data):
         data = None
         try:
-            request_resp = requests.get(url, allow_redirects=False, timeout=1)
+            request_resp = requests.get(url, allow_redirects=False, timeout=10)
             if request_resp is not None:
                 data = self.get_data_from_source(url, request_resp, seen_urls)
         except Exception as e:
-            print(e)
+            print("Exception:", e)
             pass
 
         return url, data
@@ -275,7 +270,7 @@ class Scraper:
             main_text = ''
             for text in main_text_unprocessed:
                 main_text += text['text'].replace("ï¿1⁄2", "'") + " "
-            urls = processor.extract_urls_from_html(article['content'])
+            urls = processor.extract_urls_from_html(article['c'])
 
         # make the tokens from the main text, and create a clean form
         tokens = TextProcessor.create_tokens_from_text(main_text)

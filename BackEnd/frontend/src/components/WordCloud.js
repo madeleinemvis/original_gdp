@@ -24,7 +24,8 @@ const WordCloud = () => {
                 })
                 .then(data => {
                     const tempCloud = []
-                    let keywords = JSON.parse(data)
+                    let keywords;
+                    keywords = JSON.parse(data);
                     let x = 0;
                     for (let k in keywords) {
                         tempCloud[x] = {value: k, count: keywords[k]};

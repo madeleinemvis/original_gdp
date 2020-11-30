@@ -32,7 +32,7 @@ const Home = () => {
         e.preventDefault();
         setLoading(true)
         //Deleteing existing parts
-        var uid = uuidv4();
+        var uid = uuidv4();npm
         formData.delete('uid')
         formData.delete('claim')
         formData.delete('urls')

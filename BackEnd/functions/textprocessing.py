@@ -163,7 +163,6 @@ class TextProcessor:
             return []
 
         word_types = ['NOUN', 'PROPN']
-
         document = spacy.load('en_core_web_sm')(text)
 
         # make the sentences from the input text using spacy

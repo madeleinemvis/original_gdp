@@ -10,8 +10,12 @@ from rest_framework.decorators import api_view
 
 # Create your views here.
 # Returns all tweets
-@api_view(['GET'])
+from BackEnd.documents.forms import RequestForm
+
+
+@api_view(['POST'])
 def tweets_list(request):
+    request_form = RequestForm(request.POST, request.FILES)
     tweets = Tweet.objects.all()
     twitter_serializer = TweetSerializer(tweets, many=True)
     return JsonResponse(twitter_serializer.data, safe=False)
