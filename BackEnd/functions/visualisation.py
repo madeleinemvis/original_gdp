@@ -1,5 +1,5 @@
-from functions.textprocessing import TextProcessor
-from BackEnd.dbmanager import DbManager
+from .textprocessing import TextProcessor
+from dbmanager import DbManager
 
 
 # class for the data visualisation
@@ -14,6 +14,5 @@ class DataVisualiser:
         # Get all keywords from mongodb (big big string) need UID
         # use TextProcessor method get_all_keywords_with_textrank we want approx 25 words
         text = self.db_manager.get_all_main_texts(uid)
-        keywords = TextProcessor.calculate_keywords_with_text_rank(text, 25)
-        print(str(keywords))
-        return keywords
+        keywords_with_values = TextProcessor.calculate_keywords_with_text_rank(text, 25)
+        return dict(keywords_with_values)

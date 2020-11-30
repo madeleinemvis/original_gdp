@@ -8,8 +8,6 @@ import {
     Jumbotron
 } from 'react-bootstrap';
 
-
-import FileUpload from "./FileUpload";
 const Home = () => {
     // https://dev.to/fuchodeveloper/dynamic-form-fields-in-react-1h6c
     const [inputFields, setInputFields] = useState([
@@ -90,8 +88,6 @@ const Home = () => {
                     </form>        
                     
                     <br/>
-                        
-                    <FileUpload/>                               
                 
                 
                 </Col>

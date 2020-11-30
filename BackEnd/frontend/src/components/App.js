@@ -10,9 +10,9 @@ import {
   } from "react-router-dom";
 
 const App = () => {
-
+    console.log("Entering app");
     return (
-        
+
         <React.Fragment>
             <Router>
                 <nav className="navbar navbar-expand-sm sticky-top navbar-dark bg-dark">

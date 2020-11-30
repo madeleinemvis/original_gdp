@@ -57,9 +57,6 @@ const Tweets = () => {
                             
                                          
                     </Col>
-                    <Col>
-                    
-                    </Col>
                     
                 </Row>
         </React.Fragment>
