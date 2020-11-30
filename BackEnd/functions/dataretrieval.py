@@ -6,6 +6,8 @@ import re
 import csv
 import concurrent.futures
 
+from typing import Dict
+
 from .textprocessing import TextProcessor
 from urllib.parse import urldefrag, urlparse
 from tika import parser  # Note this module needs Java to be installed on the system to work.
@@ -193,6 +195,7 @@ class Scraper:
         self.lock = Lock()
 
     def downloads(self, urls: [str]) -> Dict[str, Data]:
+        print(urls)
         responses = {}
         threads = min(MAX_THREADS, len(urls))
         with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
