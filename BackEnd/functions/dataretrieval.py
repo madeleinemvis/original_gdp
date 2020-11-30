@@ -26,7 +26,7 @@ from tika import parser  # Note this module needs Java to be installed on the sy
 
 from .analysis import NLP_Analyser
 from .textprocessing import TextProcessor
-
+from threading import Lock
 MAX_THREADS = 50
 
 # class for crawling and scraping the internet
