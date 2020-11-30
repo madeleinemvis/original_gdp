@@ -8,9 +8,14 @@ from rest_framework.parsers import JSONParser
 from rest_framework import status
 from documents.models import Document
 from documents.serializers import DocumentSerializer
+from filehandler import FileHandler
+from rest_framework import status
 from rest_framework.decorators import api_view
 from filehandler import FileHandler
 from documents.forms import RequestForm
+from rest_framework.parsers import JSONParser
+
+from functions.visualisation import DataVisualiser
 
 
 @api_view(['POST'])
@@ -20,9 +25,9 @@ def document_list(request):
         file_handler = FileHandler()
         request_form = RequestForm(request.POST, request.FILES)
         if request_form.is_valid():
-            uid, claim, document_urls, document_pdfs, zip_file = file_handler.get_objects_from_request(request, request_form)
+            uid, claim, document_urls, document_pdfs, files = file_handler.get_objects_from_request(request, request_form)
             # FAILS if no documents attached
-            if not(document_urls is None and document_pdfs is None and zip_file is None):
+            if not(document_urls is None and document_pdfs is None and files is None):
                 file_handler.save_claim(uid, claim)
                 if document_urls:
                     documents = file_handler.read_docs(document_urls)
@@ -30,8 +35,8 @@ def document_list(request):
                 if document_pdfs:
                     documents = file_handler.read_docs(document_pdfs)
                     file_handler.save_documents(uid, 'pdf', documents)
-                if zip_file:
-                    documents = file_handler.read_zip_file(uid, zip_file)
+                if files:
+                    documents = file_handler.read_docs(files)
                     file_handler.save_documents(uid, 'pdf', documents)
                 return JsonResponse(data=request.data, status=status.HTTP_201_CREATED, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
@@ -62,3 +67,13 @@ def document_detail(request, pk):
         count = Document.objects.all().delete()
         return JsonResponse({'message': '{} Tutorials were deleted successfully!'.format(count[0])},
                             status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['POST'])
+def keywords_wordcloud(request):
+    datavisualiser = DataVisualiser()
+    if request.method == "POST":
+        uid = request.data['uid']
+        keywords = datavisualiser.word_cloud(uid)
+        return JsonResponse(data=keywords, status=status.HTTP_200_OK, safe=False)
+    return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)

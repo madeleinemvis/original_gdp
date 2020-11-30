@@ -21,7 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('frontend.urls')),
     url(r'^', include('documents.urls')),
-    url(r'^', include('tweets.urls')),
-    url(r'^', include('files.urls'))
+    url(r'^', include('tweets.urls'))
 ]
 

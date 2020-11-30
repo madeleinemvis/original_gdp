@@ -29,11 +29,13 @@
         "prop-types": "^15.7.2",
         "react": "^17.0.1",
         "react-bootstrap": "^1.4.0",
+        "react-content-loader": "^5.1.4",
         "react-dom": "^17.0.1",
         "react-icons": "^3.11.0",
         "react-router": "^5.2.0",
         "react-router-dom": "^5.2.0",
         "react-scrollbars-custom": "^4.0.25",
+        "react-tagcloud": "^2.0.0",
         "reactstrap": "^8.7.1",
         "save": "^2.4.0"
     }
