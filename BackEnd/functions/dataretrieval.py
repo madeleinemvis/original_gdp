@@ -1,25 +1,20 @@
+import concurrent.futures
+import concurrent.futures
+import csv
 import json
+import re
+from collections import namedtuple
+from datetime import datetime
+from pathlib import Path
+from subprocess import CalledProcessError
+from threading import Lock
+from typing import Dict
+from urllib.parse import urldefrag, urlparse
+
+import requests
 import requests.exceptions
 import tweepy
-import requests
-import re
-import csv
-import concurrent.futures
-
-from typing import Dict
-
-from .textprocessing import TextProcessor
-from urllib.parse import urldefrag, urlparse
-from tika import parser  # Note this module needs Java to be installed on the system to work.
-from collections import namedtuple
 from googlesearch import search
-from bs4 import BeautifulSoup
-from pathlib import Path
-from datetime import datetime
-
-from .analysis import NLP_Analyser
-import concurrent.futures
-from requests import Response
 from readabilipy import simple_json_from_html_string
 from requests import Response
 from tika import parser  # Note this module needs Java to be installed on the system to work.
@@ -28,6 +23,7 @@ from BackEnd.functions.analysis import NLP_Analyser
 from BackEnd.functions.textprocessing import TextProcessor
 
 MAX_THREADS = 50
+
 
 # class for crawling and scraping the internet
 class Crawler:
@@ -117,7 +113,6 @@ class Crawler:
             final_dict.update(response)
         return final_dict
 
-
     @staticmethod
     def twitter_init():
         with open(Path(__file__).parent.parent.parent / 'Data' / "twitter_credentials.json", "r") as file:
@@ -158,7 +153,7 @@ class Crawler:
 
         return countries, country_abbreviations, states, state_abbreviations
 
-    def twitter_crawl(self, keywords: [str], tweets_returned: int):
+    def twitter_crawl(self, uid: str, keywords: [str], tweets_returned: int):
         api = self.twitter_init()
         # Retrieves all tweets with given keywords and count
         query = ' '.join(keywords[:2])
@@ -167,7 +162,8 @@ class Crawler:
         tweets = []
 
         for tweet in searched_tweets:
-            parsed_tweet = {'created_at': tweet.created_at,
+            parsed_tweet = {'uid': uid,
+                            'created_at': tweet.created_at,
                             'text': tweet.text,
                             'favorite_count': tweet.favorite_count,
                             'retweet_count': tweet.retweet_count,
@@ -175,7 +171,6 @@ class Crawler:
                                                                           countries, country_abbreviations,
                                                                           states, state_abbreviations),
                             'sentiment': NLP_Analyser.get_tweet_sentiment(tweet.text)}
-            # print(parsed_tweet['user_location'] + "|" + parsed_tweet['text'])
 
             if tweet.retweet_count > 0:
                 # Only appends if the tweet text is unique
@@ -281,8 +276,7 @@ class Scraper:
         tokens = TextProcessor.create_tokens_from_text(main_text)
         cleaned_tokens = processor.clean_tokens(tokens)
 
-        return Data(uid="", content_type=content_type, url=source, raw_html=initial_html, title=title, text_body=main_text,
+        return Data(uid="", content_type=content_type, url=source, raw_html=initial_html, title=title,
+                    text_body=main_text,
                     cleaned_tokens=cleaned_tokens,
                     html_links=urls)
-
-

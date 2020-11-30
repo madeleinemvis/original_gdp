@@ -4,6 +4,7 @@ from BackEnd.dbmanager import DbManager
 
 
 # Function for the main workflow of the project
+# noinspection PyInterpreter
 def main(source_urls: [str], claim: str):
     NUMBER_OF_KEY_WORDS = 30
     NUMBER_OF_GOOGLE_RESULTS_WANTED = 25
@@ -25,10 +26,11 @@ def main(source_urls: [str], claim: str):
     # along with the html links found
     urls = set()
 
-    documents = db_manager.get_all_documents('some_random_hash')
-    all_sentences = db_manager.get_all_main_texts('some_random_hash')
-    document_html_links = db_manager.get_all_html_links('some_random_hash')
-    claim = db_manager.get_claim('some_random_hash')
+    uid = 'some_random_hash'
+    documents = db_manager.get_all_documents(uid)
+    all_sentences = db_manager.get_all_main_texts(uid)
+    document_html_links = db_manager.get_all_html_links(uid)
+    claim = db_manager.get_claim(uid)
 
     # if no tokens stored in database
     if len(all_sentences) == 0:
@@ -77,31 +79,31 @@ def main(source_urls: [str], claim: str):
 
     print("-------- SCRAPING TWITTER --------")
     # crawling with Twitter
-    #crawled_tweets = crawler.twitter_crawl(key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
+    crawled_tweets = crawler.twitter_crawl(uid, key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
 
-    # print("-------- EXAMPLE SIMILARITY CHECKING --------")
-    # do some similarity checking for the documents so far crawled
-    # Throws errors if links weren't searched 
-    #analyser.create_topic_model(scraped_data)
-    #print("Similar Doc:", analyser.check_similarity(scraped_data["https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/"]))
-    #print("Non-similar doc:", analyser.check_similarity(scraped_data["https://www.bbc.co.uk/news/uk-54779430"]))
-
-    print("-------- RECURSIVE CRAWLING --------")
-    # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
-    recursive_urls = crawler.url_cleaner(urls)
-    final_crawled_urls = crawler.recursive_url_crawl(recursive_urls, MAXIMUM_URL_CRAWL_DEPTH)
-    scraped_data.update(final_crawled_urls)
-    print("------- SCRAPE REMAINING URLS -------")
-    # retrieve and store all the data about a URL's not yet scraped
-    urls_to_scrape = [u for u in urls if u not in scraped_data.keys()]
-    data = scraper.downloads(urls_to_scrape)
-    for k in data.keys():
-        scraped_data[k] = data[k]
+    # # print("-------- EXAMPLE SIMILARITY CHECKING --------")
+    # # do some similarity checking for the documents so far crawled
+    # # Throws errors if links weren't searched
+    # #analyser.create_topic_model(scraped_data)
+    # #print("Similar Doc:", analyser.check_similarity(scraped_data["https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/"]))
+    # #print("Non-similar doc:", analyser.check_similarity(scraped_data["https://www.bbc.co.uk/news/uk-54779430"]))
+    #
+    # print("-------- RECURSIVE CRAWLING --------")
+    # # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
+    # recursive_urls = crawler.url_cleaner(urls)
+    # final_crawled_urls = crawler.recursive_url_crawl(recursive_urls, MAXIMUM_URL_CRAWL_DEPTH)
+    # scraped_data.update(final_crawled_urls)
+    # print("------- SCRAPE REMAINING URLS -------")
+    # # retrieve and store all the data about a URL's not yet scraped
+    # urls_to_scrape = [u for u in urls if u not in scraped_data.keys()]
+    # data = scraper.downloads(urls_to_scrape)
+    # for k in data.keys():
+    #     scraped_data[k] = data[k]
 
     print("-------- STORING --------")
-    db_manager.insert_many('documents_document')  # Collection name for web pages
-
-    # db_manager.insert_many('tweets_tweet', crawled_tweets)  # Collection name for tweets
+    # db_manager.insert_many('documents_document')  # Collection name for web pages
+    print("CRAWLED:", crawled_tweets)
+    db_manager.insert_many('tweets_tweet', crawled_tweets)  # Collection name for tweets
     # perform analysis on the scraped dataS
 
     # perform data visualisation
