@@ -24,8 +24,8 @@ from readabilipy import simple_json_from_html_string
 from requests import Response
 from tika import parser  # Note this module needs Java to be installed on the system to work.
 
-from BackEnd.functions.analysis import NLP_Analyser
-from BackEnd.functions.textprocessing import TextProcessor
+from .analysis import NLP_Analyser
+from .textprocessing import TextProcessor
 
 MAX_THREADS = 50
 

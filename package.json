@@ -27,6 +27,7 @@
     "dependencies": {
         "axios": "^0.21.0",
         "bootstrap": "^4.5.3",
+        "jszip": "^3.5.0",
         "prop-types": "^15.7.2",
         "react": "^17.0.1",
         "react-bootstrap": "^1.4.0",
@@ -37,6 +38,10 @@
         "react-scrollbars-custom": "^4.0.25",
         "react-tagcloud": "^2.0.0",
         "reactstrap": "^8.7.1",
-        "save": "^2.4.0"
+        "save": "^2.4.0",
+        "react-loader-spinner": "^3.1.14",
+        "react-promise-tracker": "^2.1.0",
+        "react-uid": "^2.3.1",
+        "uuid": "^8.3.1"
     }
 }
