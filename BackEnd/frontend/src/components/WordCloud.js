@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {TagCloud} from "react-tagcloud";
-import { Row, Col } from 'react-bootstrap';
+import {Spinner} from 'react-bootstrap';
 
 const WordCloud = () => {
     const[wordCloud, setWordCloud] = useState({});
@@ -46,19 +46,22 @@ const WordCloud = () => {
     console.log("IsLoading:", isLoading);
 
     return <React.Fragment>
-                <Row>
-                    {isLoading &&
-                        <Col>Loading...</Col>
-                    }
-                    {!isLoading &&
-                        <Col>
-                            <TagCloud
-                                minSize={10}
-                                maxSize={35}
-                                tags = { wordCloud }/>
-                        </Col>
-                    }
-                </Row>
+                {isLoading &&
+                    <Loading/>
+                }
+                {!isLoading &&
+                    <TagCloud
+                        minSize={10}
+                        maxSize={35}
+                        tags = { wordCloud }/>
+                }
     </React.Fragment>;
 }
+
+const Loading = () => {
+    return <Spinner animation="border" role="status">
+        <span className="sr-only">Loading...</span>
+    </Spinner>
+}
+
 export default WordCloud;
