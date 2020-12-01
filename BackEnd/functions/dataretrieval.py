@@ -5,10 +5,12 @@ import json
 import re
 from collections import namedtuple
 from datetime import datetime
+import time
 from pathlib import Path
 from subprocess import CalledProcessError
 from threading import Lock
 from typing import Dict
+from urllib.error import HTTPError
 from urllib.parse import urldefrag, urlparse
 
 import requests
@@ -23,6 +25,7 @@ from .analysis import NLP_Analyser
 from .textprocessing import TextProcessor
 
 MAX_THREADS = 50
+
 
 # class for crawling and scraping the internet
 class Crawler:
@@ -39,12 +42,29 @@ class Crawler:
     # not sure how we want to use this method yet
     def crawl_google_with_key_words(self, key_words: [str], urls_returned: int) -> [str]:
         query = ' '.join(key_words)
-        google_result = search(query, tld="com", lang="en", num=urls_returned, start=0, stop=urls_returned, pause=1)
         new_results = set()
-        for url in google_result:
-            if not re.match(self.BLACKLIST_REGEX, url):
-                defrag_url = urldefrag(url)[0]
-                new_results.add(defrag_url)
+        current_delay = 0.1
+        # Segment into sections if
+        if urls_returned > 100:
+            temp_start, temp_end = 0, 100
+        else:
+            temp_start, temp_end = 0, urls_returned
+
+        while len(new_results) < urls_returned:
+            print(temp_start, temp_end, current_delay, len(new_results))
+            try:
+                google_result = search(query, tld="com", lang="en", num=temp_end, start=temp_start,
+                                       stop=temp_end, pause=1)
+                for url in google_result:
+                    if not re.match(self.BLACKLIST_REGEX, url):
+                        defrag_url = urldefrag(url)[0]
+                        new_results.add(defrag_url)
+                print(len(new_results))
+            except HTTPError:
+                print("Waiting", current_delay, "seconds before retrying.")
+                time.sleep(current_delay)
+                current_delay *= 2  # Exponentially increase
+
         return new_results
 
     def url_cleaner(self, urls: [str]) -> [str]:
@@ -112,7 +132,6 @@ class Crawler:
             final_dict.update(response)
         return final_dict
 
-
     @staticmethod
     def twitter_init():
         with open(Path(__file__).parent.parent.parent / 'Data' / "twitter_credentials.json", "r") as file:
@@ -153,31 +172,34 @@ class Crawler:
 
         return countries, country_abbreviations, states, state_abbreviations
 
+    # TODO: remove timeouts after Wednesday meeting
     def twitter_crawl(self, keywords: [str], tweets_returned: int):
         api = self.twitter_init()
         # Retrieves all tweets with given keywords and count
         query = ' '.join(keywords[:2])
-        searched_tweets = tweepy.Cursor(api.search, q=query).items(tweets_returned)
         countries, country_abbreviations, states, state_abbreviations = self.location_lists_init()
+        # Setting up timeout
+        timeout = time.time() + 60 * 15
         tweets = []
 
-        for tweet in searched_tweets:
-            parsed_tweet = {'created_at': tweet.created_at,
-                            'text': tweet.text,
-                            'favorite_count': tweet.favorite_count,
-                            'retweet_count': tweet.retweet_count,
-                            'user_location': TextProcessor.clean_location(tweet.user.location,
-                                                                          countries, country_abbreviations,
-                                                                          states, state_abbreviations),
-                            'sentiment': NLP_Analyser.get_tweet_sentiment(tweet.text)}
-            # print(parsed_tweet['user_location'] + "|" + parsed_tweet['text'])
+        while len(tweets) < tweets_returned and time.time() < timeout:
+            searched_tweets = tweepy.Cursor(api.search, q=query).items(tweets_returned - len(tweets))
+            for tweet in searched_tweets:
+                parsed_tweet = {'created_at': tweet.created_at,
+                                'text': tweet.text,
+                                'favorite_count': tweet.favorite_count,
+                                'retweet_count': tweet.retweet_count,
+                                'user_location': TextProcessor.clean_location(tweet.user.location,
+                                                                              countries, country_abbreviations,
+                                                                              states, state_abbreviations),
+                                'sentiment': NLP_Analyser.get_tweet_sentiment(tweet.text)}
 
-            if tweet.retweet_count > 0:
-                # Only appends if the tweet text is unique
-                if not any(t['text'] == parsed_tweet['text'] for t in tweets):
+                if tweet.retweet_count > 0:
+                    # Only appends if the tweet text is unique
+                    if not any(t['text'] == parsed_tweet['text'] for t in tweets):
+                        tweets.append(parsed_tweet)
+                else:
                     tweets.append(parsed_tweet)
-            else:
-                tweets.append(parsed_tweet)
 
         return tweets
 
@@ -276,8 +298,7 @@ class Scraper:
         tokens = TextProcessor.create_tokens_from_text(main_text)
         cleaned_tokens = processor.clean_tokens(tokens)
 
-        return Data(uid="", content_type=content_type, url=source, raw_html=initial_html, title=title, text_body=main_text,
+        return Data(uid="", content_type=content_type, url=source, raw_html=initial_html, title=title,
+                    text_body=main_text,
                     cleaned_tokens=cleaned_tokens,
                     html_links=urls)
-
-

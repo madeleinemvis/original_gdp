@@ -32,7 +32,8 @@ def test_url_scraping_values(get_scraper, test_url):
     scraped_data = get_scraper.get_data_from_source(test_url, response)
     assert scraped_data.uid == "" and scraped_data.content_type == "" and \
            all(v is not None for v in
-               [scraped_data.url, scraped_data.raw_html, scraped_data.title, scraped_data.text_body, scraped_data.cleaned_tokens, scraped_data.html_links])
+               [scraped_data.url, scraped_data.raw_html, scraped_data.title, scraped_data.text_body,
+                scraped_data.cleaned_tokens, scraped_data.html_links])
 
 
 @pytest.mark.parametrize("pdf_url", [
@@ -52,7 +53,8 @@ def test_pdf_scraping_values(get_scraper, pdf_url):
         pdf_url, request)
     assert scraped_data.uid == "" and scraped_data.content_type == "application/pdf" and \
            all(v is not None for v in
-               [scraped_data.url, scraped_data.raw_html, scraped_data.title, scraped_data.text_body, scraped_data.cleaned_tokens, scraped_data.html_links])
+               [scraped_data.url, scraped_data.raw_html, scraped_data.title, scraped_data.text_body,
+                scraped_data.cleaned_tokens, scraped_data.html_links])
 
 
 # used in more than one test so is a fixture
@@ -65,22 +67,23 @@ def search_keywords_n_results():
         (["Test", "Search", "Random", "Elephant", "Nonsense"], 50),
         (["Test", "To", "Return", "Nothing"], 0),
         (["Test", "Return", "Negative"], -1),
-        (["Test", "Too", "Many"], 10_000) # this would look for a time out or an error thrown
+        (["Test", "Too", "Many"], 10_000)  # this would look for a time out or an error thrown
     ]
 
 
 # check google search returns correct # of results
-# TODO Maddy this currently fails
+# TODO Maddy
 def test_google_returns_n_results(search_keywords_n_results, get_crawler):
     for keywords, n_results in search_keywords_n_results:
         assert len(get_crawler.crawl_google_with_key_words(keywords, n_results)) == n_results
 
 
+# TODO Maddy
 # check twitter search returns correct # of results
-# TODO Maddy this currently fails
 def test_twitter_returns_n_results(search_keywords_n_results, get_crawler):
     for keywords, n_results in search_keywords_n_results:
-        assert len(get_crawler.twitter_crawl(keywords, n_results)) == n_results
+        assert (len(get_crawler.twitter_crawl(keywords, n_results)) == n_results)
+
 
 # TODO Alex Lockwood, getting Error: "UnicodeEncodeError: 'charmap' codec can't encode character '\u0142'
 #  in position 11335: character maps to <undefined>" for all calls so tests can run
@@ -96,7 +99,6 @@ def test_correct_data_returned_from_sources():
         data = scraper.get_data_from_source(url, response)
 
         assert data.title == lines[1] and data.text_body == lines[2]
-
 
 # ##### ARCHIVED TESTS BELOW #########
 

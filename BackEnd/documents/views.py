@@ -20,28 +20,31 @@ from functions.visualisation import DataVisualiser
 
 @api_view(['POST'])
 def document_list(request):
-    # POSTING URLs and PDFs from request
+     # POSTING URLs and PDFs from request
     if request.method == 'POST':
+
         file_handler = FileHandler()
         request_form = RequestForm(request.POST, request.FILES)
+
         if request_form.is_valid():
+            return JsonResponse(data=request.data, status=status.HTTP_201_CREATED, safe=False)
             uid, claim, document_urls, document_pdfs, files = file_handler.get_objects_from_request(request,
                                                                                                     request_form)
             # FAILS if no documents attached
-            if not (document_urls is None and document_pdfs is None and files is None):
-                file_handler.save_claim(uid, claim)
-                if document_urls:
-                    documents = file_handler.read_docs(document_urls)
-                    file_handler.save_documents(uid, 'web-page', documents)
-                if document_pdfs:
-                    documents = file_handler.read_docs(document_pdfs)
-                    file_handler.save_documents(uid, 'pdf', documents)
+            # if not (document_urls is None and document_pdfs is None and files is None):
+            #     file_handler.save_claim(uid, claim)
+            #     if document_urls:
+            #         documents = file_handler.read_docs(document_urls)
+            #         file_handler.save_documents(uid, 'web-page', documents)
+            #     if document_pdfs:
+            #         documents = file_handler.read_docs(document_pdfs)
+            #         file_handler.save_documents(uid, 'pdf', documents)
                 # if files:
                 #    documents = file_handler.read_docs(files)
                 #    file_handler.save_documents(uid, 'pdf', documents)
-                print('----Links----\n', document_urls)
-                print('----Links with pdf----\n', document_pdfs)
-                return JsonResponse(data=request.data, status=status.HTTP_201_CREATED, safe=False)
+            print('----Links----\n', document_urls)
+            print('----Links with pdf----\n', document_pdfs)
+            return JsonResponse(data=request.data, status=status.HTTP_201_CREATED, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
 
@@ -78,5 +81,6 @@ def keywords_wordcloud(request):
     if request.method == "POST":
         uid = request.data['uid']
         keywords = datavisualiser.word_cloud(uid)
+        print(keywords)
         return JsonResponse(data=keywords, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)

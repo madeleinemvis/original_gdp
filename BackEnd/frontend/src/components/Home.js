@@ -32,7 +32,7 @@ const Home = () => {
         e.preventDefault();
         setLoading(true)
         //Deleteing existing parts
-        var uid = uuidv4();npm
+        var uid = uuidv4();
         formData.delete('uid')
         formData.delete('claim')
         formData.delete('urls')
@@ -50,13 +50,18 @@ const Home = () => {
         
         formData.append('urls', urls)
         formData.append('pdfs', pdfURL)
-        
-        http.post('/documents', formData)
+
+        const requestOptions = {
+                method: 'POST',
+                body: formData,
+                redirect: 'follow',
+            };
+        fetch('http://127.0.0.1:8080/api/documents', requestOptions)
         .then(res =>{
             if(res.status === 201){                
                 setLoading(false)
                 setRedirect(true)
-                console.log(res.data)
+                console.log("response:", res.data)
             }
             
         })

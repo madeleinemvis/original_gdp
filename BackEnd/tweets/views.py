@@ -10,7 +10,7 @@ from rest_framework.decorators import api_view
 
 # Create your views here.
 # Returns all tweets
-from BackEnd.documents.forms import RequestForm
+from documents.forms import RequestForm
 
 
 @api_view(['POST'])
