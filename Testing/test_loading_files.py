@@ -32,5 +32,9 @@ def test_load_stopwords_txt():
 
 
 # test loading countries.txt
-def test_load_lists_loading():
+def test_load_location_lists_init():
     assert all([x is not None for x in Crawler.location_lists_init()])
+
+
+def test_twitter_init():
+    assert Crawler.twitter_init() is not None

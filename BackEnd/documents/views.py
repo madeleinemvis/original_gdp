@@ -8,10 +8,10 @@ from rest_framework.parsers import JSONParser
 from rest_framework import status
 from documents.models import Document
 from documents.serializers import DocumentSerializer
-from filehandler import FileHandler
+from functions.filehandler import FileHandler
 from rest_framework import status
 from rest_framework.decorators import api_view
-from filehandler import FileHandler
+from functions.filehandler import FileHandler
 from documents.forms import RequestForm
 from rest_framework.parsers import JSONParser
 
@@ -25,9 +25,10 @@ def document_list(request):
         file_handler = FileHandler()
         request_form = RequestForm(request.POST, request.FILES)
         if request_form.is_valid():
-            uid, claim, document_urls, document_pdfs, files = file_handler.get_objects_from_request(request, request_form)
+            uid, claim, document_urls, document_pdfs, files = file_handler.get_objects_from_request(request,
+                                                                                                    request_form)
             # FAILS if no documents attached
-            if not(document_urls is None and document_pdfs is None and files is None):
+            if not (document_urls is None and document_pdfs is None and files is None):
                 file_handler.save_claim(uid, claim)
                 if document_urls:
                     documents = file_handler.read_docs(document_urls)
@@ -35,9 +36,11 @@ def document_list(request):
                 if document_pdfs:
                     documents = file_handler.read_docs(document_pdfs)
                     file_handler.save_documents(uid, 'pdf', documents)
-                if files:
-                    documents = file_handler.read_docs(files)
-                    file_handler.save_documents(uid, 'pdf', documents)
+                # if files:
+                #    documents = file_handler.read_docs(files)
+                #    file_handler.save_documents(uid, 'pdf', documents)
+                print('----Links----\n', document_urls)
+                print('----Links with pdf----\n', document_pdfs)
                 return JsonResponse(data=request.data, status=status.HTTP_201_CREATED, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 

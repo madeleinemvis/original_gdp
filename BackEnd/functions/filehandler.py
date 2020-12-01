@@ -3,13 +3,13 @@ import shutil
 import zipfile
 from ast import literal_eval
 
-from dbmanager import DbManager
+from .dbmanager import DbManager
 
 from django.utils.datastructures import MultiValueDictKeyError
 from documents.models import Document, Claim
 
 
-from functions.dataretrieval import Scraper
+from .dataretrieval import Scraper
 
 
 class FileHandler:

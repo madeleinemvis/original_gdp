@@ -9,12 +9,13 @@ import {
 } from "react-router-dom";
 
 import Tweets from './Tweets';
+import Sources from "./Sources";
 
 // Source: https://bezkoder.com/react-hooks-crud-axios-api/
 const Dashboard = () => {
 
     let { path, url } = useRouteMatch();
-   
+   console.log(path);
     return (
         <React.Fragment>
             <Container>
@@ -37,7 +38,7 @@ const Dashboard = () => {
                             <h3>Info</h3>
                         </Route>
                         <Route exact path={`${path}/sources`}>
-                            <h3>Sources</h3>
+                            <Sources />
                         </Route>
                         <Route exact path={`${path}/tweets`}>
                             <Tweets />

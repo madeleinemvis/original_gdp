@@ -1,3 +1,6 @@
+import concurrent.futures
+import concurrent.futures
+import csv
 import json
 from typing import Dict
 
@@ -5,16 +8,15 @@ import requests.exceptions
 import tweepy
 import requests
 import re
-import csv
-import concurrent.futures
-
-from .textprocessing import TextProcessor
-from urllib.parse import urldefrag, urlparse
-from tika import parser  # Note this module needs Java to be installed on the system to work.
 from collections import namedtuple
 from googlesearch import search
 from pathlib import Path
 from datetime import datetime
+from pathlib import Path
+from subprocess import CalledProcessError
+from threading import Lock
+from typing import Dict
+from urllib.parse import urldefrag, urlparse
 
 from .analysis import NLP_Analyser
 import concurrent.futures
@@ -165,6 +167,7 @@ class Crawler:
         tweets = []
 
         for tweet in searched_tweets:
+            print(tweet)
             parsed_tweet = {'created_at': tweet.created_at,
                             'text': tweet.text,
                             'favorite_count': tweet.favorite_count,
@@ -173,6 +176,7 @@ class Crawler:
                                                                           countries, country_abbreviations,
                                                                           states, state_abbreviations),
                             'sentiment': NLP_Analyser.get_tweet_sentiment(tweet.text)}
+            print(parsed_tweet)
             # print(parsed_tweet['user_location'] + "|" + parsed_tweet['text'])
 
             if tweet.retweet_count > 0:
@@ -194,6 +198,7 @@ class Scraper:
         self.processor = TextProcessor()
 
     def downloads(self, urls: [str]) -> Dict[str, Data]:
+        print("URLS:", urls)
         responses = {}
         threads = min(MAX_THREADS, len(urls))
         with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
@@ -213,7 +218,7 @@ class Scraper:
             request_resp = requests.get(url, allow_redirects=False, timeout=5)
             data = self.get_data_from_source(url, request_resp)
         except Exception as e:
-            print(e)
+            print("Exception:", e)
             pass
 
         return url, data
