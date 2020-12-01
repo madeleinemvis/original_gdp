@@ -133,7 +133,7 @@ def main(source_urls: [str], claim: str):
     print("-------- STORING --------")
     # db_manager.insert_many('documents_document')  # Collection name for web pages
 
-    # db_manager.insert_many('tweets_tweet', crawled_tweets)  # Collection name for tweets
+    db_manager.insert_many('tweets_tweet', crawled_tweets)  # Collection name for tweets
     # perform analysis on the scraped dataS
 
     # perform data visualisation
