@@ -27,18 +27,6 @@ MAX_THREADS = 50
 
 
 # class for crawling and scraping the internet
-def url_cleaner(urls: [str]) -> [str]:
-    parent = []
-    url_depth = []
-    for url in urls:
-        link = urlparse(url)
-        net = link.netloc
-        if net not in parent:
-            parent.append(net)
-            url_depth.append(url)
-    return url_depth
-
-
 class Crawler:
     def __init__(self):
         with open(Path(__file__).parent.parent.parent / 'Data' / 'blacklist.txt') as f:
@@ -48,6 +36,18 @@ class Crawler:
                 regexes.append(line.rstrip())
             self.BLACKLIST_REGEX = '(?:%s)' % '|'.join(regexes)
         pass
+
+    def url_cleaner(self, urls: [str]) -> [str]:
+        parent = []
+        url_depth = []
+        for url in urls:
+            if not re.match(self.BLACKLIST_REGEX, url):
+                link = urlparse(url)
+                net = link.netloc
+                if net not in parent:
+                    parent.append(net)
+                    url_depth.append(url)
+        return url_depth
 
     # Maddy
     # not sure how we want to use this method yet
@@ -79,6 +79,7 @@ class Crawler:
                 break
             start_t = datetime.now()
 
+            print("Depth", depth_index)
             print("Batch Scraping", len(urls), "links: ")
             response = scraper.downloads(urls)
             print("Batch Scraping Complete.", len(response), "Links Scraped. Time Taken: ", datetime.now() - start_t)
@@ -218,16 +219,16 @@ class Scraper:
         return url, data
 
     # method for getting raw text and cleaned tokens from a source, can be a html or pdf
-    def get_data_from_source(self, source: str, response: Response, seen_urls: [str] = None) -> namedtuple:
+    def get_data_from_source(self, source: str, response: Response, seen_urls=None) -> namedtuple:
+        # if seen_urls is default, set as an empty list to begin with
+        if seen_urls is None:
+            seen_urls = []
+
         print("Processing:", source)
 
         # if there is no response, no point in processing further
         if response is None:
             return None
-
-        # if seen_urls is default, set as an empty list to begin with
-        if seen_urls is None:
-            seen_urls = []
 
         initial_html = ''
         title = ''
@@ -279,6 +280,7 @@ class Scraper:
             # if there is a location header, we have to handle redirects
             if 'location' in response.headers.keys():
                 location = response.headers['location']
+                print("Seen URLs Length", len(seen_urls))
 
                 # check if we have seen this url before
                 if location in seen_urls:
@@ -286,7 +288,7 @@ class Scraper:
                     return None
 
                 # add to list of previously seen urls
-                new_seen_urls = seen_urls.append(location)
+                seen_urls.append(location)
 
                 # try to get a new request from the redirected location
                 try:
@@ -295,7 +297,7 @@ class Scraper:
                     return None
 
                 # recursively call the get_data_from_source function with the new request and new seen urls list
-                return self.get_data_from_source(location, new_request_resp, new_seen_urls)
+                return self.get_data_from_source(location, new_request_resp, seen_urls)
 
             # use readability-lxml to extract a list of urls
             url_doc = Document(initial_html).summary()

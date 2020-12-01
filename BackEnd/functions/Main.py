@@ -1,4 +1,4 @@
-from BackEnd.functions.dataretrieval import Crawler, Scraper, url_cleaner
+from BackEnd.functions.dataretrieval import Crawler, Scraper
 from BackEnd.functions.textprocessing import TextProcessor
 from BackEnd.dbmanager import DbManager
 
@@ -77,7 +77,7 @@ def main(source_urls: [str], claim: str):
 
     print("-------- SCRAPING TWITTER --------")
     # crawling with Twitter
-    #crawled_tweets = crawler.twitter_crawl(key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
+    crawled_tweets = crawler.twitter_crawl(key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
 
     # print("-------- EXAMPLE SIMILARITY CHECKING --------")
     # do some similarity checking for the documents so far crawled
@@ -88,7 +88,7 @@ def main(source_urls: [str], claim: str):
 
     print("-------- RECURSIVE CRAWLING --------")
     # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
-    recursive_urls = url_cleaner(urls)
+    recursive_urls = crawler.url_cleaner(urls)
     final_crawled_urls = crawler.recursive_url_crawl(recursive_urls, MAXIMUM_URL_CRAWL_DEPTH)
     scraped_data.update(final_crawled_urls)
     print("------- SCRAPE REMAINING URLS -------")
@@ -101,7 +101,7 @@ def main(source_urls: [str], claim: str):
     print("-------- STORING --------")
     db_manager.insert_many('documents_document')  # Collection name for web pages
 
-    # db_manager.insert_many('tweets_tweet', crawled_tweets)  # Collection name for tweets
+    db_manager.insert_many('tweets_tweet', crawled_tweets)  # Collection name for tweets
     # perform analysis on the scraped dataS
 
     # perform data visualisation
