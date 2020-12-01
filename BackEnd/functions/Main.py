@@ -60,6 +60,17 @@ def generate_suggested_urls(no_of_suggestions, google_urls, urls):
         return list(google_urls)[:no_of_suggestions]
 
 
+def scrape_google_results(scraper, google_urls):
+    data = scraper.downloads(google_urls)
+    new_urls = set()
+    new_scraped_data = {}
+    if data is not None:
+        for k in data.keys():
+            new_scraped_data[k] = data[k]
+            new_urls.update(data[k].html_links)
+    return new_urls, new_scraped_data
+
+
 # Function for the main workflow of the project
 def main(source_urls: [str], claim: str):
     crawler, scraper, text_processor = Crawler(), Scraper(), TextProcessor()
@@ -91,11 +102,9 @@ def main(source_urls: [str], claim: str):
     #
     print("-------- SCRAPING GOOGLE URLS --------")
     # retrieve and store all the data about a URL
-    data = scraper.downloads(urls_google)
-    if data is not None:
-        for k in data.keys():
-            scraped_data[k] = data[k]
-            urls.update(data[k].html_links)
+    new_urls, new_scraped_data = scrape_google_results(scraper, urls_google)
+    urls.update(new_urls)
+    scraped_data.update(new_scraped_data)
 
     print("-------- SCRAPING TWITTER --------")
     # crawling with Twitter
