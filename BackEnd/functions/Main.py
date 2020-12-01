@@ -4,12 +4,17 @@ from BackEnd.functions.dbmanager import DbManager
 
 import random
 
+NUMBER_OF_KEY_WORDS = 30
+NUMBER_OF_GOOGLE_RESULTS_WANTED = 25
+NUMBER_OF_TWEETS_RESULTS_WANTED = 20
+MAXIMUM_URL_CRAWL_DEPTH = 3
 
-def crawl_google(crawler, key_words, number_of_results):
+
+def crawl_google(crawler, key_words):
     # TODO here we are using all 30 keywords for the google search,
     #  we might want to only use 5 or 6 to help with results
-    urls_google = crawler.crawl_google_with_key_words(key_words, number_of_results)
-    print(f"Top {number_of_results} Google Results from Keywords ({key_words}):")
+    urls_google = crawler.crawl_google_with_key_words(key_words, NUMBER_OF_GOOGLE_RESULTS_WANTED)
+    print(f"Top {NUMBER_OF_GOOGLE_RESULTS_WANTED} Google Results from Keywords ({key_words}):")
     for i, url in enumerate(urls_google):
         print(f"[{i + 1}]: {url}")
     return urls_google
@@ -28,10 +33,7 @@ def generate_suggested_urls(no_of_suggestions, google_urls, urls):
 
 # Function for the main workflow of the project
 def main(source_urls: [str], claim: str):
-    NUMBER_OF_KEY_WORDS = 30
-    NUMBER_OF_GOOGLE_RESULTS_WANTED = 25
-    NUMBER_OF_TWEETS_RESULTS_WANTED = 20
-    MAXIMUM_URL_CRAWL_DEPTH = 3
+
 
     crawler = Crawler()
     db_manager = DbManager()
