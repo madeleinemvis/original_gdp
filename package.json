@@ -27,6 +27,7 @@
     "dependencies": {
         "axios": "^0.21.0",
         "bootstrap": "^4.5.3",
+        "holderjs": "^2.9.7",
         "jszip": "^3.5.0",
         "prop-types": "^15.7.2",
         "react": "^17.0.1",

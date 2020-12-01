@@ -162,6 +162,7 @@ class Crawler:
         tweets = []
 
         for tweet in searched_tweets:
+            print(tweet)
             parsed_tweet = {'created_at': tweet.created_at,
                             'text': tweet.text,
                             'favorite_count': tweet.favorite_count,
@@ -170,6 +171,7 @@ class Crawler:
                                                                           countries, country_abbreviations,
                                                                           states, state_abbreviations),
                             'sentiment': NLP_Analyser.get_tweet_sentiment(tweet.text)}
+            print(parsed_tweet)
             # print(parsed_tweet['user_location'] + "|" + parsed_tweet['text'])
 
             if tweet.retweet_count > 0:
