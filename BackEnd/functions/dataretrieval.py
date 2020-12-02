@@ -159,7 +159,7 @@ class Crawler:
 
         return countries, country_abbreviations, states, state_abbreviations
 
-    def twitter_crawl(self, keywords: [str], tweets_returned: int):
+    def twitter_crawl(self, uid: str, keywords: [str], tweets_returned: int):
         api = self.twitter_init()
         # Retrieves all tweets with given keywords and count
         query = ' '.join(keywords[:2])
@@ -168,8 +168,8 @@ class Crawler:
         tweets = []
 
         for tweet in searched_tweets:
-            print(tweet)
-            parsed_tweet = {'created_at': tweet.created_at,
+            parsed_tweet = {'uid': uid,
+                            'created_at': tweet.created_at,
                             'text': tweet.text,
                             'favorite_count': tweet.favorite_count,
                             'retweet_count': tweet.retweet_count,
@@ -177,8 +177,6 @@ class Crawler:
                                                                           countries, country_abbreviations,
                                                                           states, state_abbreviations),
                             'sentiment': NLP_Analyser.get_tweet_sentiment(tweet.text)}
-            print(parsed_tweet)
-            # print(parsed_tweet['user_location'] + "|" + parsed_tweet['text'])
 
             if tweet.retweet_count > 0:
                 # Only appends if the tweet text is unique

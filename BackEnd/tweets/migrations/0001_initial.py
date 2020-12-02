@@ -15,12 +15,13 @@ class Migration(migrations.Migration):
             name='Tweet',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('uid', models.TextField(blank=False, default=''))
                 ('created_at', models.DateTimeField()),
-                ('text', models.TextField(blank=True, default='')),
+                ('text', models.TextField(blank=False, default='')),
                 ('favorite_count', models.IntegerField(default=0)),
                 ('retweet_count', models.IntegerField(default=0)),
-                ('user_location', models.TextField(blank=True, default='')),
-                ('sentiment', models.TextField(blank=True, default='')),
+                ('user_location', models.TextField(blank=False, default='')),
+                ('sentiment', models.TextField(blank=False, default='')),
             ],
         ),
     ]

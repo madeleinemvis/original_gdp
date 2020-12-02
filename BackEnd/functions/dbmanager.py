@@ -12,6 +12,7 @@ class DbManager:
         self.database = self.client.Trilateral
         # self.drop_collection('documents_document')
         # self.drop_collection('documents_claim')
+        # self.drop_collection('tweets_tweet')
 
     # Inserts a single document into a specified collection
     def insert_one(self, collection, document):
@@ -97,6 +98,13 @@ class DbManager:
             return " ".join([text for text in main_text])
         except pymongo.errors.PyMongoError:
             print("No Collection, Documents_document  Found in Database")
+
+    def get_all_tweets(self, uid: str):
+        try:
+            ini_list = list(self.database['tweets_tweet'].find({"uid": uid}))
+            return ini_list
+        except pymongo.errors.PyMongoError:
+            print("No Collection, Tweets_tweet Found in Database")
 
     def get_all_html_links(self, uid: str):
         try:
