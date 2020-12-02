@@ -11,3 +11,6 @@ class RequestForm(forms.Form):
 
 class SuggestionForm(forms.Form):
     want_suggestions = forms.BooleanField(required=True)
+    urls = forms.CharField(required=False)
+    pdfs = forms.CharField(required=False)
+    files = forms.FileField(required=False)

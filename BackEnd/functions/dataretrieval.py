@@ -1,29 +1,25 @@
 import concurrent.futures
 import concurrent.futures
+import concurrent.futures
 import csv
 import json
-from typing import Dict
-
-import requests.exceptions
-import tweepy
-import requests
 import re
 from collections import namedtuple
-from googlesearch import search
-from pathlib import Path
 from datetime import datetime
 from pathlib import Path
-from subprocess import CalledProcessError
 from threading import Lock
 from typing import Dict
 from urllib.parse import urldefrag, urlparse
 
-from .analysis import NLP_Analyser
-import concurrent.futures
-from requests import Response
+import requests
+import requests.exceptions
+import tweepy
+from googlesearch import search
 from readability import Document
+from requests import Response
 from trafilatura import extract
-from threading import Lock
+
+from .analysis import NLP_Analyser
 from .textprocessing import TextProcessor
 
 MAX_THREADS = 50

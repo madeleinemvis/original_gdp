@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.http.response import JsonResponse
 from documents.forms import RequestForm, SuggestionForm
 from documents.models import Document
@@ -39,19 +41,30 @@ def upload_documents(request):
 
 @api_view(['POST'])
 def suggest_urls(request):
+    start_t = datetime.now()
     if request.method == 'POST':
+        print("post")
         file_handler = FileHandler()
         suggestion_form = SuggestionForm(request.POST)
-        if suggestion_form.is_valid() and suggestion_form.cleaned_data['want_suggestion']:
+        print(suggestion_form.is_valid())
+        if suggestion_form.is_valid() and suggestion_form.cleaned_data['want_suggestions']:
+            print("sugg valid")
             request_form = RequestForm(request.POST, request.FILES)
             if request_form.is_valid():
+                print("request valid")
                 uid, claim, document_urls, document_pdfs, files = file_handler.get_objects_from_request(request, request_form)
                 # Convert data into Scraped Documents
                 documents_urls = file_handler.read_docs(document_urls)
                 document_pdfs = file_handler.read_docs(document_pdfs)
                 # TODO files
+                # Merge document list
+                documents = documents_urls.append(document_pdfs)
                 handler = Handler()
-
+                suggested_urls = handler.generate_suggested_urls(documents)
+                print("Finished in: ", datetime.now()-start_t)
+                return JsonResponse(data=suggested_urls, status=status.HTTP_201_CREATED, safe=False)
+    print("Finished in: ", datetime.now() - start_t)
+    return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
