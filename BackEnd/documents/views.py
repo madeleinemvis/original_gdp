@@ -33,10 +33,10 @@ def document_list(request):
                 documents = None
                 if document_urls:
                     documents = file_handler.read_docs(document_urls)
-                    #file_handler.save_documents(uid, 'web-page', documents)
+                    file_handler.save_documents(uid, 'web-page', documents)
                 if document_pdfs:
-                   documents = file_handler.read_docs(document_pdfs)
-                  #  file_handler.save_documents(uid, 'pdf', documents)
+                    documents = file_handler.read_docs(document_pdfs)
+                    file_handler.save_documents(uid, 'pdf', documents)
                 # if files:
                 #    documents = file_handler.read_docs(files)
                 #    file_handler.save_documents(uid, 'pdf', documents)
