@@ -47,3 +47,8 @@ typing~=3.7.4.3
 jsonfield~=3.1.0
 readability-lxml~=0.8.1
 trafilatura~=0.6.0
+
+pytrends~=4.7.3
+dowhy~=0.5
+yfinance~=0.1.5
+xlrd~=1.2.0

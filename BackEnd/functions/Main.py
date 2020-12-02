@@ -1,6 +1,7 @@
 from BackEnd.functions.dataretrieval import Crawler, Scraper
 from BackEnd.functions.textprocessing import TextProcessor
 from BackEnd.functions.dbmanager import DbManager
+from BackEnd.functions.causal import Causal
 
 import random
 
@@ -73,7 +74,7 @@ def scrape_google_results(scraper, google_urls):
 
 # Function for the main workflow of the project
 def main(source_urls: [str], claim: str):
-    crawler, scraper, text_processor = Crawler(), Scraper(), TextProcessor()
+    crawler, scraper, text_processor, causal = Crawler(), Scraper(), TextProcessor(), Causal()
     db_manager = DbManager()
 
     print("-------- RETRIEVING DATA FROM DB MANAGER --------")
@@ -99,7 +100,7 @@ def main(source_urls: [str], claim: str):
     if want_suggestions:
         print("---- GENERATING SUGGESTED URLS FOR USER ----")
         suggestions = generate_suggested_urls(no_of_suggestions, urls_google, urls)
-    #
+
     print("-------- SCRAPING GOOGLE URLS --------")
     # retrieve and store all the data about a URL
     new_urls, new_scraped_data = scrape_google_results(scraper, urls_google)
@@ -129,6 +130,9 @@ def main(source_urls: [str], claim: str):
     data = scraper.downloads(urls_to_scrape)
     for k in data.keys():
         scraped_data[k] = data[k]
+
+    print("-------- CAUSAL ANALYSIS --------")
+    causal.analyse(key_words[:5]) 
 
     print("-------- STORING --------")
     # db_manager.insert_many('documents_document')  # Collection name for web pages
