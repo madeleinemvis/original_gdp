@@ -1,5 +1,3 @@
-import sys
-sys.path.append('/Users/alexllewellyn/GDP/main-project')
 from BackEnd.functions.dataretrieval import Crawler, Scraper
 from BackEnd.functions.textprocessing import TextProcessor
 from BackEnd.functions.dbmanager import DbManager
@@ -102,7 +100,7 @@ def main(source_urls: [str], claim: str):
     if want_suggestions:
         print("---- GENERATING SUGGESTED URLS FOR USER ----")
         suggestions = generate_suggested_urls(no_of_suggestions, urls_google, urls)
-    #
+
     print("-------- SCRAPING GOOGLE URLS --------")
     # retrieve and store all the data about a URL
     new_urls, new_scraped_data = scrape_google_results(scraper, urls_google)

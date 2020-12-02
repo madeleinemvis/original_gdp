@@ -29,9 +29,9 @@ tweepy==3.9.0
 
 
 pip~=20.0.2
-#zlib~=1.2.11
+zlib~=1.2.11
 wheel~=0.34.2
-#openssl~=1.1.1h
+openssl~=1.1.1h
 py~=1.8.1
 lxml~=4.5.0
 keyring~=21.1.0
