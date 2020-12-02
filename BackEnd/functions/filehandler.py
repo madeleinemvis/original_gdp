@@ -25,7 +25,8 @@ class FileHandler:
         docs = literal_eval(docs)
         documents = []
         for d in docs:
-            documents.append(self.scraper.get_data_from_source(d))
+            documents.append(docs[d])
+        documents = self.scraper.downloads(documents)
         return documents
 
     @staticmethod
