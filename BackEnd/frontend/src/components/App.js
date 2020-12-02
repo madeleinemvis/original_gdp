@@ -21,7 +21,7 @@ const App = () => {
             <Router>
                 <nav className="navbar navbar-expand-sm sticky-top navbar-dark bg-dark">
                     <div className="container">
-                        <a className="navbar-brand" href="/">{uid}</a>
+                        <a className="navbar-brand" href="/">Propaganda analysis</a>
                         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                             <span className="navbar-toggler-icon"/>
                         </button>
