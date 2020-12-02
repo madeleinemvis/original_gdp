@@ -9,8 +9,7 @@ import {
 } from "react-router-dom";
 
 import Tweets from './Tweets';
-import WordCloud from "./WordCloud";
-import Card from "react-bootstrap/Card";
+import Sources from "./Sources";
 
 // Source: https://bezkoder.com/react-hooks-crud-axios-api/
 const Dashboard = () => {
@@ -39,14 +38,7 @@ const Dashboard = () => {
                             <h3>Info</h3>
                         </Route>
                         <Route exact path={`${path}/sources`}>
-                            <Container>
-                                <Card style={{ width: '22rem' }}>
-                                  <Card.Body>
-                                      <Card.Title>Word Cloud</Card.Title>
-                                      <WordCloud />
-                                  </Card.Body>
-                                </Card>
-                            </Container>
+                            <Sources />
                         </Route>
                         <Route exact path={`${path}/tweets`}>
                             <Tweets />

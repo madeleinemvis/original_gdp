@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 from bs4.element import Comment
 from nltk.stem import WordNetLemmatizer
 from pathlib import Path
+from threading import Lock
 
 try:
     from collections.abc import Counter, OrderedDict
@@ -16,14 +17,14 @@ except ImportError:
 
 
 class TextProcessor:
-
     def __init__(self):
+        self.lemmatizer = WordNetLemmatizer()
+        self.lock = Lock()
         self.stop_words = set()
         with open(Path(__file__).parent.parent.parent / 'Data' / 'stopwords.txt') as f:
             lines = f.readlines()
             for line in lines:
                 self.stop_words.add(line.rstrip())
-
 
     # Maddy
     # returns presence of tags in returned text, to be removed from main body
@@ -144,8 +145,12 @@ class TextProcessor:
         stripped = [s for s in stripped if not re.search(r'\d', s)]
 
         # lemmatizing the remaining tokens
-        lemmatizer = WordNetLemmatizer()
-        stripped = [lemmatizer.lemmatize(token) for token in stripped]
+        # nltk is not thread safe - must use lock
+        self.lock.acquire()
+        try:
+            stripped = [self.lemmatizer.lemmatize(token) for token in stripped]
+        finally:
+            self.lock.release()
 
         return stripped
 
@@ -163,7 +168,6 @@ class TextProcessor:
             return []
 
         word_types = ['NOUN', 'PROPN']
-
         document = spacy.load('en_core_web_sm')(text)
 
         # make the sentences from the input text using spacy
