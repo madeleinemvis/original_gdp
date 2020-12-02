@@ -24,6 +24,7 @@ from requests import Response
 from readability import Document
 from trafilatura import extract
 from threading import Lock
+from .textprocessing import TextProcessor
 
 MAX_THREADS = 50
 

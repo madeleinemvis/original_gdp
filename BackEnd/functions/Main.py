@@ -118,17 +118,17 @@ def main(source_urls: [str], claim: str):
     # "https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/"]))
     # print("Non-similar doc:", analyser.check_similarity(scraped_data["https://www.bbc.co.uk/news/uk-54779430"]))
 
-    # print("-------- RECURSIVE CRAWLING --------")
-    # # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
-    # recursive_urls = crawler.url_cleaner(urls)
-    # final_crawled_urls = crawler.recursive_url_crawl(recursive_urls, MAXIMUM_URL_CRAWL_DEPTH)
-    # scraped_data.update(final_crawled_urls)
-    # print("------- SCRAPE REMAINING URLS -------")
-    # # retrieve and store all the data about a URL's not yet scraped
-    # urls_to_scrape = [u for u in urls if u not in scraped_data.keys()]
-    # data = scraper.downloads(urls_to_scrape)
-    # for k in data.keys():
-    #     scraped_data[k] = data[k]
+    print("-------- RECURSIVE CRAWLING --------")
+    # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
+    recursive_urls = crawler.url_cleaner(urls)
+    final_crawled_urls = crawler.recursive_url_crawl(recursive_urls, MAXIMUM_URL_CRAWL_DEPTH)
+    scraped_data.update(final_crawled_urls)
+    print("------- SCRAPE REMAINING URLS -------")
+    # retrieve and store all the data about a URL's not yet scraped
+    urls_to_scrape = [u for u in urls if u not in scraped_data.keys()]
+    data = scraper.downloads(urls_to_scrape)
+    for k in data.keys():
+        scraped_data[k] = data[k]
 
     print("-------- STORING --------")
     # db_manager.insert_many('documents_document')  # Collection name for web pages
