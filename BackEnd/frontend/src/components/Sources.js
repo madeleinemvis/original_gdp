@@ -3,7 +3,7 @@ import WordCloud from "./WordCloud";
 import {CardColumns, Container} from "reactstrap";
 import React from "react";
 
-const Sources = () => {
+const Sources = props => {
 
     return(
         <Container>
@@ -11,7 +11,7 @@ const Sources = () => {
               <Card style={{ width: '22rem' }}>
                 <Card.Body>
                     <Card.Title>Word Cloud</Card.Title>
-                    <WordCloud />
+                    <WordCloud uid={props.uid} />
                 </Card.Body>
               </Card>
               <Card>

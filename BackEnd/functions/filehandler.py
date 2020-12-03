@@ -23,11 +23,17 @@ class FileHandler:
 
     def read_docs(self, docs: str):
         docs = literal_eval(docs)
+        
         documents = []
         for d in docs:
-            # Gets all data objects from dictionary (URL, Document)
-            documents.append(self.scraper.scrape_url(d)[1])
-        return documents
+            documents.append(docs[d])
+        documents = self.scraper.downloads(documents)
+        
+        doc_list = []
+        for d in documents:
+            doc_list.append(documents[d])
+        
+        return doc_list
 
     @staticmethod
     def set_documents(uid: str, content_type: str, documents):

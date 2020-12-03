@@ -11,7 +11,7 @@ import {
     Spinner
 } from 'react-bootstrap';
 import http from '../http-common'
-const Home = () => {
+const Home = props => {
     // https://dev.to/fuchodeveloper/dynamic-form-fields-in-react-1h6c
 
     const [redirect, setRedirect] = useState(false)
@@ -26,13 +26,16 @@ const Home = () => {
     const [pdfs, setPdfs] = useState([
         { url: '' }
     ]);
+    function setUid(id){
+        props.uid(id)
+    }
 
 
     const handleSubmit = e => {
         e.preventDefault();
         setLoading(true)
         //Deleteing existing parts
-        var uid = uuidv4();npm
+        var uid = uuidv4();
         formData.delete('uid')
         formData.delete('claim')
         formData.delete('urls')
@@ -48,12 +51,18 @@ const Home = () => {
         var urls = formatLinks(inputFields)  
         var pdfURL = formatLinks(pdfs)
         
-        formData.append('urls', urls)
-        formData.append('pdfs', pdfURL)
+        if(urls !== null){
+            formData.append('urls', urls)
+        }
+        if(pdfURL !== null){
+            formData.append('pdfs', pdfURL)
+        }
+        
         
         http.post('/documents', formData)
         .then(res =>{
-            if(res.status === 201){                
+            if(res.status === 201){   
+                setUid(res.data)             
                 setLoading(false)
                 setRedirect(true)
                 console.log(res.data)
@@ -66,6 +75,9 @@ const Home = () => {
     };
     const formatLinks = input => {
 
+        if(input[0].url === ''){
+            return null
+        }
         var out = "{"        
 
         for (let i = 0; i < input.length; i++) {

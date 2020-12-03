@@ -5,6 +5,7 @@ import {
     Switch,
     Route,
     useRouteMatch,
+    Redirect,
     NavLink as RRNavLink
 } from "react-router-dom";
 
@@ -12,10 +13,13 @@ import Tweets from './Tweets';
 import Sources from "./Sources";
 
 // Source: https://bezkoder.com/react-hooks-crud-axios-api/
-const Dashboard = () => {
-
+const Dashboard = props => {
+    const uid = props.uid
     let { path, url } = useRouteMatch();
-   console.log(path);
+    if(props.uid === 'null'){
+        console.log('redirecting')
+        return <Redirect to={{ pathname: "/" }}/>
+    }
     return (
         <React.Fragment>
             <Container>
@@ -38,7 +42,7 @@ const Dashboard = () => {
                             <h3>Info</h3>
                         </Route>
                         <Route exact path={`${path}/sources`}>
-                            <Sources />
+                            <Sources uid={uid}/>
                         </Route>
                         <Route exact path={`${path}/tweets`}>
                             <Tweets />
