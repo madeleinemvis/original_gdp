@@ -11,6 +11,8 @@ class RequestForm(forms.Form):
 
 class SuggestionForm(forms.Form):
     want_suggestions = forms.BooleanField(required=True)
+    uid = forms.CharField(required=True, max_length=100)
+    claim = forms.CharField(required=True, max_length=100)
     urls = forms.CharField(required=False)
     pdfs = forms.CharField(required=False)
     files = forms.FileField(required=False)
