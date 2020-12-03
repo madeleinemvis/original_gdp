@@ -9,6 +9,7 @@ import warnings
 import re
 import requests
 import datetime
+import matplotlib 
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 logging.disable(logging.CRITICAL)
@@ -222,6 +223,7 @@ class Causal:
         return
 
     def analyse(self, keywords: [str], country: str = 'United Kingdom'):
+        matplotlib.use('TkAgg')  
 
         print('Country:', country)
         countries = pd.read_csv(Path(__file__).parent.parent.parent / 'Data' / 'countries.csv')
@@ -263,6 +265,8 @@ class Causal:
             politics['trend'] = self.scale(politics['trend'])
             print('----- Politics Causal Test -----')
             self.dowhy(politics, 'politics')
+
+        matplotlib.rcParams.update(matplotlib.rcParamsDefault)
 
         return
 
