@@ -14,6 +14,11 @@ def get_scraper():
 def get_crawler():
     return Crawler()
 
+def test_recursive_crawler(get_crawler):
+    url = 'https://webscraper.io/test-sites/e-commerce/allinone'
+    response_dict = get_crawler.recursive_url_crawl([url], 3)
+    print(response_dict[url].title)
+    assert response_dict[url].title == "Web Scraper Test Sites" and len(response_dict) == 1
 
 # TODO Alex Lockwood, are there any edge cases that need to be added here?
 @pytest.mark.parametrize("test_url", [

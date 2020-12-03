@@ -1,5 +1,3 @@
-import sys
-sys.path.append('/Users/alexllewellyn/GDP/main-project')
 from BackEnd.functions.dataretrieval import Crawler, Scraper
 from BackEnd.functions.textprocessing import TextProcessor
 from BackEnd.functions.dbmanager import DbManager
