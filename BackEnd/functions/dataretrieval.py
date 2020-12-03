@@ -10,7 +10,7 @@ from pathlib import Path
 from threading import Lock
 from typing import Dict
 from urllib.parse import urldefrag, urlparse
-
+from tika import parser
 import requests
 import requests.exceptions
 import tweepy

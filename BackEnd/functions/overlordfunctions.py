@@ -5,23 +5,30 @@ from functions.textprocessing import TextProcessor
 
 
 class Handler:
-    NUMBER_OF_KEY_WORDS = 30
+    NUMBER_OF_KEY_WORDS = 25
     NUMBER_OF_SUGGESTED = 15
     NUMBER_OF_GOOGLE_RESULTS_WANTED = 25
     NUMBER_OF_TWEETS_RESULTS_WANTED = 20
     MAXIMUM_URL_CRAWL_DEPTH = 3
-    scraper = None
-    text_processor = None
-    crawler = None
 
     def __init__(self):
-        scraper = Scraper()
-        crawler = Crawler()
-        text_processor = TextProcessor()
+        self.scraper = Scraper()
+        self.crawler = Crawler()
+        self.text_processor = TextProcessor()
 
     def generate_manifesto(self, documents):
         urls = self.get_all_html_links(documents)
         keywords = self.get_all_keywords(documents)
+        return urls, keywords
+
+    # Returns list of keywords and their corresponding value
+    def get_all_keywords(self, documents):
+        if len(documents) < 5:
+            all_tokens = [t for d in documents for t in d.cleaned_tokens]
+            return [t[0] for t in self.text_processor.calculate_key_words(all_tokens, self.NUMBER_OF_KEY_WORDS)]
+        else:
+            all_sentences = " ".join([d.text_body for d in documents])
+            return [t[0] for t in self.text_processor.calculate_keywords_with_text_rank(all_sentences, self.NUMBER_OF_KEY_WORDS)]
 
     # {documents} are only source documents.
     @staticmethod
@@ -34,15 +41,6 @@ class Handler:
         print(f"Sources in manifesto: {len(documents)}")
         print(f"Sources found in manifesto sources: {len(urls)}")
         return urls
-
-    # Returns list of keywords and their corresponding value
-    def get_all_keywords(self, documents):
-        if len(documents) < 5:
-            all_tokens = [t for d in documents for t in d.cleaned_tokens]
-            return self.text_processor.calculate_key_words(all_tokens, self.NUMBER_OF_KEY_WORDS)
-        else:
-            all_sentences = " ".join([d.text_body for d in documents])
-            return self.text_processor.calculate_keywords_with_text_rank(all_sentences, self.NUMBER_OF_KEY_WORDS)
 
     def crawl_google(self, keywords, number_of_results):
         urls_google = self.crawler.crawl_google_with_key_words(keywords, number_of_results)

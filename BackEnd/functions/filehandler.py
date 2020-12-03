@@ -25,9 +25,8 @@ class FileHandler:
         docs = literal_eval(docs)
         documents = []
         for d in docs:
-            print("D: ", d)
             # Gets all data objects from dictionary (URL, Document)
-            documents.append(self.scraper.downloads(d))
+            documents.append(self.scraper.scrape_url(d)[1])
         return documents
 
     @staticmethod
