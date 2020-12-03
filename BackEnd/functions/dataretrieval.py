@@ -193,7 +193,6 @@ class Scraper:
         self.processor = TextProcessor()
 
     def downloads(self, urls: [str]) -> Dict[str, Data]:
-        print("URLS:", urls)
         responses = {}
         threads = min(MAX_THREADS, len(urls))
         with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
