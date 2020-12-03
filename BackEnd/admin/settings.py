@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'documents.apps.DocumentsConfig',
     'frontend',
 
-    'functions.apps.FunctionsConfig',
     'tweets.apps.TweetsConfig',
 ]
 

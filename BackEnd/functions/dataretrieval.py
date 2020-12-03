@@ -1,29 +1,25 @@
 import concurrent.futures
 import concurrent.futures
+import concurrent.futures
 import csv
 import json
-from typing import Dict
-
-import requests.exceptions
-import tweepy
-import requests
 import re
 from collections import namedtuple
-from googlesearch import search
-from pathlib import Path
 from datetime import datetime
 from pathlib import Path
-from subprocess import CalledProcessError
 from threading import Lock
 from typing import Dict
 from urllib.parse import urldefrag, urlparse
+from tika import parser
+import requests
+import requests.exceptions
+import tweepy
+from googlesearch import search
+from readability import Document
+from requests import Response
+from trafilatura import extract
 
 from .analysis import NLP_Analyser
-import concurrent.futures
-from requests import Response
-from readability import Document
-from trafilatura import extract
-from threading import Lock
 from .textprocessing import TextProcessor
 
 MAX_THREADS = 50
@@ -197,7 +193,6 @@ class Scraper:
         self.processor = TextProcessor()
 
     def downloads(self, urls: [str]) -> Dict[str, Data]:
-        print("URLS:", urls)
         responses = {}
         threads = min(MAX_THREADS, len(urls))
         with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:

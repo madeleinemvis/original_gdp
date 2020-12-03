@@ -121,8 +121,8 @@ class DbManager:
 
     def get_claim(self, uid: str):
         try:
-            c_result = list(self.database['documents_claim'].find({"uid": uid},
-                                                          {"_id": 0, "claim": 1}))
+            c_result = self.database['documents_claim'].find({"uid": uid},
+                                                          {"_id": 0, "claim": 1})
             claim = c_result[0]['claim']
             return claim
         except pymongo.errors.PyMongoError:

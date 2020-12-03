@@ -14,14 +14,14 @@ operations = [
     migrations.CreateModel(
         name='Claim',
         fields=[
-            ('uid', models.TextField(blank=False, default='')),
+            ('uid', models.TextField(blank=False)),
             ('claim', models.TextField(blank=False, default='')),
         ]
     ),
     migrations.CreateModel(
         name='Document',
         fields=[
-            ('uid', models.TextField(blank=False, default='')),
+            ('uid', models.TextField(blank=False)),
             ('content_type', models.TextField(blank=False, default='')),
             ('url', models.TextField(default='')),
             ('raw_html', models.TextField(blank=True, default='')),
