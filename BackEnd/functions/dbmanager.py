@@ -1,6 +1,7 @@
 # file for handling API, left blank for now
-import pymongo
 from ast import literal_eval
+
+import pymongo
 
 
 class DbManager:

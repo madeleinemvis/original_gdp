@@ -80,7 +80,7 @@ def test_google_returns_n_results(search_keywords_n_results, get_crawler):
 # TODO Maddy this currently fails
 def test_twitter_returns_n_results(search_keywords_n_results, get_crawler):
     for keywords, n_results in search_keywords_n_results:
-        assert len(get_crawler.twitter_crawl(keywords, n_results)) == n_results
+        assert len(get_crawler.twitter_crawl("some-random-uid", keywords, n_results)) == n_results
 
 # TODO Alex Lockwood, getting Error: "UnicodeEncodeError: 'charmap' codec can't encode character '\u0142'
 #  in position 11335: character maps to <undefined>" for all calls so tests can run

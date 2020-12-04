@@ -1,9 +1,9 @@
-from BackEnd.functions.dataretrieval import Crawler, Scraper
-from BackEnd.functions.textprocessing import TextProcessor
-from BackEnd.functions.dbmanager import DbManager
-from BackEnd.functions.causal import Causal
-
 import random
+
+from BackEnd.functions.causal import Causal
+from BackEnd.functions.dataretrieval import Crawler, Scraper
+from BackEnd.functions.dbmanager import DbManager
+from BackEnd.functions.textprocessing import TextProcessor
 
 NUMBER_OF_KEY_WORDS = 30
 NUMBER_OF_GOOGLE_RESULTS_WANTED = 25
@@ -16,10 +16,10 @@ def generate_manifesto(scraper, text_processor, source_urls, all_sentences, docu
     scraped_data = {}
 
     if len(all_sentences) == 0:
-        for source in source_urls:
-            data = scraper.scrape_url(source)
-            scraped_data[source] = data
-            urls.update(data.html_links)
+        url_dict = scraper.downloads(source_urls)
+        for k in url_dict.keys():
+            scraped_data[k] = url_dict[k]
+            urls.update(url_dict[k].html_links)
 
         # if there are less than 5 documents, scrape tokens
         if len(source_urls) < 5:
@@ -109,7 +109,7 @@ def main(source_urls: [str], claim: str):
 
     print("-------- SCRAPING TWITTER --------")
     # crawling with Twitter
-    crawled_tweets = crawler.twitter_crawl(key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
+    crawled_tweets = crawler.twitter_crawl("some-random-uid", key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
 
     # print("-------- EXAMPLE SIMILARITY CHECKING --------")
     # do some similarity checking for the documents so far crawled
@@ -132,7 +132,7 @@ def main(source_urls: [str], claim: str):
         scraped_data[k] = data[k]
 
     print("-------- CAUSAL ANALYSIS --------")
-    causal.analyse(key_words[:5]) 
+    # causal.analyse(key_words[:5])
 
     print("-------- STORING --------")
     # db_manager.insert_many('documents_document')  # Collection name for web pages

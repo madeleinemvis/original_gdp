@@ -1,14 +1,15 @@
+import datetime
+import logging
+import re
+import warnings
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import requests
+import yfinance as yf
 from dowhy import CausalModel
 from pytrends.request import TrendReq
-from pathlib import Path
-import pandas as pd
-import numpy as np
-import yfinance as yf
-import logging
-import warnings
-import re
-import requests
-import datetime
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 logging.disable(logging.CRITICAL)
