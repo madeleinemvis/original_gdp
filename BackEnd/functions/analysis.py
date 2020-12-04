@@ -1,16 +1,13 @@
-# Gensim
-import gensim
-import gensim.corpora as corpora
-from gensim.matutils import cossim
-from gensim.models import CoherenceModel
 from pathlib import Path
 
-# spacy for lemmatization
+import gensim
+import gensim.corpora as corpora
 import spacy
-
-# class for doing all the NLP analysis needed
-from .textprocessing import TextProcessor
+from gensim.matutils import cossim
+from gensim.models import CoherenceModel
 from textblob import TextBlob
+
+from .textprocessing import TextProcessor
 
 
 class NLP_Analyser:

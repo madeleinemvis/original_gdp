@@ -1,14 +1,14 @@
 import re
 import string
-import spacy
-import numpy as np
-
+from pathlib import Path
+from threading import Lock
 from typing import Tuple, List
+
+import numpy as np
+import spacy
 from bs4 import BeautifulSoup
 from bs4.element import Comment
 from nltk.stem import WordNetLemmatizer
-from pathlib import Path
-from threading import Lock
 
 try:
     from collections.abc import Counter, OrderedDict
