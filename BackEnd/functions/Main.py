@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from BackEnd.functions.dataretrieval import Crawler, Scraper
 from BackEnd.functions.textprocessing import TextProcessor
 from BackEnd.functions.dbmanager import DbManager
@@ -74,14 +76,16 @@ def scrape_google_results(scraper, google_urls):
 
 # Function for the main workflow of the project
 def main(source_urls: [str], claim: str):
+    start_t = datetime.now()
     crawler, scraper, text_processor, causal = Crawler(), Scraper(), TextProcessor(), Causal()
     db_manager = DbManager()
 
     print("-------- RETRIEVING DATA FROM DB MANAGER --------")
-    documents = db_manager.get_all_documents('some_random_hash')
-    all_sentences = db_manager.get_all_main_texts('some_random_hash')
-    document_html_links = db_manager.get_all_html_links('some_random_hash')
-    claim = db_manager.get_claim('some_random_hash')
+    uid = 'some_random_hash'
+    documents = db_manager.get_all_documents(uid)
+    all_sentences = db_manager.get_all_main_texts(uid)
+    document_html_links = db_manager.get_all_html_links(uid)
+    claim = db_manager.get_claim(uid)
     # TODO: implement - wantSuggestions = db_manager.get_want_suggestions('some_random_hash')
     want_suggestions = True
     # TODO: implement - no_of_suggestions = db_manager.get_no_of_suggestions('some_random_hash')
@@ -109,7 +113,7 @@ def main(source_urls: [str], claim: str):
 
     print("-------- SCRAPING TWITTER --------")
     # crawling with Twitter
-    crawled_tweets = crawler.twitter_crawl(key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
+    crawled_tweets = crawler.twitter_crawl(uid, key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
 
     # print("-------- EXAMPLE SIMILARITY CHECKING --------")
     # do some similarity checking for the documents so far crawled
@@ -143,6 +147,7 @@ def main(source_urls: [str], claim: str):
     # perform data visualisation
 
     # use api to communicate results to webpage
+    print("Time taken for entire process: ", datetime.now()-start_t)
 
 
 if __name__ == "__main__":

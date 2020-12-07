@@ -2,6 +2,7 @@ import Card from "react-bootstrap/Card";
 import WordCloud from "./WordCloud";
 import {CardColumns, Container} from "reactstrap";
 import React from "react";
+import DocumentFreq from "./DocumentFreq";
 
 const Sources = props => {
 
@@ -81,9 +82,7 @@ const Sources = props => {
             </Card>
             <Card>
               <Card.Body>
-                <svg width="210" height="100" viewBox="0 0 210 100">
-                  <rect width="210" height="100" rx="10" ry="10" fill="#CCC" />
-                </svg>
+                <DocumentFreq uid={props.uid}/>
               </Card.Body>
             </Card>
             <Card className="text-right">

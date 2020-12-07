@@ -18,3 +18,7 @@ class DataVisualiser:
         text = self.db_manager.get_all_main_texts(uid)
         keywords_with_values = self.text_processor.calculate_keywords_with_text_rank(text, 25)
         return dict(keywords_with_values)
+
+    def get_document_frequency(self, uid: str):
+        count = self.db_manager.count_all_documents(uid)
+        return count

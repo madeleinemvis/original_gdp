@@ -68,6 +68,12 @@ class DbManager:
         except pymongo.errors.PyMongoError:
             print("No Collection Documents_Document,  Found in Database")
 
+    def count_all_documents(self, uid: str):
+        try:
+            return self.database['documents_document'].find({"uid": uid}).count()
+        except pymongo.errors.PyMongoError:
+            print("Returns no documents, uid %s,  Found in Database", uid)
+
     def get_all_collections(self):
         try:
             return self.database.getCollectionNames

@@ -59,7 +59,7 @@ const Home = props => {
         }
         
         
-        http.post('/documents', formData)
+        http.post('/documents/upload', formData)
         .then(res =>{
             if(res.status === 201){   
                 setUid(res.data)             

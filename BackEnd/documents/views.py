@@ -14,12 +14,14 @@ from rest_framework.parsers import JSONParser
 
 @api_view(['POST'])
 def upload_documents(request):
+    print("entering")
     # POSTING URLs and PDFs from request
     if request.method == 'POST':
         file_handler = FileHandler()
         request_form = RequestForm(request.POST, request.FILES)
         if request_form.is_valid():
-            uid, claim, document_urls, document_pdfs, files = file_handler.get_objects_from_request(request, request_form)
+            uid, claim, document_urls, document_pdfs, files = file_handler.get_objects_from_request(request,
+                                                                                                    request_form)
             file_handler.set_claim(uid, claim)
             # FAILS if no documents attached
             if not (document_urls is None and document_pdfs is None and files is None):
@@ -35,18 +37,18 @@ def upload_documents(request):
                 #    documents = file_handler.read_docs(files)
                 #    file_handler.save_documents(uid, 'pdf', documents)
                 return JsonResponse(data=uid, status=status.HTTP_201_CREATED, safe=False)
-    return JsonResponse(data=request.data,status=status.HTTP_400_BAD_REQUEST, safe=False)
+    return JsonResponse(data=request.data, status=status.HTTP_400_BAD_REQUEST, safe=False)
 
 
 @api_view(['POST'])
 def suggest_urls(request):
-
     start_t = datetime.now()
     if request.method == 'POST':
         file_handler = FileHandler()
         suggestion_form = SuggestionForm(request.POST)
         if (suggestion_form.is_valid() and suggestion_form.cleaned_data['want_suggestions']):
-            uid, claim, documents_urls, documents_pdfs, files = file_handler.get_objects_from_request(request, suggestion_form)
+            uid, claim, documents_urls, documents_pdfs, files = file_handler.get_objects_from_request(request,
+                                                                                                      suggestion_form)
             # Convert data into Scraped Documents
             documents_urls = file_handler.read_docs(documents_urls)
             documents_pdfs = file_handler.read_docs(documents_pdfs)
@@ -56,7 +58,7 @@ def suggest_urls(request):
             documents = [*documents_urls, *documents_pdfs]
             handler = Handler()
             suggested_urls = handler.generate_suggested_urls(documents)
-            print("Finished in: ", datetime.now()-start_t)
+            print("Finished in: ", datetime.now() - start_t)
             return JsonResponse(data=suggested_urls, status=status.HTTP_201_CREATED, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
@@ -95,4 +97,15 @@ def keywords_wordcloud(request):
         uid = request.data['uid']
         keywords = datavisualiser.word_cloud(uid)
         return JsonResponse(data=keywords, status=status.HTTP_200_OK, safe=False)
+    return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
+
+
+@api_view(['POST'])
+def document_frequency(request):
+    datavisualiser = DataVisualiser()
+    if request.method == "POST":
+        uid = request.data['uid']
+        frequency = datavisualiser.get_document_frequency(uid)
+        print("frequency: ", frequency)
+        return JsonResponse(data=frequency, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
