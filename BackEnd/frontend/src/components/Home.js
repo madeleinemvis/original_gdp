@@ -11,6 +11,8 @@ import {
     Spinner
 } from 'react-bootstrap';
 import http from '../http-common'
+import '../style/App.css'
+
 const Home = props => {
     // https://dev.to/fuchodeveloper/dynamic-form-fields-in-react-1h6c
 
@@ -150,82 +152,95 @@ const Home = props => {
         
         
         <React.Fragment>
-            
-        <Container>
-            <Row>
-                <Col>
-                    <Jumbotron>
-                        <h1>Welcome</h1>
-                        <p>Project description!</p>
-                        <hr/>
-                        <p>Add a link to be analysed. More than one link can be added.</p>
-                        <p>
-                            <Button variant="primary" size="lg">
-                                Learn More
-                            </Button>
-                        </p>
-                    </Jumbotron> 
-                </Col>
-                {loading ? <Loading/>:
+            {loading ? <Loading/> :
 
-                <Col>
-                    <h3>Add your links to be analysed</h3>   
-                    <hr/>
-                    <form onSubmit={handleSubmit}>
-                        <h5>Claim:</h5>
-                        <div className="input-group">
-                            <input type="text" className="form-control" placeholder="Claim" aria-label="claim" aria-describedby="basic-addon2" onChange={e => setClaim(e.target.value)} />
-                        </div>
-                        <br/>
-                        <h5>Links:</h5>
-                        {inputFields.map((inputField, index) => (
-                            <div key={`${inputField}~${index}`}>
+                <Container>
+                    <Row>
+                        <Col>
+                            <Jumbotron>
+                                <h1 className="jumbotron-h1">Welcome</h1>
+                                <p className="jumbotron-p">Our system is here to show you how a particular theme of
+                                    propaganda has spread!</p>
+                                <hr/>
+                                <p className="jumbotron-p">Add a link to be analysed. More than one link can be
+                                    added.</p>
+                                <p>
+                                    <Button variant="primary" size="lg">
+                                        Learn More
+                                    </Button>
+                                </p>
+                            </Jumbotron>
+                        </Col>
+                        <span className="vertical-line"/>
+                        <Col>
+                            <h3>Add your links to be analysed</h3>
+                            <hr/>
+                            <form onSubmit={handleSubmit}>
+                                <h5>Claim:</h5>
                                 <div className="input-group">
-                                    <input type="text" className="form-control" placeholder="URL" aria-label="link" aria-describedby="basic-addon2" onChange={event => handleInputChange(index, event)}/>
-                                    <div className="input-group-append">
-                                      <button className="btn btn-outline-secondary" type="button" onClick={() => handleAddFields()}>+</button>
-                                      <button className="btn btn-outline-secondary" type="button" onClick={() => handleRemoveFields(index)}>-</button>
-                                    </div>
+                                    <input type="text" className="form-control" placeholder="Claim" aria-label="claim"
+                                           aria-describedby="basic-addon2" onChange={e => setClaim(e.target.value)}/>
                                 </div>
-                            </div>
-                        ))}                                            
-                        <br/>
-                        <h5>PDF Links:</h5>
-                        {pdfs.map((pdf, index) => (
-                            <div key={`${pdf}~${index}`}>
-                                <div className="input-group">
-                                    <input type="text" className="form-control" placeholder="PDF URL" aria-label="pdf" aria-describedby="basic-addon2" onChange={event => handleInputChangePdf(index, event)}/>
-                                    <div className="input-group-append">
-                                      <button className="btn btn-outline-secondary" type="button" onClick={() => handleAddFieldsPDF()}>+</button>
-                                      <button className="btn btn-outline-secondary" type="button" onClick={() => handleRemoveFieldsPDF(index)}>-</button>
+                                <br/>
+                                <h5>Links:</h5>
+                                {inputFields.map((inputField, index) => (
+                                    <div key={`${inputField}~${index}`}>
+                                        <div className="input-group">
+                                            <input type="text" className="form-control" placeholder="URL"
+                                                   aria-label="link" aria-describedby="basic-addon2"
+                                                   onChange={event => handleInputChange(index, event)}/>
+                                            <div className="input-group-append">
+                                                <button className="btn btn-outline-secondary" type="button"
+                                                        onClick={() => handleAddFields()}>+
+                                                </button>
+                                                <button className="btn btn-outline-secondary" type="button"
+                                                        onClick={() => handleRemoveFields(index)}>-
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                        ))} 
-                                 
-                        <br></br>
+                                ))}
+                                <br/>
+                                <h5>PDF Links:</h5>
+                                {pdfs.map((pdf, index) => (
+                                    <div key={`${pdf}~${index}`}>
+                                        <div className="input-group">
+                                            <input type="text" className="form-control" placeholder="PDF URL"
+                                                   aria-label="pdf" aria-describedby="basic-addon2"
+                                                   onChange={event => handleInputChangePdf(index, event)}/>
+                                            <div className="input-group-append">
+                                                <button className="btn btn-outline-secondary" type="button"
+                                                        onClick={() => handleAddFieldsPDF()}>+
+                                                </button>
+                                                <button className="btn btn-outline-secondary" type="button"
+                                                        onClick={() => handleRemoveFieldsPDF(index)}>-
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
 
-                        <input type="file" id="files" onChange={upload} name="files" multiple/>
-                        
-                        <hr/>
-                        
-                        <div className="submit-button">
-                            <button
-                              className="btn btn-primary mr-2"
-                              type="submit"
-                              onSubmit={handleSubmit}
-                            >
-                              Submit
-                            </button>
-                        </div>
-                    </form>        
-                    
-                    <br/>
-                </Col>
-                }
-               
-            </Row>
-        </Container>
+                                <br></br>
+
+                                <input type="file" id="files" onChange={upload} name="files" multiple/>
+
+                                <hr/>
+
+                                <div className="submit-button">
+                                    <button
+                                        className="btn btn-primary mr-2"
+                                        type="submit"
+                                        onSubmit={handleSubmit}
+                                    >
+                                        Submit
+                                    </button>
+                                </div>
+                            </form>
+
+                            <br/>
+                        </Col>
+                    </Row>
+                </Container>}
     </React.Fragment> 
     )
 }
@@ -235,8 +250,12 @@ const Dash = () =>{
 }
 
 const Loading = () =>{
-    return <Spinner animation="border" role="status">
-    <span className="sr-only">Loading...</span>
-</Spinner> 
+    return(
+        <Container>
+            <Spinner className="spinner" animation="border" role="status">
+                <span className="sr-only">Loading...</span>
+            </Spinner>
+        </Container>);
+
 }
 export default Home;

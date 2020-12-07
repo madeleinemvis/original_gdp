@@ -8,6 +8,8 @@ import {
     Route,
     Link
   } from "react-router-dom";
+import '../style/App.css';
+import {Navbar, Nav, Container} from "react-bootstrap";
 
 const App = () => {
     const[uid, setUid] = useState('null')
@@ -19,28 +21,21 @@ const App = () => {
     return (
         <Fragment>
             <Router>
-                <nav className="navbar navbar-expand-sm sticky-top navbar-dark bg-dark">
-                    <div className="container">
+                <Container className="header">
+                    <nav className="navbar navbar-expand-sm">
                         <a className="navbar-brand" href="/">Propaganda analysis</a>
-                        <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                            <span className="navbar-toggler-icon"/>
-                        </button>
                         <div className="collapse navbar-collapse" id="navbarNav">
                             <ul className="navbar-nav">
                                 <li className="nav-item">
-                                    <Link to="/" className="nav-link">Home</Link>
+                                    <a href="/" className="nav-link">Home</a>
                                 </li>
                                 <li className="nav-item">
-                                  <Link to="/about" className="nav-link">About</Link>
-                                </li> 
-                                {/*<li className="nav-item">
-                                  <Link to="/dashboard" className="nav-link">Dashboard</Link>
-                                </li>       */}               
+                                  <a href="/about" className="nav-link">About</a>
+                                </li>
                             </ul>
                         </div>
-                    </div>
-                </nav>
-                <br/>
+                    </nav>
+                </Container>
                 <Switch>
                     <Route path="/about">
 

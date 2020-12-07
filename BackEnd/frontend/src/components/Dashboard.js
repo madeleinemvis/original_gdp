@@ -23,10 +23,18 @@ const Dashboard = props => {
     return (
         <React.Fragment>
             <Container>
-                <h3>Results from Analysis</h3>
                 <Router>
-                    <Nav pills>
-                        <NavItem>
+                    {/*TODO: active buttons*/}
+                    <nav style="pills">
+                        <ul className="navbar-nav">
+                            <li className="nav-item">
+                                <a href={`${url}`}>Web Articles</a>
+                            </li>
+                            <li>
+                                <a href={`${url}/sources`}>Sources</a>
+                            </li>
+                        </ul>
+                        {/*<NavItem>
                             <NavLink exact to={`${url}`} tag={RRNavLink} activeClassName="active">Info</NavLink>
                         </NavItem>
                         <NavItem>
@@ -34,13 +42,13 @@ const Dashboard = props => {
                         </NavItem>
                         <NavItem>
                             <NavLink exact to={`${url}/tweets`} tag={RRNavLink} activeClassName="active">Tweets</NavLink>
-                        </NavItem>
-                    </Nav>
+                        </NavItem>*/}
+                    </nav>
 
                     <Switch>
-                        <Route exact path={path}>
+                        {/*<Route exact path={path}>
                             <h3>Info</h3>
-                        </Route>
+                        </Route>*/}
                         <Route exact path={`${path}/sources`}>
                             <Sources uid={uid}/>
                         </Route>

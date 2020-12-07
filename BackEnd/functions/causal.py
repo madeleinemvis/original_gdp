@@ -94,7 +94,7 @@ class Causal:
             print("Warning: Couldn't connect to YouGov")
             return
 
-        df = pd.read_excel(r.content, index = False)
+        df = pd.read_excel(r.content)
         df.columns.values[0] = ''
         df = df.set_index('')
 

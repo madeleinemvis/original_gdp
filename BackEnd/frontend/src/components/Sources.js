@@ -8,7 +8,7 @@ import TweetFreq from "./TweetFreq";
 const Sources = props => {
 
     return(
-        <Container>
+        <Container className="sources">
           <CardColumns>
               <Card style={{ width: '22rem' }}>
                 <Card.Body>
