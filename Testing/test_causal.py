@@ -1,6 +1,4 @@
 import pytest
-import sys
-sys.path.append('/Users/alexllewellyn/GDP/main-project')
 from BackEnd.functions.causal import Causal
 
 
@@ -8,10 +6,10 @@ from BackEnd.functions.causal import Causal
 def get_causal():
     return Causal()
 
-def test_recursive_crawler(get_crawler):
-    pass
-    # url = 'https://webscraper.io/test-sites/e-commerce/allinone'
-    # response_dict = get_crawler.recursive_url_crawl([url], 3)
-    # print(response_dict[url].title)
-    # assert response_dict[url].title == "Web Scraper Test Sites" and len(response_dict) == 1
+def test_causal(get_causal):
+    keywords = ['Vaccine', 'Vaccination', 'Control', 'Government', 'MicroChip']
+    uk_econ, uk_health, uk_politics = get_causal.analyse(keywords, 'United Kingdom')
+    us_econ, us_health, us_politics = get_causal.analyse(keywords, 'United States')
+    agg = uk_health + uk_politics + us_econ + us_politics
+    assert uk_econ >= 70.00 and us_health >= 70.00 and agg == 0
 

@@ -1,5 +1,3 @@
-import sys
-sys.path.append('/Users/alexllewellyn/GDP/main-project')
 from BackEnd.functions.dataretrieval import Crawler, Scraper
 from BackEnd.functions.textprocessing import TextProcessor
 from BackEnd.functions.dbmanager import DbManager
@@ -134,7 +132,7 @@ def main(source_urls: [str], claim: str):
         scraped_data[k] = data[k]
 
     print("-------- CAUSAL ANALYSIS --------")
-    causal.analyse(key_words[:5]) 
+    econ, health, politics = causal.analyse(key_words[:5])
 
     print("-------- STORING --------")
     # db_manager.insert_many('documents_document')  # Collection name for web pages
