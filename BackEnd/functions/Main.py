@@ -136,7 +136,9 @@ def main(source_urls: [str], claim: str):
         scraped_data[k] = data[k]
 
     print("-------- CAUSAL ANALYSIS --------")
+    causal_t = datetime.now()
     econ, health, politics = causal.analyse(key_words[:5])
+    print("Causal time: ", datetime.now()-causal_t)
 
     print("-------- STORING --------")
     # db_manager.insert_many('documents_document')  # Collection name for web pages

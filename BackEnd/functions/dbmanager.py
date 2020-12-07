@@ -74,6 +74,12 @@ class DbManager:
         except pymongo.errors.PyMongoError:
             print("Returns no documents, uid %s,  Found in Database", uid)
 
+    def count_all_tweets(self, uid: str):
+        try:
+            return self.database['tweets_tweet'].find({"uid": uid}).count()
+        except pymongo.errors.PyMongoError:
+            print("Returns no tweets, uid %s,  Found in Database", uid)
+
     def get_all_collections(self):
         try:
             return self.database.getCollectionNames

@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from django.http.response import JsonResponse
 from documents.forms import RequestForm, SuggestionForm
 from documents.models import Document

@@ -3,6 +3,7 @@ import WordCloud from "./WordCloud";
 import {CardColumns, Container} from "reactstrap";
 import React from "react";
 import DocumentFreq from "./DocumentFreq";
+import TweetFreq from "./TweetFreq";
 
 const Sources = props => {
 
@@ -85,18 +86,10 @@ const Sources = props => {
                 <DocumentFreq uid={props.uid}/>
               </Card.Body>
             </Card>
-            <Card className="text-right">
-              <blockquote className="blockquote mb-0 card-body">
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere
-                  erat a ante.
-                </p>
-                <footer className="blockquote-footer">
-                  <small className="text-muted">
-                    Someone famous in <cite title="Source Title">Source Title</cite>
-                  </small>
-                </footer>
-              </blockquote>
+            <Card>
+              <Card.Body>
+                <TweetFreq uid={props.uid}/>
+              </Card.Body>
             </Card>
             <Card>
               <Card.Body>

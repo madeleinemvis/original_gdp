@@ -22,3 +22,7 @@ class DataVisualiser:
     def get_document_frequency(self, uid: str):
         count = self.db_manager.count_all_documents(uid)
         return count
+
+    def get_tweet_frequency(self, uid: str):
+        count = self.db_manager.count_all_tweets(uid)
+        return count
