@@ -215,12 +215,15 @@ class Causal:
                             flag += 1
             
         if flag >= (runtime / 100) * 70:
-            print('Treatment is causal - ' + str(round(flag / (runtime / 100), 2)) + '% confidence')
+            value = round(flag / (runtime / 100), 2)
+            print('Treatment is causal - ' + str(value) + '% confidence')
+            return value
         else:
             print('Treatment is not causal')
             print('Test failed', (runtime - flag), 'out of', runtime, 'times')
+            return 0
 
-        return
+        return 0
 
     def analyse(self, keywords: [str], country: str = 'United Kingdom'):
         matplotlib.use('TkAgg')  
@@ -245,30 +248,34 @@ class Causal:
         health = self.get_health_data(country_key)
         politics = self.get_political_data(country_key)
 
+        econ_result = 0
+        health_result = 0
+        politics_result = 0
+
         if isinstance(econ, pd.DataFrame):
             econ = pd.merge(trends, econ, on='date', sort=False).dropna()
             econ['econ'] = self.scale(econ['econ'])
             econ['trend'] = self.scale(econ['trend'])
             print('----- Economics Causal Test -----')
-            self.dowhy(econ, 'econ')
+            econ_result = self.dowhy(econ, 'econ')
         
         if isinstance(health, pd.DataFrame):
             health = pd.merge(trends, health, on='date', sort=False).dropna()
             health['health'] = self.scale(health['health'])
             health['trend'] = self.scale(health['trend'])
             print('----- Health Causal Test -----')
-            self.dowhy(health, 'health')
+            health_result = self.dowhy(health, 'health')
         
         if isinstance(politics, pd.DataFrame):
             politics = pd.merge(trends, politics, on='date', sort=False).dropna()
             politics['politics'] = self.scale(politics['politics'])
             politics['trend'] = self.scale(politics['trend'])
             print('----- Politics Causal Test -----')
-            self.dowhy(politics, 'politics')
+            politics_result = self.dowhy(politics, 'politics')
 
         matplotlib.rcParams.update(matplotlib.rcParamsDefault)
 
-        return
+        return econ_result, health_result, politics_result
 
 if __name__ == "__main__":
     c = Causal()
