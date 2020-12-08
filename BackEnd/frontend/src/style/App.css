@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:regular,bold,italic&subset=latin,latin-ext');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+
+* {
+  background-color: white;
+  text-align: left;
+  color: #333333;
+  font-family: 'Poppins', sans-serif;;
+}
+
+a {
+  color: #333333;
+}
+
+.center-body{
+  top:50%;
+}
+
+.sources{
+  margin-top: 5px;
+}
+
+.header{
+  font-size: xx-large;
+  font-weight:200;
+  height:100px;
+}
+
+.navbar{
+  top:25%;
+  height:100px;
+}
+
+.navbar-brand {
+  font-size: xx-large;
+  font-weight: 700;
+  color: #2E43E1;
+}
+
+.nav-link {
+  position: relative;
+  display: inline-block;
+  color: #333333;
+  font-size: large;
+  text-decoration: none;
+}
+
+.nav-link::after {
+content: '';
+position: absolute;
+display: block;
+bottom: -3px;
+left: 50%;
+width: 0;
+height: 2px;
+border-bottom: 5px solid #2E43E1;
+}
+
+.nav-link, .nav-link::after {
+transition: all 0.3s linear;
+}
+
+.nav-link:hover {
+color: #2E43E1;
+}
+
+.nav-link:hover::after {
+left: 0;
+width: 100%;
+}
+
+.vertical-line{
+  border-right: thick solid #333333;
+  border-radius: 5px;
+}
+.jumbotron{
+  background-color: white;
+}
+
+.jumbotron-h1{
+  font-weight: 700;
+  font-size: xx-large;
+}
+
+.jumbotron-p{
+  font-size: large;
+  font-weight: 200;
+}
+
+.spinner{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -50px;
+  margin-top: -50px;
+  background-size: 100%;
+}

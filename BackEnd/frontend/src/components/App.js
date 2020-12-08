@@ -21,7 +21,7 @@ const App = () => {
     return (
         <Fragment>
             <Router>
-                <Container className="header">
+                <Container>
                     <nav className="navbar navbar-expand-sm">
                         <a className="navbar-brand" href="/">Propaganda analysis</a>
                         <div className="collapse navbar-collapse" id="navbarNav">
@@ -36,7 +36,8 @@ const App = () => {
                         </div>
                     </nav>
                 </Container>
-                <Switch>
+                <Container className="center-body">
+                    <Switch>
                     <Route path="/about">
 
                     </Route>
@@ -46,7 +47,8 @@ const App = () => {
                     <Route exact path="/">
                         <Home uid={setUID}/>
                     </Route>
-                </Switch>  
+                </Switch>
+                </Container>
             </Router>
         </Fragment>
     )

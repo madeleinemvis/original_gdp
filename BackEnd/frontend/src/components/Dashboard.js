@@ -22,42 +22,35 @@ const Dashboard = props => {
     }
     return (
         <React.Fragment>
-            <Container>
-                <Router>
+            <Router>
+                <Container>
                     {/*TODO: active buttons*/}
-                    <nav style="pills">
-                        <ul className="navbar-nav">
-                            <li className="nav-item">
-                                <a href={`${url}`}>Web Articles</a>
-                            </li>
-                            <li>
-                                <a href={`${url}/sources`}>Sources</a>
-                            </li>
-                        </ul>
-                        {/*<NavItem>
-                            <NavLink exact to={`${url}`} tag={RRNavLink} activeClassName="active">Info</NavLink>
-                        </NavItem>
-                        <NavItem>
-                            <NavLink exact to={`${url}/sources`} tag={RRNavLink} activeClassName="active">Sources</NavLink>
-                        </NavItem>
-                        <NavItem>
-                            <NavLink exact to={`${url}/tweets`} tag={RRNavLink} activeClassName="active">Tweets</NavLink>
-                        </NavItem>*/}
-                    </nav>
-
-                    <Switch>
-                        {/*<Route exact path={path}>
-                            <h3>Info</h3>
-                        </Route>*/}
-                        <Route exact path={`${path}/sources`}>
-                            <Sources uid={uid}/>
-                        </Route>
-                        <Route exact path={`${path}/tweets`}>
-                            <Tweets />
-                        </Route>
-                    </Switch>  
-                </Router>
-            </Container>
+                    <Container>
+                        <nav className="navbar navbar-expand-sm">
+                            <div className="collapse navbar-collapse" id="navbarNav">
+                                <ul className="navbar-nav">
+                                    <li className="nav-item">
+                                        <NavLink exact to={`${url}/sources`} tag={RRNavLink} activeClassName="active">Web Articles</NavLink>
+                                    </li>
+                                    <li className="nav-item">
+                                        <NavLink exact to={`${url}/tweets`} tag={RRNavLink} activeClassName="active">Tweets</NavLink>
+                                    </li>
+                                </ul>
+                            </div>
+                        </nav>
+                    </Container>
+                    <Container>
+                        <Switch>
+                            <Route exact path={`${path}/sources`}>
+                                <Sources className="center-body" uid={uid}/>
+                            </Route>
+                            <Route exact path={`${path}/tweets`}>
+                                <Tweets className="center-body" uid={uid}/>
+                            </Route>
+                        </Switch>
+                    </Container>
+                </Container>
+            </Router>
         </React.Fragment>
     )
 }
