@@ -162,7 +162,7 @@ class Causal:
 
     def dowhy(self, data, indicator: str):
         flag = 0
-        runtime = 300 # Adjust if slow
+        runtime = 10 # Adjust if slow
         np.warnings.filterwarnings('ignore', category=np.VisibleDeprecationWarning) 
 
         for i in range(runtime):
@@ -203,18 +203,16 @@ class Causal:
             # plac = plac[0].item()
             # subs = subs[0].item()
 
+            two_percent = (esti / 100) * 2
             five_percent = (esti / 100) * 5
-            ten_percent = five_percent * 2
-            fifteen_percent = five_percent * 3
-            twenty_percent = ten_percent * 2
             
-            if (esti - five_percent <= rand <= esti + five_percent) or (esti - five_percent >= rand >= esti + five_percent):
-                if (esti - ten_percent <= unob <= esti + ten_percent) or (esti - ten_percent >= unob >= esti + ten_percent):
-                    if (-fifteen_percent <= plac <= fifteen_percent) or (-fifteen_percent >= plac >= fifteen_percent):
-                        if (esti - twenty_percent <= subs <= esti + twenty_percent) or (esti - twenty_percent >= subs >= esti + twenty_percent):
+            if (esti - two_percent <= rand <= esti + two_percent) or (esti - two_percent >= rand >= esti + two_percent):
+                if (esti - five_percent <= unob <= esti + five_percent) or (esti - five_percent >= unob >= esti + five_percent):
+                    if (-five_percent <= plac <= five_percent) or (-five_percent >= plac >= five_percent):
+                        if (esti - five_percent <= subs <= esti + five_percent) or (esti - five_percent >= subs >= esti + five_percent):
                             flag += 1
             
-        if flag >= (runtime / 100) * 70:
+        if flag >= (runtime / 100) * 90:
             value = round(flag / (runtime / 100), 2)
             print('Treatment is causal - ' + str(value) + '% confidence')
             return value
