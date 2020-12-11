@@ -49,8 +49,12 @@ def suggest_urls(request):
             uid, claim, documents_urls, documents_pdfs, files = file_handler.get_objects_from_request(request,
                                                                                                       suggestion_form)
             # Convert data into Scraped Documents
-            documents_urls = file_handler.read_docs(documents_urls)
-            documents_pdfs = file_handler.read_docs(documents_pdfs)
+            
+            if documents_urls:
+                documents_urls = file_handler.read_docs(documents_urls)
+            
+            if documents_pdfs:
+                documents_pdfs = file_handler.read_docs(documents_pdfs)
 
             # TODO files
             # Merge document list
@@ -59,7 +63,7 @@ def suggest_urls(request):
             suggested_urls = handler.generate_suggested_urls(documents)
             print("Finished in: ", datetime.now() - start_t)
             return JsonResponse(data=suggested_urls, status=status.HTTP_201_CREATED, safe=False)
-    return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
+    return JsonResponse(data=request.data,status=status.HTTP_400_BAD_REQUEST, safe=False)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])

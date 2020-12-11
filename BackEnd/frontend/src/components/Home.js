@@ -1,7 +1,6 @@
-import React, {  useState, useEffect } from 'react';
+import React, {  useState } from 'react';
 import { Redirect } from 'react-router';
 
-import { v4 as uuidv4 } from 'uuid';
 import { 
     Button,
     Col, 
@@ -11,70 +10,79 @@ import {
     Spinner
 } from 'react-bootstrap';
 import http from '../http-common'
+
+import Suggestion from './Suggestion';
+import Input from './Input'
+
 import '../style/App.css'
 
 const Home = props => {
     // https://dev.to/fuchodeveloper/dynamic-form-fields-in-react-1h6c
 
+    //Local component state
     const [redirect, setRedirect] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [suggest, setSuggest] = useState(false)
+
+    const { uid } = props
+    const [claim, setClaim] = useState('')
+    const [links, setLinks] = useState([{url:''}])
+    const [pdfs, setPdfs] = useState([{url:''}])
 
     var formData = new FormData()
     const [claim, setClaim] = useState("")
 
-    const [inputFields, setInputFields] = useState([
-        { url: '' }
-    ]);
-    const [pdfs, setPdfs] = useState([
-        { url: '' }
-    ]);
-    function setUid(id){
-        props.uid(id)
-    }
+    // Suggested links
+    const [suggestions, setSuggestions] = useState([])
 
 
-    const handleSubmit = e => {
-        e.preventDefault();
+
+    const handleSubmit = suggest => {
         setLoading(true)
-        //Deleteing existing parts
-        var uid = uuidv4();
+
         formData.delete('uid')
+        formData.append('uid', uid)
+
         formData.delete('claim')
-        formData.delete('urls')
-        formData.delete('pdfs')
+        formData.append('claim',claim)
 
-        //Add uid
-        formData.append('uid',uid)
-
-        //Adding claim   
-        formData.append('claim', claim)
-
-        //urls and pdf urls 
-        var urls = formatLinks(inputFields)  
-        var pdfURL = formatLinks(pdfs)
-        
-        if(urls !== null){
+        if(links[0].url !== ''){
+            formData.delete('urls')
+            let urls = formatLinks(links)
             formData.append('urls', urls)
         }
-        if(pdfURL !== null){
-            formData.append('pdfs', pdfURL)
+        if(pdfs[0].url !== ''){
+            formData.delete('pdfs')
+            let pdf_links = formatLinks(pdfs)
+            formData.append('pdfs', pdf_links)
         }
-        
-        
-        http.post('/documents/upload', formData)
-        .then(res =>{
-            if(res.status === 201){   
-                setUid(res.data)             
+
+        if(suggest){
+            formData.append('want_suggestions', suggest)
+            http.post('/documents/suggest', formData)
+            .then(res => {
+                setSuggestions(res.data)
                 setLoading(false)
-                setRedirect(true)
-                console.log(res.data)
-            }
-            
-        })
-        .catch(e => {
-            console.log(e)
-        })
+                setSuggest(suggest)
+            })
+            .catch(e => {
+                console.log(e)
+            })
+        }else{
+            http.post('/documents/upload', formData)
+                .then(res =>{
+                    if(res.status === 201){
+                        setLoading(false)
+                        setRedirect(true)
+                    }
+                })
+                .catch(e => {
+                    console.log(e)
+                })
+        }
     };
+
+    // [{url: ''}] -> "{}"
     const formatLinks = input => {
 
         if(input[0].url === ''){
@@ -96,58 +104,40 @@ const Home = props => {
         out += "}"
         return out
     }
+    // functions that will be passed to child components
+    function set_claim(claim){
+        setClaim(claim)
+    }
+    function add_links(urls){
+        let values = [...links]
+        for(const url of urls){
+            values.push(url)
+
+        }
+        setLinks(values)
+    }
+    function set_links(links){
+        setLinks(links)
+    }
+    function set_pdfs(pdfs){
+        setPdfs(pdfs)
+    }
 
     // Source: https://medium.com/@tchiayan/compressing-single-file-or-multiple-files-to-zip-format-on-client-side-6607a1eca662
-    const upload = e => {
-        e.preventDefault();
+    function set_files(e){
         formData.delete('files')
-
         var fs = e.target.files
 
         for (const f of fs) {
-            //console.log(f)
             formData.append('files', f, f.name)
         }
     }
 
-    const handleInputChange = (index, event) => {
-        const values = [...inputFields];
-        values[index].url = event.target.value;
-        setInputFields(values);
-    };
-
-    const handleAddFields = () => {
-        const values = [...inputFields];
-        values.push({ url: ''});
-        setInputFields(values);
-      };
-    
-    const handleRemoveFields = index => {
-      const values = [...inputFields];
-      values.splice(index, 1);
-      setInputFields(values);
-    };
-
-    const handleInputChangePdf = (index, event) => {
-        const values = [...pdfs];
-        values[index].url = event.target.value;
-        setPdfs(values);
-    };
-    const handleAddFieldsPDF = () => {
-        const values = [...pdfs];
-        values.push({ url: ''});
-        setPdfs(values);
-    };    
-    const handleRemoveFieldsPDF = index => {
-      const values = [...pdfs];
-      values.splice(index, 1);
-      setPdfs(values);
-    };
-
     if(redirect){
-        return <Dash/>
+        return <Redirect to={{ pathname: "/dashboard" }}/>
     }
- 
+
+
     return (
         
         
@@ -239,14 +229,20 @@ const Home = props => {
 
                             <br/>
                         </Col>
+                        <Col>
+                            {
+                                suggest ? null : <Input uid={uid} submit={handleSubmit} setFiles={set_files} setClaim={set_claim} setLinks={set_links} setPdfs={set_pdfs}/>}
+                            {
+                                loading ? <Loading/> : null
+                            }
+                            {
+                                suggest ? <Suggestion submit={handleSubmit} suggested={suggestions} addLinks={add_links}/> : null
+                            }
+                        </Col>
                     </Row>
                 </Container>}
     </React.Fragment> 
     )
-}
-
-const Dash = () =>{
-    return <Redirect to={{ pathname: "/dashboard" }}/>
 }
 
 const Loading = () =>{

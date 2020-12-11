@@ -20,7 +20,7 @@ const Tweets = () => {
     }, []);
 
     const retrieveTweets = () => {
-        http.get('/tweets')
+        http.post('/tweets')
             .then( res => {
                 console.log('api')
                 setTweets(res.data)

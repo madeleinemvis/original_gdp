@@ -206,7 +206,7 @@ class Causal:
             five_percent = (esti / 100) * 5
             ten_percent = five_percent * 2
             fifteen_percent = five_percent * 3
-            twenty_percent = ten_percent * 2
+            twenty_percent = five_percent * 4
             
             if (esti - five_percent <= rand <= esti + five_percent) or (esti - five_percent >= rand >= esti + five_percent):
                 if (esti - ten_percent <= unob <= esti + ten_percent) or (esti - ten_percent >= unob >= esti + ten_percent):
@@ -226,8 +226,7 @@ class Causal:
         return 0
 
     def analyse(self, keywords: [str], country: str = 'United Kingdom'):
-        matplotlib.use('TkAgg')  
-
+        matplotlib.use('TkAgg')
         print('Country:', country)
         countries = pd.read_csv(Path(__file__).parent.parent.parent / 'Data' / 'countries.csv')
         ans = countries[countries == country].stack().index.tolist()
