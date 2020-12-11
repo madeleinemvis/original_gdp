@@ -1,7 +1,8 @@
-import React, {  useState } from 'react';
+import React, {  useState, useEffect } from 'react';
 import { Redirect } from 'react-router';
 
-import { 
+import { v4 as uuidv4 } from 'uuid';
+import {
     Button,
     Col, 
     Row, 
@@ -9,12 +10,11 @@ import {
     Jumbotron,
     Spinner
 } from 'react-bootstrap';
+
 import http from '../http-common'
-
-import Suggestion from './Suggestion';
-import Input from './Input'
-
 import '../style/App.css'
+import Suggestion from './Suggestion';
+import Input from "./Input";
 
 const Home = props => {
     // https://dev.to/fuchodeveloper/dynamic-form-fields-in-react-1h6c
@@ -30,10 +30,11 @@ const Home = props => {
     const [pdfs, setPdfs] = useState([{url:''}])
 
     var formData = new FormData()
-    const [claim, setClaim] = useState("")
+
 
     // Suggested links
     const [suggestions, setSuggestions] = useState([])
+
 
 
 
@@ -160,87 +161,21 @@ const Home = props => {
                                     </Button>
                                 </p>
                             </Jumbotron>
-                        </Col>
-                        <span className="vertical-line"/>
-                        <Col>
-                            <h3>Add your links to be analysed</h3>
-                            <hr/>
-                            <form onSubmit={handleSubmit}>
-                                <h5>Claim:</h5>
-                                <div className="input-group">
-                                    <input type="text" className="form-control" placeholder="Claim" aria-label="claim"
-                                           aria-describedby="basic-addon2" onChange={e => setClaim(e.target.value)}/>
-                                </div>
-                                <br/>
-                                <h5>Links:</h5>
-                                {inputFields.map((inputField, index) => (
-                                    <div key={`${inputField}~${index}`}>
-                                        <div className="input-group">
-                                            <input type="text" className="form-control" placeholder="URL"
-                                                   aria-label="link" aria-describedby="basic-addon2"
-                                                   onChange={event => handleInputChange(index, event)}/>
-                                            <div className="input-group-append">
-                                                <button className="btn btn-outline-secondary" type="button"
-                                                        onClick={() => handleAddFields()}>+
-                                                </button>
-                                                <button className="btn btn-outline-secondary" type="button"
-                                                        onClick={() => handleRemoveFields(index)}>-
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                                <br/>
-                                <h5>PDF Links:</h5>
-                                {pdfs.map((pdf, index) => (
-                                    <div key={`${pdf}~${index}`}>
-                                        <div className="input-group">
-                                            <input type="text" className="form-control" placeholder="PDF URL"
-                                                   aria-label="pdf" aria-describedby="basic-addon2"
-                                                   onChange={event => handleInputChangePdf(index, event)}/>
-                                            <div className="input-group-append">
-                                                <button className="btn btn-outline-secondary" type="button"
-                                                        onClick={() => handleAddFieldsPDF()}>+
-                                                </button>
-                                                <button className="btn btn-outline-secondary" type="button"
-                                                        onClick={() => handleRemoveFieldsPDF(index)}>-
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-
-                                <br></br>
-
-                                <input type="file" id="files" onChange={upload} name="files" multiple/>
-
-                                <hr/>
-
-                                <div className="submit-button">
-                                    <button
-                                        className="btn btn-primary mr-2"
-                                        type="submit"
-                                        onSubmit={handleSubmit}
-                                    >
-                                        Submit
-                                    </button>
-                                </div>
-                            </form>
-
-                            <br/>
-                        </Col>
-                        <Col>
-                            {
-                                suggest ? null : <Input uid={uid} submit={handleSubmit} setFiles={set_files} setClaim={set_claim} setLinks={set_links} setPdfs={set_pdfs}/>}
-                            {
-                                loading ? <Loading/> : null
-                            }
-                            {
-                                suggest ? <Suggestion submit={handleSubmit} suggested={suggestions} addLinks={add_links}/> : null
-                            }
-                        </Col>
-                    </Row>
-                </Container>}
+                </Col>
+                <span className="vertical-line"/>
+                <Col>
+                    {
+                        suggest ? null : <Input uid={uid} submit={handleSubmit} setFiles={set_files} setClaim={set_claim} setLinks={set_links} setPdfs={set_pdfs}/>}
+                    {
+                        loading ? <Loading/> : null
+                    }
+                    {
+                        suggest ? <Suggestion submit={handleSubmit} suggested={suggestions} addLinks={add_links}/> : null
+                    }
+                </Col>
+                </Row>
+            </Container>
+            }
     </React.Fragment> 
     )
 }
