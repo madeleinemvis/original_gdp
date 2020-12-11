@@ -88,6 +88,15 @@ def make_sentiment_scatter_plot(tweets):
     return fig
 
 
+def make_sentiment_pie_chart(tweets):
+    cf.go_offline()
+    cf.set_config_file(offline=False, world_readable=True)
+    tweet_df = pd.DataFrame(tweets)
+    fig = px.pie(tweet_df, names='sentiment_score_cat')
+    return fig
+
+
+
 # Function for the main workflow of the project
 def main(source_urls: [str], claim: str):
     start_t = datetime.now()
@@ -129,6 +138,8 @@ def main(source_urls: [str], claim: str):
     # crawling with Twitter
     crawled_tweets = crawler.twitter_crawl(uid, key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
     fig = make_sentiment_scatter_plot(crawled_tweets)
+    fig.show()
+    fig = make_sentiment_pie_chart(crawled_tweets)
     fig.show()
 
 
