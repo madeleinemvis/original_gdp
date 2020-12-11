@@ -38,29 +38,20 @@ const Tweets = () => {
     
     return(
         <React.Fragment>
-            
-                <Row>
-                    <Col>
-                        <h5>Sentiment Analysis</h5>
-                        
-                            <Scrollbar style={{ width: "100%",  height: 400 }}>
-                                {tweets && tweets.map( (tw, index) => (
-                                    <Card key={index}>    
-                                        <CardBody>
-                                            <CardTitle tag="h5">Tweet #{index}</CardTitle>
-                                            <CardSubtitle tag="h6" className="mb-2 text-muted">Sentiment: { tw.sentiment }</CardSubtitle>
-                                            <CardSubtitle tag="h6" className="mb-2 text-muted">Favorite Count: { tw.favorite_count } Retweet Count: { tw.retweet_count }</CardSubtitle>
-                                            <CardSubtitle tag="h6" className="mb-2 text-muted">Tweet Location: { tw.user_location }</CardSubtitle>
-                                            
-                                            <CardText> {  tw.text  }</CardText>                      
-                                        </CardBody>
-                                    </Card>                    
-                                ))}</Scrollbar>
-                            
-                                         
-                    </Col>
-                    
-                </Row>
+        <Scrollbar style={{ width: "100%",  height: 400 }}>
+            {tweets && tweets.map( (tw, index) => (
+                <Card key={index}>
+                    <CardBody>
+                        <CardTitle tag="h5">Tweet #{index}</CardTitle>
+                        <CardSubtitle tag="h6" className="mb-2 text-muted">Sentiment: { tw.sentiment }</CardSubtitle>
+                        <CardSubtitle tag="h6" className="mb-2 text-muted">Favorite Count: { tw.favorite_count } Retweet Count: { tw.retweet_count }</CardSubtitle>
+                        <CardSubtitle tag="h6" className="mb-2 text-muted">Tweet Location: { tw.user_location }</CardSubtitle>
+
+                        <CardText> {  tw.text  }</CardText>
+                    </CardBody>
+                </Card>
+            ))}</Scrollbar>
+
         </React.Fragment>
     )
 }

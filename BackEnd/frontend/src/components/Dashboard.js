@@ -11,6 +11,7 @@ import {
 
 import Tweets from './Tweets';
 import Sources from "./Sources";
+import SocialMedia from "./SocialMedia";
 
 // Source: https://bezkoder.com/react-hooks-crud-axios-api/
 const Dashboard = props => {
@@ -29,10 +30,10 @@ const Dashboard = props => {
                         <nav className="navbar navbar-expand-sm">
                             <div className="collapse navbar-collapse" id="navbarNav">
                                 <ul className="navbar-nav">
-                                    <li className="nav-item">
+                                    <li className="nav-item-menu">
                                         <NavLink exact to={`${url}/sources`} tag={RRNavLink} activeClassName="active">Web Articles</NavLink>
                                     </li>
-                                    <li className="nav-item">
+                                    <li className="nav-item-menu">
                                         <NavLink exact to={`${url}/tweets`} tag={RRNavLink} activeClassName="active">Tweets</NavLink>
                                     </li>
                                 </ul>
@@ -45,7 +46,7 @@ const Dashboard = props => {
                                 <Sources className="center-body" uid={uid}/>
                             </Route>
                             <Route exact path={`${path}/tweets`}>
-                                <Tweets className="center-body" uid={uid}/>
+                                <SocialMedia uid={uid}/>
                             </Route>
                         </Switch>
                     </Container>
