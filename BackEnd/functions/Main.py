@@ -74,6 +74,20 @@ def scrape_google_results(scraper, google_urls):
     return new_urls, new_scraped_data
 
 
+import plotly.express as px
+import cufflinks as cf
+import pandas as pd
+
+
+# this is the function that makes the graphic,
+def make_sentiment_scatter_plot(tweets):
+    cf.go_offline()
+    cf.set_config_file(offline=False, world_readable=True)
+    tweet_df = pd.DataFrame(tweets)
+    fig = px.scatter(tweet_df, x='favorite_count', y='retweet_count', color='sentiment')
+    return fig
+
+
 # Function for the main workflow of the project
 def main(source_urls: [str], claim: str):
     start_t = datetime.now()
@@ -114,6 +128,9 @@ def main(source_urls: [str], claim: str):
     print("-------- SCRAPING TWITTER --------")
     # crawling with Twitter
     crawled_tweets = crawler.twitter_crawl(uid, key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
+    fig = make_sentiment_scatter_plot(crawled_tweets)
+    fig.show()
+
 
     # print("-------- EXAMPLE SIMILARITY CHECKING --------")
     # do some similarity checking for the documents so far crawled

@@ -159,7 +159,7 @@ class Crawler:
         api = self.twitter_init()
         # Retrieves all tweets with given keywords and count
         query = ' '.join(keywords[:2])
-        searched_tweets = tweepy.Cursor(api.search, q=query).items(tweets_returned)
+        searched_tweets = tweepy.Cursor(api.search, q=query, result_type='popular').items(tweets_returned)
         countries, country_abbreviations, states, state_abbreviations = self.location_lists_init()
         tweets = []
 
