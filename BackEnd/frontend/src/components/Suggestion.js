@@ -12,6 +12,7 @@ const Suggestion= props => {
     
     //Props
     const { suggested } = props
+    
 
     // Links
     const [links, setLinks] = useState([])
@@ -27,18 +28,21 @@ const Suggestion= props => {
         }
         props.addLinks(values)
     }
-    
+    let urls = []
     useEffect(() => {
         //Changing format of suggested links for choosing
-        let urls = []
-        suggested.map(e => {
-            urls.push({
-                isChecked: 'false',
-                url: e
-            })    
-        });
-        setLinks(urls)
-    }, [suggested])
+        
+        if(suggested){
+            suggested.map(e => {
+                urls.push({
+                    isChecked: 'false',
+                    url: e
+                })    
+            });
+            setLinks(urls)
+        }
+        
+    },[props.suggested])
         
 
     const submit = e => {
