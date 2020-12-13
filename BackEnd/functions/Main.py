@@ -1,13 +1,14 @@
+import random
 from datetime import datetime
 
-import tweepy
+import cufflinks as cf
+import pandas as pd
+import plotly.express as px
 
-from BackEnd.functions.dataretrieval import Crawler, Scraper
-from BackEnd.functions.textprocessing import TextProcessor
-from BackEnd.functions.dbmanager import DbManager
 from BackEnd.functions.causal import Causal
-
-import random
+from BackEnd.functions.dataretrieval import Crawler, Scraper
+from BackEnd.functions.dbmanager import DbManager
+from BackEnd.functions.textprocessing import TextProcessor
 
 NUMBER_OF_KEY_WORDS = 30
 NUMBER_OF_GOOGLE_RESULTS_WANTED = 25
@@ -20,10 +21,10 @@ def generate_manifesto(scraper, text_processor, source_urls, all_sentences, docu
     scraped_data = {}
 
     if len(all_sentences) == 0:
-        for source in source_urls:
-            data = scraper.scrape_url(source)
-            scraped_data[source] = data
-            urls.update(data.html_links)
+        url_dict = scraper.downloads(source_urls)
+        for k in url_dict.keys():
+            scraped_data[k] = url_dict[k]
+            urls.update(url_dict[k].html_links)
 
         # if there are less than 5 documents, scrape tokens
         if len(source_urls) < 5:
@@ -74,11 +75,6 @@ def scrape_google_results(scraper, google_urls):
             new_scraped_data[k] = data[k]
             new_urls.update(data[k].html_links)
     return new_urls, new_scraped_data
-
-
-import plotly.express as px
-import cufflinks as cf
-import pandas as pd
 
 
 # this is the function that makes the graphic,
@@ -143,7 +139,6 @@ def main(source_urls: [str], claim: str):
     fig.show()
     fig = make_sentiment_pie_chart(crawled_tweets)
     fig.show()
-
 
     # print("-------- EXAMPLE SIMILARITY CHECKING --------")
     # do some similarity checking for the documents so far crawled
