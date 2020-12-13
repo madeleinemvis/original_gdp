@@ -114,6 +114,12 @@ class DbManager:
     def get_all_tweets(self, uid: str):
         try:
             ini_list = list(self.database['tweets_tweet'].find({"uid": uid}))
+            tweets = []
+            for t in ini_list:
+                tweets.append(
+                    dict(uid=t['uid'], created_at=t['created_at'], text=t['text'], favorite_count=t['favorite_count'],
+                         retweet_count=t['retweet_count'], user_location=t['user_location'],
+                         sentiment=t['sentiment']))
             return ini_list
         except pymongo.errors.PyMongoError:
             print("No Collection, Tweets_tweet Found in Database")
@@ -128,13 +134,13 @@ class DbManager:
                 html_links.extend(res)
 
             return html_links
-        except  pymongo.errors.PyMongoError:
+        except pymongo.errors.PyMongoError:
             print("No Objects, UID: %s,  Found in Collection, Documents_document", uid)
 
     def get_claim(self, uid: str):
         try:
             c_result = self.database['documents_claim'].find({"uid": uid},
-                                                          {"_id": 0, "claim": 1})
+                                                             {"_id": 0, "claim": 1})
             claim = c_result[0]['claim']
             return claim
         except pymongo.errors.PyMongoError:
