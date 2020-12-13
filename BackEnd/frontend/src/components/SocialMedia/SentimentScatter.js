@@ -3,7 +3,7 @@ import {Spinner} from 'react-bootstrap';
 
 import http from '../../http-common'
 const SentimentScatter = props => {
-    // const[sentimentScatter, setSentimentScatter] = useState({});
+    const[data, setData] = useState([]);
     const[isLoading, setIsLoading] = useState(true);
 
     useEffect(( ) => {
@@ -14,6 +14,7 @@ const SentimentScatter = props => {
 
                 .then(res => {
                     const tweetsDf = res.data;
+                    setData(tweetsDf)
                     console.log(tweetsDf)
 
                     setIsLoading(false);
