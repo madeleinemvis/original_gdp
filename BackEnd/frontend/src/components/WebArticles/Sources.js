@@ -1,19 +1,19 @@
 import Card from "react-bootstrap/Card";
+import WordCloud from "./WordCloud";
 import {CardDeck, Container} from "reactstrap";
 import React from "react";
 import DocumentFreq from "./DocumentFreq";
-import TweetFreq from "./TweetFreq";
-import Tweets from "./Tweets";
+import TweetFreq from "../SocialMedia/TweetFreq";
 
 const Sources = props => {
 
     return(
-        <Container className="tweets">
+        <Container className="sources">
           <CardDeck>
               <Card>
                 <Card.Body>
-                    <Card.Title>Sentiment Analysis</Card.Title>
-                    <Tweets uid={props.uid} />
+                    <Card.Title>Word Cloud</Card.Title>
+                    <WordCloud uid={props.uid} />
                 </Card.Body>
               </Card>
               <Card>
@@ -26,11 +26,6 @@ const Sources = props => {
                   This is a longer card with supporting text below as a natural lead-in to
                   additional content. This content is a little bit longer.
                 </Card.Text>
-              </Card.Body>
-            </Card>
-            <Card>
-              <Card.Body>
-                <TweetFreq uid={props.uid}/>
               </Card.Body>
             </Card>
             <Card>
@@ -84,15 +79,14 @@ const Sources = props => {
                 </Card.Text>
               </Card.Body>
             </Card>
-            <Card className="text-center, highlight-card">
+            <Card>
               <Card.Body>
-                <Card.Title>
-                  Highlighted Card
-                </Card.Title>
-                <Card.Text>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere
-                  erat a ante.
-                </Card.Text>
+                <DocumentFreq uid={props.uid}/>
+              </Card.Body>
+            </Card>
+            <Card>
+              <Card.Body>
+                <TweetFreq uid={props.uid}/>
               </Card.Body>
             </Card>
             <Card>

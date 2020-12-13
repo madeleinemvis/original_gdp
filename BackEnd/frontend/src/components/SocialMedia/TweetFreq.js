@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react'
 import {Container, Spinner, Row, Col} from 'react-bootstrap';
 
-import http from '../http-common'
-const DocumentFreq = props => {
+import http from '../../http-common'
+const TweetFreq = props => {
     const[frequency, setFrequency] = useState(0);
     const[isLoading, setIsLoading] = useState(true);
     const[isEmpty, setIsEmpty] = useState(false);
@@ -11,16 +11,12 @@ const DocumentFreq = props => {
         const fetchData = () => {
             const formdata = new FormData();
             formdata.append("uid", props.uid);
-            http.post('/documents/freq', formdata)
+            http.post('/tweets/freq', formdata)
 
                 .then(res => {
                     setFrequency(res.data);
                     console.log("frequency:", frequency)
-                    if(frequency == 0){
-                        setIsEmpty(true);
-                    }
                     setIsLoading(false);
-                    console.log("isEmpty:", isEmpty)
                 })
                 .catch(e => {
                     console.log(e)
@@ -38,7 +34,7 @@ const DocumentFreq = props => {
                 {!isLoading &&
                     <Container>
                         <Row>
-                            <Col> <h4>Number of Documents Collected</h4></Col>
+                            <Col> <h4>Number of Tweets Collected</h4></Col>
                         </Row>
                         <Row>
                             <Col><h1>{frequency}</h1></Col>
@@ -57,4 +53,4 @@ const Loading = () => {
     </Spinner>
 }
 
-export default DocumentFreq;
+export default TweetFreq;

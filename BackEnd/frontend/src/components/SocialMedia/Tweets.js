@@ -8,8 +8,8 @@ import {
 
 import { Scrollbar } from "react-scrollbars-custom";
 
-import DB from '../services/db.service';
-import http from '../http-common';
+import DB from '../../services/db.service';
+import http from '../../http-common';
 
 const Tweets = () => {
     

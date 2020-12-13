@@ -9,9 +9,9 @@ import {
     NavLink as RRNavLink
 } from "react-router-dom";
 
-import Tweets from './Tweets';
-import Sources from "./Sources";
-import SocialMedia from "./SocialMedia";
+import Tweets from './SocialMedia/Tweets';
+import Sources from "./WebArticles/Sources";
+import SocialMedia from "./SocialMedia/SocialMedia";
 
 // Source: https://bezkoder.com/react-hooks-crud-axios-api/
 const Dashboard = props => {

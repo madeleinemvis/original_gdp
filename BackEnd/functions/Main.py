@@ -1,5 +1,7 @@
 from datetime import datetime
 
+import tweepy
+
 from BackEnd.functions.dataretrieval import Crawler, Scraper
 from BackEnd.functions.textprocessing import TextProcessor
 from BackEnd.functions.dbmanager import DbManager

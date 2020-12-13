@@ -3,9 +3,9 @@ from django.http.response import JsonResponse
 from documents.forms import RequestForm, SuggestionForm
 from documents.models import Document
 from documents.serializers import DocumentSerializer
-from functions.filehandler import FileHandler
 from functions.visualisation import DataVisualiser
 from functions.overlordfunctions import Handler
+from functions.viewshandler import ViewsHandler
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
@@ -16,25 +16,26 @@ def upload_documents(request):
     print("entering")
     # POSTING URLs and PDFs from request
     if request.method == 'POST':
-        file_handler = FileHandler()
+        views_handler = ViewsHandler()
         request_form = RequestForm(request.POST, request.FILES)
         if request_form.is_valid():
-            uid, claim, document_urls, document_pdfs, files = file_handler.get_objects_from_request(request,
+            uid, claim, documents_urls, documents_pdfs, files = views_handler.get_objects_from_request(request,
                                                                                                     request_form)
-            file_handler.set_claim(uid, claim)
+            views_handler.set_claim(uid, claim)
             # FAILS if no documents attached
-            if not (document_urls is None and document_pdfs is None and files is None):
-                file_handler.save_claim(uid, claim)
-                documents = None
-                if document_urls:
-                    documents = file_handler.read_docs(document_urls)
-                    file_handler.save_documents(uid, 'web-page', documents)
-                if document_pdfs:
-                    documents = file_handler.read_docs(document_pdfs)
-                    file_handler.save_documents(uid, 'pdf', documents)
-                # if files:
-                #    documents = file_handler.read_docs(files)
-                #    file_handler.save_documents(uid, 'pdf', documents)
+            if not (documents_urls is None and documents_pdfs is None and files is None):
+                views_handler.save_claim(uid, claim)
+                if documents_urls:
+                    documents_urls = views_handler.read_docs(documents_urls)
+                    # views_handler.save_documents(uid, 'web-page', documents_urls)
+                if documents_pdfs:
+                    documents_pdfs = views_handler.read_docs(documents_pdfs)
+                    # views_handler.save_documents(uid, 'pdf', documents_pdfs)
+                # TODO files
+                print("MERGING DOCS")
+                documents = [*documents_urls, *documents_pdfs]
+                handler = Handler()
+                handler.run_program(views_handler, uid, documents)
                 return JsonResponse(data=uid, status=status.HTTP_201_CREATED, safe=False)
     return JsonResponse(data=request.data, status=status.HTTP_400_BAD_REQUEST, safe=False)
 
@@ -43,18 +44,18 @@ def upload_documents(request):
 def suggest_urls(request):
     start_t = datetime.now()
     if request.method == 'POST':
-        file_handler = FileHandler()
+        views_handler = ViewsHandler()
         suggestion_form = SuggestionForm(request.POST)
-        if (suggestion_form.is_valid() and suggestion_form.cleaned_data['want_suggestions']):
-            uid, claim, documents_urls, documents_pdfs, files = file_handler.get_objects_from_request(request,
+        if suggestion_form.is_valid() and suggestion_form.cleaned_data['want_suggestions']:
+            uid, claim, documents_urls, documents_pdfs, files = views_handler.get_objects_from_request(request,
                                                                                                       suggestion_form)
             # Convert data into Scraped Documents
             
             if documents_urls:
-                documents_urls = file_handler.read_docs(documents_urls)
+                documents_urls = views_handler.read_docs(documents_urls)
             
             if documents_pdfs:
-                documents_pdfs = file_handler.read_docs(documents_pdfs)
+                documents_pdfs = views_handler.read_docs(documents_pdfs)
 
             # TODO files
             # Merge document list

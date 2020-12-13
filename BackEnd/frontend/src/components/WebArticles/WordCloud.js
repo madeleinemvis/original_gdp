@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {TagCloud} from "react-tagcloud";
 import {Spinner} from 'react-bootstrap';
 
-import http from '../http-common'
+import http from '../../http-common'
 const WordCloud = props => {
     const[wordCloud, setWordCloud] = useState({});
     const[isLoading, setIsLoading] = useState(true);

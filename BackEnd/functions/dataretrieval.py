@@ -159,11 +159,12 @@ class Crawler:
         api = self.twitter_init()
         # Retrieves all tweets with given keywords and count
         query = ' '.join(keywords[:2])
-        searched_tweets = tweepy.Cursor(api.search, q=query, result_type='popular').items(tweets_returned)
+        searched_tweets = tweepy.Cursor(api.search, q="vaccine forced", result_type='popular').items(40)
+        print("searched tweets:", searched_tweets)
         countries, country_abbreviations, states, state_abbreviations = self.location_lists_init()
         tweets = []
-
         for tweet in searched_tweets:
+            print("tweet", tweet)
             parsed_tweet = {'uid': uid,
                             'created_at': tweet.created_at,
                             'text': tweet.text,
@@ -173,14 +174,9 @@ class Crawler:
                                                                           countries, country_abbreviations,
                                                                           states, state_abbreviations),
                             'sentiment': NLP_Analyser.get_tweet_sentiment(tweet.text)}
-
-            if tweet.retweet_count > 0:
-                # Only appends if the tweet text is unique
-                if not any(t['text'] == parsed_tweet['text'] for t in tweets):
-                    tweets.append(parsed_tweet)
-            else:
-                tweets.append(parsed_tweet)
-
+            print("parsed tweet: ", parsed_tweet)
+            tweets.append(parsed_tweet)
+        print("number of tweets:", len(tweets))
         return tweets
 
 

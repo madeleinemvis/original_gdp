@@ -1,21 +1,21 @@
 import React, {useEffect, useState} from 'react'
-import {Container, Spinner, Row, Col} from 'react-bootstrap';
+import {Spinner} from 'react-bootstrap';
 
-import http from '../http-common'
-const TweetFreq = props => {
-    const[frequency, setFrequency] = useState(0);
+import http from '../../http-common'
+const SentimentScatter = props => {
+    // const[sentimentScatter, setSentimentScatter] = useState({});
     const[isLoading, setIsLoading] = useState(true);
-    const[isEmpty, setIsEmpty] = useState(false);
 
     useEffect(( ) => {
         const fetchData = () => {
             const formdata = new FormData();
             formdata.append("uid", props.uid);
-            http.post('/tweets/freq', formdata)
+            http.post('/tweets/sentiment_scatter$', formdata)
 
                 .then(res => {
-                    setFrequency(res.data);
-                    console.log("frequency:", frequency)
+                    const tweetsDf = res.data;
+                    console.log(tweetsDf)
+
                     setIsLoading(false);
                 })
                 .catch(e => {
@@ -32,17 +32,7 @@ const TweetFreq = props => {
                     <Loading/>
                 }
                 {!isLoading &&
-                    <Container>
-                        <Row>
-                            <Col> <h4>Number of Tweets Collected</h4></Col>
-                        </Row>
-                        <Row>
-                            <Col><h1>{frequency}</h1></Col>
-                        </Row>
-                    </Container>
-
-
-
+                    <h1>Here is a scatter plot</h1>
                 }
     </React.Fragment>;
 }
@@ -53,4 +43,4 @@ const Loading = () => {
     </Spinner>
 }
 
-export default TweetFreq;
+export default SentimentScatter;

@@ -7,15 +7,14 @@ from .dbmanager import DbManager
 
 from django.utils.datastructures import MultiValueDictKeyError
 from documents.models import Document, Claim
-
+from tweets.models import Tweet
 
 from .dataretrieval import Scraper
 
 
-class FileHandler:
-    ROOT_DIR = None
+
+class ViewsHandler:
     db_manager = None
-    ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
     scraper = Scraper()
 
     def __init__(self):
@@ -45,10 +44,19 @@ class FileHandler:
         return d_save
 
     @staticmethod
+    def set_tweets(uid: str, tweets):
+        t_save = []
+        for t in tweets:
+            # _id generated automatically
+            t_save.append(Tweet(uid=uid, created_at=t['created_at'], text=t['text'], favorite_count=t['favorite_count'],
+                                retweet_count=t['retweet_count'], user_location=t['user_location'],
+                                sentiment=t['sentiment']))
+        return t_save
+
+    @staticmethod
     def set_claim(uid, claim):
         c_save = Claim(uid=uid, claim=claim)
         return c_save
-
 
     @staticmethod
     def get_objects_from_request(request, request_form):
@@ -70,3 +78,7 @@ class FileHandler:
     def save_claim(self, uid: str, claim: str):
         c_save = self.set_claim(uid, claim)
         c_save.save()
+
+    def save_tweets(self, uid: str, tweets):
+        t_save = self. set_tweets(uid, tweets)
+        Tweet.objects.bulk_create(t_save)
