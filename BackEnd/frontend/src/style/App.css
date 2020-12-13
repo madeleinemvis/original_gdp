@@ -9,6 +9,7 @@
 
 a {
   color: #333333;
+  max-width: 100% !important;
 }
 
 .center-body{
