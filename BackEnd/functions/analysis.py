@@ -6,7 +6,7 @@ import gensim.corpora as corpora
 from gensim.models import CoherenceModel
 from textblob import TextBlob
 
-from textprocessing import TextProcessor
+from BackEnd.functions.textprocessing import TextProcessor
 
 
 class NLPAnalyser:
@@ -48,6 +48,9 @@ class NLPAnalyser:
     def check_similarity(self, document):
         if document is None:
             return 0
-        cleaned_tokens = document.cleaned_tokens
-        test_corpus = self.id2word.doc2bow(cleaned_tokens)
-        return self.sim_model[test_corpus]
+        cleaned_tokens = [document.cleaned_tokens]
+        test_corpus = [self.id2word.doc2bow(cleaned_tokens[0])]
+        query_test_words = self.tf_idf[test_corpus]
+        for doc in query_test_words:
+            max_sim = max(self.sim_model[doc])
+        return max_sim

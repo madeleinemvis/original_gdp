@@ -214,8 +214,11 @@ class Scraper:
     def get_data_from_source(self, source: str) -> (str, Data):
         # If the source begins with HTTP(S) scheme, treat as a hyperlink
         if re.match(r'^https?://', source):
-            response = requests.get(source, allow_redirects=False, timeout=5)
-            data = self.get_data_from_url(source, response)
+            try:
+                response = requests.get(source, allow_redirects=False, timeout=5)
+                data = self.get_data_from_url(source, response)
+            except:
+                data = None
         # If the source does not begin with HTTP(S) scheme, treat as path
         else:
             data = self.get_data_from_path(source)
@@ -226,8 +229,6 @@ class Scraper:
         # if seen_urls is default, set as an empty list to begin with
         if seen_urls is None:
             seen_urls = []
-
-        print("Processing:", url)
 
         # if there is no response, no point in processing further
         if response is None:
@@ -281,7 +282,6 @@ class Scraper:
             # if there is a location header, we have to handle redirects
             if 'location' in response.headers.keys():
                 location = response.headers['location']
-                print("Seen URLs Length", len(seen_urls))
 
                 # check if we have seen this url before
                 if location in seen_urls:
