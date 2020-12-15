@@ -1,1 +1,184 @@
-﻿code,Titleaf,Afghanistanal,Albaniadz,Algeriaad,Andorraao,Angolaaq,Antarcticaar,Argentinaam,Armeniaau,Australiaat,Austriaaz,Azerbaijanbh,Bahrainbd,Bangladeshby,Belarusbe,Belgiumbz,Belizebj,Beninbt,Bhutanbo,Boliviaba,Bosnia & Herzegovinabw,Botswanabr,Brazilbn,Bruneibg,Bulgariabf,Burkina Fasobi,Burundici,Côte d’Ivoirekh,Cambodiacm,Cameroonca,Canadacv,Cape Verdecf,Central African Republictd,Chadcl,Chilecn,Chinaco,Colombiacg,Congo - Brazzavillecd,Congo - Kinshasacr,Costa Ricahr,Croatiacu,Cubacy,Cypruscz,Czechiadk,Denmarkdj,Djiboutido,Dominican Republicec,Ecuadoreg,Egyptsv,El Salvadorgq,Equatorial Guineaer,Eritreaee,Estoniaet,Ethiopiafi,Finlandfr,Francegf,French Guianaga,Gabongm,Gambiage,Georgiade,Germanygh,Ghanagr,Greecegl,Greenlandgu,Guamgt,Guatemalagn,Guineagw,Guinea-Bissaugy,Guyanaht,Haitihn,Hondurashk,Hong Konghu,Hungaryis,Icelandin,Indiaid,Indonesiair,Iraniq,Iraqie,Irelandil,Israelit,Italyjm,Jamaicajp,Japanjo,Jordankz,Kazakhstanke,Kenyakw,Kuwaitkg,Kyrgyzstanla,Laoslv,Latvialb,Lebanonls,Lesotholr,Liberialy,Libyali,Liechtensteinlt,Lithuanialu,Luxembourgmo,Macaomg,Madagascarmw,Malawimy,Malaysiamv,Maldivesml,Malimt,Maltamr,Mauritaniamu,Mauritiusyt,Mayottemx,Mexicomd,Moldovamc,Monacomn,Mongoliame,Montenegroma,Moroccomz,Mozambiquemm,Myanmar (Burma)na,Namibianp,Nepalnl,Netherlandsnz,New Zealandni,Nicaraguane,Nigerng,Nigeriakp,North Koreano,Norwayom,Omanpk,Pakistanps,Palestinepa,Panamapg,Papua New Guineapy,Paraguaype,Peruph,Philippinespl,Polandpt,Portugalpr,Puerto Ricore,Réunionro,Romaniaru,Russiarw,Rwandast,São Tomé & Príncipesm,San Marinosa,Saudi Arabiasn,Senegalrs,Serbiasc,Seychellessl,Sierra Leonesg,Singaporesk,Slovakiasi,Sloveniaso,Somaliaza,South Africakr,South Koreaes,Spainlk,Sri Lankash,St. Helenasd,Sudansr,Surinamesz,Swazilandse,Swedench,Switzerlandsy,Syriatw,Taiwantj,Tajikistantz,Tanzaniath,Thailandtl,Timor-Lestetg,Togotn,Tunisiatr,Turkeytm,Turkmenistanug,Ugandaua,Ukraineae,United Arab Emiratesgb,United Kingdomus,United Statesuy,Uruguayuz,Uzbekistanva,Vatican Cityve,Venezuelavn,Vietnameh,Western Saharaye,Yemenzm,Zambiazw,Zimbabwe
+code,Title,code3
+af,Afghanistan,AFG
+al,Albania,ALB
+dz,Algeria,DZA
+ad,Andorra,AND
+ao,Angola,AGO
+aq,Antarctica,ATA
+ar,Argentina,ARG
+am,Armenia,ARM
+au,Australia,AUS
+at,Austria,AUT
+az,Azerbaijan,AZE
+bh,Bahrain,BHR
+bd,Bangladesh,BGD
+by,Belarus,BLR
+be,Belgium,BEL
+bz,Belize,BLZ
+bj,Benin,BEN
+bt,Bhutan,BTN
+bo,Bolivia,BOL
+ba,Bosnia & Herzegovina,BIH
+bw,Botswana,BWA
+br,Brazil,BRA
+bn,Brunei,BRN
+bg,Bulgaria,BGR
+bf,Burkina Faso,BFA
+bi,Burundi,BDI
+ci,Côte d’Ivoire,CIV
+kh,Cambodia,KHM
+cm,Cameroon,CMR
+ca,Canada,CAN
+cv,Cape Verde,CPV
+cf,Central African Republic,CAF
+td,Chad,TCD
+cl,Chile,CHL
+cn,China,CHN
+co,Colombia,COL
+cg,Congo - Brazzaville,COG
+cd,Congo - Kinshasa,COD
+cr,Costa Rica,CRI
+hr,Croatia,HRV
+cu,Cuba,CUB
+cy,Cyprus,CYP
+cz,Czechia,CZE
+dk,Denmark,DNK
+dj,Djibouti,DJI
+do,Dominican Republic,DOM
+ec,Ecuador,ECU
+eg,Egypt,EGY
+sv,El Salvador,SLV
+gq,Equatorial Guinea,GNQ
+er,Eritrea,ERI
+ee,Estonia,EST
+et,Ethiopia,ETH
+fi,Finland,FIN
+fr,France,FRA
+gf,French Guiana,GUF
+ga,Gabon,GAB
+gm,Gambia,GMB
+ge,Georgia,GEO
+de,Germany,DEU
+gh,Ghana,GHA
+gr,Greece,GRC
+gl,Greenland,GRL
+gu,Guam,GUM
+gt,Guatemala,GTM
+gn,Guinea,GIN
+gw,Guinea-Bissau,GNB
+gy,Guyana,GUY
+ht,Haiti,HTI
+hn,Honduras,HND
+hk,Hong Kong,HKG
+hu,Hungary,HUN
+is,Iceland,ISL
+in,India,IND
+id,Indonesia,IDN
+ir,Iran,IRN
+iq,Iraq,IRQ
+ie,Ireland,IRL
+il,Israel,ISR
+it,Italy,ITA
+jm,Jamaica,JAM
+jp,Japan,JPN
+jo,Jordan,JOR
+kz,Kazakhstan,KAZ
+ke,Kenya,KEN
+kw,Kuwait,KWT
+kg,Kyrgyzstan,KGZ
+la,Laos,LAO
+lv,Latvia,LVA
+lb,Lebanon,LBN
+ls,Lesotho,LSO
+lr,Liberia,LBR
+ly,Libya,LBY
+li,Liechtenstein,LIE
+lt,Lithuania,LTU
+lu,Luxembourg,LUX
+mo,Macao,MAC
+mg,Madagascar,MDG
+mw,Malawi,MWI
+my,Malaysia,MYS
+mv,Maldives,MDV
+ml,Mali,MLI
+mt,Malta,MLT
+mr,Mauritania,MRT
+mu,Mauritius,MUS
+yt,Mayotte,MYT
+mx,Mexico,MEX
+md,Moldova,MDA
+mc,Monaco,MCO
+mn,Mongolia,MNG
+me,Montenegro,MNE
+ma,Morocco,MAR
+mz,Mozambique,MOZ
+mm,Myanmar (Burma),MMR
+na,Namibia,NAM
+np,Nepal,NPL
+nl,Netherlands,NLD
+nz,New Zealand,NZL
+ni,Nicaragua,NIC
+ne,Niger,NER
+ng,Nigeria,NGA
+kp,North Korea,PRK
+no,Norway,NOR
+om,Oman,OMN
+pk,Pakistan,PAK
+ps,Palestine,PSE
+pa,Panama,PAN
+pg,Papua New Guinea,PNG
+py,Paraguay,PRY
+pe,Peru,PER
+ph,Philippines,PHL
+pl,Poland,POL
+pt,Portugal,PRT
+pr,Puerto Rico,PRI
+re,Réunion,REU
+ro,Romania,ROU
+ru,Russia,RUS
+rw,Rwanda,RWA
+st,São Tomé & Príncipe,STP
+sm,San Marino,SMR
+sa,Saudi Arabia,SAU
+sn,Senegal,SEN
+rs,Serbia,SRB
+sc,Seychelles,SYC
+sl,Sierra Leone,SLE
+sg,Singapore,SGP
+sk,Slovakia,SVK
+si,Slovenia,SVN
+so,Somalia,SOM
+za,South Africa,ZAF
+kr,South Korea,KOR
+es,Spain,ESP
+lk,Sri Lanka,LKA
+sh,St. Helena,SHN
+sd,Sudan,SDN
+sr,Suriname,SUR
+sz,Swaziland,SWZ
+se,Sweden,SWE
+ch,Switzerland,CHE
+sy,Syria,SYR
+tw,Taiwan,TWN
+tj,Tajikistan,TJK
+tz,Tanzania,TZA
+th,Thailand,THA
+tl,Timor-Leste,TLS
+tg,Togo,TGO
+tn,Tunisia,TUN
+tr,Turkey,TUR
+tm,Turkmenistan,TKM
+ug,Uganda,UGA
+ua,Ukraine,UKR
+ae,United Arab Emirates,ARE
+gb,United Kingdom,GBR
+us,United States,USA
+uy,Uruguay,URY
+uz,Uzbekistan,UZB
+va,Vatican City,VAT
+ve,Venezuela,VEN
+vn,Vietnam,VNM
+eh,Western Sahara,ESH
+ye,Yemen,YEM
+zm,Zambia,ZMB
+zw,Zimbabwe,ZWE

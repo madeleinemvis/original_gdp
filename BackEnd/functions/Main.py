@@ -5,7 +5,7 @@ import cufflinks as cf
 import pandas as pd
 import plotly.express as px
 
-from BackEnd.functions.causal import Causal
+from BackEnd.functions.causal import Causal, TrendMap
 from BackEnd.functions.dataretrieval import Crawler, Scraper
 from BackEnd.functions.dbmanager import DbManager
 from BackEnd.functions.textprocessing import TextProcessor
@@ -164,6 +164,8 @@ def main(source_urls: [str], claim: str):
     causal_t = datetime.now()
     econ, health, politics = causal.analyse(key_words[:5])
     print("Causal time: ", datetime.now()-causal_t)
+    trend = TrendMap()
+    trend_map = trend(key_words[:5])
 
     print("-------- STORING --------")
     # db_manager.insert_many('documents_document')  # Collection name for web pages

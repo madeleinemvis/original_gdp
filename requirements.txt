@@ -37,7 +37,7 @@ trafilatura~=0.6.0
 pytrends~=4.7.3
 dowhy~=0.2
 yfinance~=0.1.5
-xlrd~=1.2.0
+openpyxl~=3.0.5
 
 cufflinks~=0.17.3
 plotly~=4.14.0
