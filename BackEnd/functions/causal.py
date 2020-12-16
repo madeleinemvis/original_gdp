@@ -390,7 +390,7 @@ class TrendMap:
                 df[keywords[i]] = resp[keywords[i]].values
 
         df['metric'] = df.mean(axis=1)
-        countries = pd.read_csv('countries.csv')
+        countries = pd.read_csv(Path(__file__).parent.parent.parent / 'Data' / 'countries.csv')
 
         index = df.index
         vals = {}
