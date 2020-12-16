@@ -137,8 +137,8 @@ def main(source_urls: [str], claim: str):
     crawled_tweets = crawler.twitter_crawl(uid, key_words, NUMBER_OF_TWEETS_RESULTS_WANTED)
     fig = make_sentiment_scatter_plot(crawled_tweets)
     fig.show()
-    # fig = make_sentiment_pie_chart(crawled_tweets)
-    # fig.show()
+    fig = make_sentiment_pie_chart(crawled_tweets)
+    fig.show()
 
     # print("-------- EXAMPLE SIMILARITY CHECKING --------")
     # do some similarity checking for the documents so far crawled
