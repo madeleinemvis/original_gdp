@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {Spinner} from 'react-bootstrap';
 
 import http from '../../http-common'
+import Scatter from "./Scatter";
 const SentimentScatter = props => {
     const[data, setData] = useState([]);
     const[isLoading, setIsLoading] = useState(true);
@@ -10,7 +11,7 @@ const SentimentScatter = props => {
         const fetchData = () => {
             const formdata = new FormData();
             formdata.append("uid", props.uid);
-            http.post('/tweets/sentiment_scatter$', formdata)
+            http.post('/tweets/sentiment_scatter', formdata)
 
                 .then(res => {
                     const tweetsDf = res.data;
@@ -33,7 +34,7 @@ const SentimentScatter = props => {
                     <Loading/>
                 }
                 {!isLoading &&
-                    <h1>Here is a scatter plot</h1>
+                    <Scatter data={data}/>
                 }
     </React.Fragment>;
 }

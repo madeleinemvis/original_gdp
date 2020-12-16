@@ -41,10 +41,9 @@ def tweet_frequency(request):
 def sentiment_scatter(request):
     if request.method == "POST":
         uid = request.data['uid']
-        viewshandler = ViewsHandler()
         datavisualiser = DataVisualiser()
-        tweets = viewshandler.db_manager.get_all_tweets(uid)
-        tweets = datavisualiser.get_sentiment_scatter(tweets)
+        tweets = datavisualiser.get_sentiment_scatter(uid)
         tweets = json.loads(json_util.dumps(tweets))
+        print(tweets)
         return JsonResponse(data=tweets, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)

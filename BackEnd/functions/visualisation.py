@@ -26,3 +26,15 @@ class DataVisualiser:
     def get_tweet_frequency(self, uid: str):
         count = self.db_manager.count_all_tweets(uid)
         return count
+
+    def get_sentiment_scatter(self, uid: str):
+        tweets = self.db_manager.get_all_tweets(uid)
+        positive = []
+        negative = []
+        for t in tweets:
+            if t['sentiment'] == 'negative':
+                negative.append(dict({'y': t['retweet_count'], 'x': t['favorite_count']}))
+            elif t['sentiment'] == 'positive':
+                positive.append(dict({'y': t['retweet_count'], 'x': t['favorite_count']}))
+
+        return dict({'positive': positive, 'negative': negative})

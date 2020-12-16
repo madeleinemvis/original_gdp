@@ -4,6 +4,7 @@ import React from "react";
 import DocumentFreq from "../WebArticles/DocumentFreq";
 import TweetFreq from "./TweetFreq";
 import Tweets from "./Tweets";
+import SentimentScatter from "./SentimentScatter";
 
 const Sources = props => {
 
@@ -18,14 +19,7 @@ const Sources = props => {
               </Card>
               <Card>
               <Card.Body>
-                <svg width="210" height="100" viewBox="0 0 210 100">
-                  <rect width="210" height="100" rx="10" ry="10" fill="#CCC" />
-                </svg>
-                <Card.Title>Card title that wraps to a new line</Card.Title>
-                <Card.Text>
-                  This is a longer card with supporting text below as a natural lead-in to
-                  additional content. This content is a little bit longer.
-                </Card.Text>
+                <SentimentScatter uid={props.uid}/>
               </Card.Body>
             </Card>
             <Card>
