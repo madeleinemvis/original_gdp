@@ -21,9 +21,9 @@ const Scatter = props => {
 
     const trace2 = {
         x: negative_data.map((el) =>
-            el['favorite_count']),
+            el['x']),
         y: negative_data.map((el) =>
-            el['retweet_count']),
+            el['y']),
         mode: 'markers',
         name: 'Negative Sentiment',
         type: 'scatter',
@@ -34,17 +34,18 @@ const Scatter = props => {
 
 
     const layout = {
-      xaxis: {
+        xaxis: {
         range: [ 0, Math.max(positive_data.map((el) =>
             el['x']).concat(negative_data.map((el) =>
             el['x']))) ]
-      },
-      yaxis: {
+        },
+        yaxis: {
         range: [0, Math.max(positive_data.map((el) =>
             el['y']).concat(negative_data.map((el) =>
             el['y']))) ]
-      },
-      title:'Retweet Count vs Favorite Count'
+        },
+        title:'Retweet Count vs Favorite Count',
+        width: '100%', height: '100%'
     };
 
     const config = {
@@ -52,7 +53,11 @@ const Scatter = props => {
     };
 
     return(
-        Plotly.newPlot('fc_rt_scatter', chart_data, layout, config)
+        <Plot
+            data={chart_data}
+            layout={layout}
+            config={config}
+        />
     );
 }
 export default Scatter;
