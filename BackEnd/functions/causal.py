@@ -317,12 +317,12 @@ class Causal:
             country_key = countries.code[ans[0][0]].upper()
         except:
             print('Error: Country unavailable')
-            return
+            return 0, 0, 0
 
         print('----- Collecting Data -----')
         trends = self.get_keyword_trends(keywords, country_key)
         if not isinstance(trends, pd.DataFrame):
-            return
+            return 0, 0, 0
 
         trends['trend'] = self.scale(trends['trend'])
 
@@ -382,12 +382,17 @@ class TrendMap:
     def map_maker(self, keywords: [str]):
         pytrend = TrendReq()
         for i in range(len(keywords)):
-            pytrend.build_payload(kw_list=[keywords[i]])
-            if i == 0:
-                df = pytrend.interest_by_region()
-            else:
-                resp = pytrend.interest_by_region()
-                df[keywords[i]] = resp[keywords[i]].values
+            try:
+                pytrend.build_payload(kw_list=[keywords[i]])
+                if i == 0:
+                    df = pytrend.interest_by_region()
+                else:
+                    resp = pytrend.interest_by_region()
+                    df[keywords[i]] = resp[keywords[i]].values
+            
+            except:
+                print("Warning: Couldn't connect to Google Trends")
+                return 0
 
         df['metric'] = df.mean(axis=1)
         countries = pd.read_csv(Path(__file__).parent.parent.parent / 'Data' / 'countries.csv')
