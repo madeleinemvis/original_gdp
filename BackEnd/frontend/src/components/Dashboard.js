@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Nav, NavItem, NavLink, Container } from 'reactstrap';
 import {
-    BrowserRouter as Router,
+    HashRouter as Router,
     Switch,
     Route,
     useRouteMatch,
@@ -23,7 +23,7 @@ const Dashboard = props => {
     }
     return (
         <React.Fragment>
-            <Router>
+            <Router basename={path}>
                 <Container>
                     {/*TODO: active buttons*/}
                     <Container>
@@ -31,10 +31,10 @@ const Dashboard = props => {
                             <div className="collapse navbar-collapse" id="navbarNav">
                                 <ul className="navbar-nav">
                                     <li className="nav-item-menu">
-                                        <NavLink exact to={`${url}/sources`} tag={RRNavLink} activeClassName="active">Web Articles</NavLink>
+                                        <NavLink exact to={`/sources`} tag={RRNavLink} activeClassName="active">Web Articles</NavLink>
                                     </li>
                                     <li className="nav-item-menu">
-                                        <NavLink exact to={`${url}/tweets`} tag={RRNavLink} activeClassName="active">Tweets</NavLink>
+                                        <NavLink exact to={`/tweets`} tag={RRNavLink} activeClassName="active">Tweets</NavLink>
                                     </li>
                                 </ul>
                             </div>
@@ -42,10 +42,10 @@ const Dashboard = props => {
                     </Container>
                     <Container>
                         <Switch>
-                            <Route exact path={`${path}/sources`}>
+                            <Route exact path={`/sources`}>
                                 <Sources className="center-body" uid={uid}/>
                             </Route>
-                            <Route exact path={`${path}/tweets`}>
+                            <Route exact path={`/tweets`}>
                                 <SocialMedia uid={uid}/>
                             </Route>
                         </Switch>
