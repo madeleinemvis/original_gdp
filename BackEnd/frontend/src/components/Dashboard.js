@@ -12,6 +12,7 @@ import {
 import Tweets from './SocialMedia/Tweets';
 import Sources from "./WebArticles/Sources";
 import SocialMedia from "./SocialMedia/SocialMedia";
+import GridDashboard from "./SocialMedia/GridDashboard";
 
 // Source: https://bezkoder.com/react-hooks-crud-axios-api/
 const Dashboard = props => {
@@ -46,7 +47,7 @@ const Dashboard = props => {
                                 <Sources className="center-body" uid={uid}/>
                             </Route>
                             <Route exact path={`${path}/tweets`}>
-                                <SocialMedia uid={uid}/>
+                                <GridDashboard uid={uid}/>
                             </Route>
                         </Switch>
                     </Container>
