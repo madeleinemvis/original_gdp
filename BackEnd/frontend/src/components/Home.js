@@ -1,7 +1,6 @@
-import React, {  useState, useEffect } from 'react';
+import React, {  useState } from 'react';
 import { Redirect } from 'react-router';
 
-import { v4 as uuidv4 } from 'uuid';
 import {
     Button,
     Col, 

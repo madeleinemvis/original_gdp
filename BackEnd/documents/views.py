@@ -4,7 +4,7 @@ from documents.forms import RequestForm, SuggestionForm
 from documents.models import Document
 from documents.serializers import DocumentSerializer
 from functions.visualisation import DataVisualiser
-from functions.overlordfunctions import Handler
+from functions.programhandler import Handler
 from functions.viewshandler import ViewsHandler
 from rest_framework import status
 from rest_framework.decorators import api_view

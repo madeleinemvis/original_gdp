@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Nav, NavItem, NavLink, Container } from 'reactstrap';
+import React from 'react';
+import { NavLink, Container } from 'reactstrap';
 import {
     BrowserRouter as Router,
     Switch,
