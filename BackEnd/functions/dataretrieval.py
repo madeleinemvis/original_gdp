@@ -19,8 +19,8 @@ from requests import Response
 from tika import parser
 from trafilatura import extract
 
-from BackEnd.functions.analysis import NLPAnalyser
-from BackEnd.functions.textprocessing import TextProcessor
+from functions.analysis import NLPAnalyser
+from functions.textprocessing import TextProcessor
 
 MAX_THREADS = 50
 

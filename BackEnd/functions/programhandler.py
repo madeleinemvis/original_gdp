@@ -1,6 +1,7 @@
 import random
 
 from functions.dataretrieval import Scraper, Crawler
+from functions.analysis import NLPAnalyser
 from functions.textprocessing import TextProcessor
 
 
@@ -117,8 +118,9 @@ class Handler:
 
         print("-------- RECURSIVE CRAWLING --------")
         # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
+        nlpanalyser = NLPAnalyser()
         recursive_urls = self.crawler.url_cleaner(urls)
-        final_crawled_urls = self.crawler.recursive_url_crawl(recursive_urls, self.MAXIMUM_URL_CRAWL_DEPTH)
+        final_crawled_urls = self.crawler.recursive_url_crawl(recursive_urls, self.MAXIMUM_URL_CRAWL_DEPTH, nlpanalyser)
         scraped_data.update(final_crawled_urls)
         print("------- SCRAPE REMAINING URLS -------")
         # retrieve and store all the data about a URL's not yet scraped
