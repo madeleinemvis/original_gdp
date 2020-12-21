@@ -6,21 +6,21 @@ import {
     Col, 
     Row, 
     Container, 
-    Jumbotron,
-    Spinner
+    Jumbotron
 } from 'react-bootstrap';
 
 import http from '../http-common'
 import '../style/App.css'
 import Suggestion from './Suggestion';
 import Input from "./Input";
+import Loading from "./Loading";
 
 const Home = props => {
     // https://dev.to/fuchodeveloper/dynamic-form-fields-in-react-1h6c
 
     //Local component state
     const [redirect, setRedirect] = useState(false)
-    const [loading, setLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const [suggest, setSuggest] = useState(false)
 
     const { uid } = props
@@ -28,7 +28,7 @@ const Home = props => {
     const [links, setLinks] = useState([{url:''}])
     const [pdfs, setPdfs] = useState([{url:''}])
 
-    var formData = new FormData()
+    const formData = new FormData();
 
 
     // Suggested links
@@ -38,7 +38,7 @@ const Home = props => {
 
 
     const handleSubmit = suggest => {
-        setLoading(true)
+        setIsLoading(true)
 
         formData.delete('uid')
         formData.append('uid', uid)
@@ -58,11 +58,10 @@ const Home = props => {
         }
 
         if(suggest){
-            formData.append('want_suggestions', suggest)
             http.post('/documents/suggest', formData)
             .then(res => {
                 setSuggestions(res.data)
-                setLoading(false)
+                setIsLoading(false)
                 setSuggest(suggest)
             })
             .catch(e => {
@@ -72,7 +71,7 @@ const Home = props => {
             http.post('/documents/upload', formData)
                 .then(res =>{
                     if(res.status === 201){
-                        setLoading(false)
+                        setIsLoading(false)
                         setRedirect(true)
                     }
                 })
@@ -88,12 +87,12 @@ const Home = props => {
         if(input[0].url === ''){
             return null
         }
-        var out = "{"        
+        let out = "{";
 
         for (let i = 0; i < input.length; i++) {
             const e = input[i];
 
-            var link =  "'url" + i.toString() + "': '" + e.url + "'"
+            const link = "'url" + i.toString() + "': '" + e.url + "'";
             if(i !== (input.length - 1)){
                 out += link +','
             }else{
@@ -126,7 +125,7 @@ const Home = props => {
     // Source: https://medium.com/@tchiayan/compressing-single-file-or-multiple-files-to-zip-format-on-client-side-6607a1eca662
     function set_files(e){
         formData.delete('files')
-        var fs = e.target.files
+        const fs = e.target.files;
 
         for (const f of fs) {
             formData.append('files', f, f.name)
@@ -142,7 +141,7 @@ const Home = props => {
         
         
         <React.Fragment>
-            {loading ? <Loading/> :
+            {isLoading ? <Loading/> :
 
                 <Container>
                     <Row>
@@ -164,12 +163,9 @@ const Home = props => {
                 <span className="vertical-line"/>
                 <Col>
                     {
-                        suggest ? null : <Input uid={uid} submit={handleSubmit} setFiles={set_files} setClaim={set_claim} setLinks={set_links} setPdfs={set_pdfs}/>}
+                        suggest ? <Suggestion submit={handleSubmit} suggested={suggestions} addLinks={add_links}/> : <Input uid={uid} submit={handleSubmit} setFiles={set_files} setClaim={set_claim} setLinks={set_links} setPdfs={set_pdfs}/>}
                     {
-                        loading ? <Loading/> : null
-                    }
-                    {
-                        suggest ? <Suggestion submit={handleSubmit} suggested={suggestions} addLinks={add_links}/> : null
+                        isLoading && <Loading/>
                     }
                 </Col>
                 </Row>
@@ -177,15 +173,5 @@ const Home = props => {
             }
     </React.Fragment> 
     )
-}
-
-const Loading = () =>{
-    return(
-        <Container>
-            <Spinner className="spinner" animation="border" role="status">
-                <span className="sr-only">Loading...</span>
-            </Spinner>
-        </Container>);
-
 }
 export default Home;

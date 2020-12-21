@@ -6,6 +6,7 @@ const Scatter = props => {
     const[data, setData] = useState(props.data);
 
     const positive_data = data['positive']
+    const neutral_data = data['neutral']
     const negative_data = data['negative']
 
     const trace1 = {
@@ -30,26 +31,40 @@ const Scatter = props => {
         marker: {color: 'red'}
     };
 
-    const chart_data = [ trace1, trace2 ]
+    const trace3 = {
+        x: neutral_data.map((el) =>
+            el['x']),
+        y: neutral_data.map((el) =>
+            el['y']),
+        mode: 'markers',
+        name: 'Neutral Sentiment',
+        type: 'scatter',
+        marker: {color: 'orange'}
+    }
+
+    const chart_data = [ trace1, trace2, trace3 ]
 
 
     const layout = {
+        width: '100%',
+        autosize: true,
         xaxis: {
-        range: [ 0, Math.max(positive_data.map((el) =>
-            el['x']).concat(negative_data.map((el) =>
-            el['x']))) ]
+        range: [ 0, Math.max(positive_data.map((el) => el['x'])
+                .concat(negative_data.map((el) => el['x']))
+                .concat(neutral_data.map((el) => el['x']))) ]
         },
         yaxis: {
-        range: [0, Math.max(positive_data.map((el) =>
-            el['y']).concat(negative_data.map((el) =>
-            el['y']))) ]
+        range: [0, Math.max(positive_data.map((el) => el['y'])
+                .concat(negative_data.map((el) => el['y']))
+                .concat(neutral_data.map((el) => el['y']))) ]
         },
         title:'Retweet Count vs Favorite Count',
-        width: '100%', height: '100%'
+        paper_bgcolor : '#f9f9f9',
+        plot_bgcolor : '#f9f9f9'
     };
 
     const config = {
-        response: true
+        responsive: true
     };
 
     return(

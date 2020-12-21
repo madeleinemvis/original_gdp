@@ -9,17 +9,15 @@ import {
     NavLink as RRNavLink
 } from "react-router-dom";
 
-import Tweets from './SocialMedia/Tweets';
 import Sources from "./WebArticles/Sources";
-import SocialMedia from "./SocialMedia/SocialMedia";
-import GridDashboard from "./SocialMedia/GridDashboard";
+import TweetsDashboard from "./SocialMedia/TweetsDashboard";
+import ArticlesDashboard from "./WebArticles/ArticlesDashboard";
 
 // Source: https://bezkoder.com/react-hooks-crud-axios-api/
 const Dashboard = props => {
     const uid = props.uid
     let { path, url } = useRouteMatch();
     if(props.uid === 'null'){
-        console.log('redirecting')
         return <Redirect to={{ pathname: "/" }}/>
     }
     return (
@@ -41,16 +39,14 @@ const Dashboard = props => {
                             </div>
                         </nav>
                     </Container>
-                    <Container>
-                        <Switch>
-                            <Route exact path={`${path}/sources`}>
-                                <Sources className="center-body" uid={uid}/>
-                            </Route>
-                            <Route exact path={`${path}/tweets`}>
-                                <GridDashboard uid={uid}/>
-                            </Route>
-                        </Switch>
-                    </Container>
+                    <Switch>
+                        <Route exact path={`${path}/sources`}>
+                            <ArticlesDashboard className="center-body" uid={uid}/>
+                        </Route>
+                        <Route exact path={`${path}/tweets`}>
+                            <TweetsDashboard uid={uid}/>
+                        </Route>
+                    </Switch>
                 </Container>
             </Router>
         </React.Fragment>

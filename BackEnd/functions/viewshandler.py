@@ -1,16 +1,11 @@
-import os
-import shutil
-import zipfile
 from ast import literal_eval
-
-from .dbmanager import DbManager
 
 from django.utils.datastructures import MultiValueDictKeyError
 from documents.models import Document, Claim
 from tweets.models import Tweet
 
 from .dataretrieval import Scraper
-
+from .dbmanager import DbManager
 
 
 class ViewsHandler:

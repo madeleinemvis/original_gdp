@@ -30,11 +30,14 @@ class DataVisualiser:
     def get_sentiment_scatter(self, uid: str):
         tweets = self.db_manager.get_all_tweets(uid)
         positive = []
+        neutral = []
         negative = []
         for t in tweets:
             if t['sentiment'] == 'negative':
                 negative.append(dict({'y': t['retweet_count'], 'x': t['favorite_count']}))
+            if t['sentiment'] == 'neutral':
+                neutral.append(dict({'y': t['retweet_count'], 'x': t['favorite_count']}))
             elif t['sentiment'] == 'positive':
                 positive.append(dict({'y': t['retweet_count'], 'x': t['favorite_count']}))
 
-        return dict({'positive': positive, 'negative': negative})
+        return dict({'positive': positive, 'neutral': neutral, 'negative': negative})
