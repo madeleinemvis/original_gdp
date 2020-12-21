@@ -1,47 +1,49 @@
 import React, {useEffect, useState} from 'react'
-import {Spinner} from 'react-bootstrap';
-
+import {Row, Col, Container} from 'react-bootstrap';
 import http from '../../http-common'
+import Scatter from "./Scatter";
+import Loading from "../Loading";
 const SentimentScatter = props => {
     const[data, setData] = useState([]);
     const[isLoading, setIsLoading] = useState(true);
 
+    const fetchData = () => {
+        const formdata = new FormData();
+        formdata.append("uid", props.uid);
+        http.post('/tweets/sentiment_scatter', formdata)
+        .then(res => {
+            const tweetsDf = res.data;
+            setData(tweetsDf)
+            console.log(tweetsDf)
+
+            setIsLoading(false);
+        })
+        .catch(e => {
+            console.log(e)
+        })
+    }
+
     useEffect(( ) => {
-        const fetchData = () => {
-            const formdata = new FormData();
-            formdata.append("uid", props.uid);
-            http.post('/tweets/sentiment_scatter$', formdata)
-
-                .then(res => {
-                    const tweetsDf = res.data;
-                    setData(tweetsDf)
-                    console.log(tweetsDf)
-
-                    setIsLoading(false);
-                })
-                .catch(e => {
-                    console.log(e)
-                })
-
-        }
-
         fetchData();
     }, []);
 
-    return <React.Fragment>
-                {isLoading &&
-                    <Loading/>
-                }
-                {!isLoading &&
-                    <h1>Here is a scatter plot</h1>
-                }
-    </React.Fragment>;
+    return(
+        <React.Fragment>
+          {isLoading ?
+              <Container>
+                  <Loading/>
+              </Container>
+          :
+              <Container>
+                <Row>
+                    <Col><h3>Retweet Count vs Favorite Count</h3></Col>
+                </Row>
+                <Row>
+                    <Col><Scatter data={data}/></Col>
+                </Row>
+              </Container>
+          }
+        </React.Fragment>
+    );
 }
-
-const Loading = () => {
-    return <Spinner animation="border" role="status">
-        <span className="sr-only">Loading...</span>
-    </Spinner>
-}
-
 export default SentimentScatter;

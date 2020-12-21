@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react'
 import {TagCloud} from "react-tagcloud";
-import {Spinner} from 'react-bootstrap';
-
+import {Row, Col, Container} from 'react-bootstrap';
 import http from '../../http-common'
+import Loading from "../Loading";
+
 const WordCloud = props => {
     const[wordCloud, setWordCloud] = useState({});
     const[isLoading, setIsLoading] = useState(true);
@@ -12,7 +13,6 @@ const WordCloud = props => {
             const formdata = new FormData();
             formdata.append("uid", props.uid);
             http.post('/documents/wordcloud', formdata)
-                
                 .then(res => {
                     const tempCloud = []
                     let keywords;
@@ -29,29 +29,49 @@ const WordCloud = props => {
                 .catch(e => {
                     console.log(e)
                 })
-
         }
-
         fetchData();
     }, []);
 
-    return <React.Fragment>
+    let randomColor = require('randomcolor');
+    const colors = randomColor({
+            count: 35,
+            hue: 'blue'});
+
+    console.log("colors:", colors)
+    return (
+        <React.Fragment>
                 {isLoading &&
-                    <Loading/>
+                    <Container>
+                      <Loading/>
+                    </Container>
                 }
                 {!isLoading &&
-                    <TagCloud
-                        minSize={10}
-                        maxSize={35}
-                        tags = { wordCloud }/>
-                }
-    </React.Fragment>;
-}
+                    <Container>
+                        <Row>
+                            <Col>
+                                <h3>Word Cloud of High-Ranking Keywords</h3>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col>
+                                {wordCloud === {} ?
+                                    <p>No Documents Found</p>
+                                    :
+                                    <TagCloud
+                                        colorOptions={colors}
+                                        minSize={10}
+                                        maxSize={35}
+                                        tags={wordCloud}/>
+                                }
+                            </Col>
+                        </Row>
 
-const Loading = () => {
-    return <Spinner animation="border" role="status">
-        <span className="sr-only">Loading...</span>
-    </Spinner>
+                    </Container>
+
+                }
+        </React.Fragment>
+    );
 }
 
 export default WordCloud;

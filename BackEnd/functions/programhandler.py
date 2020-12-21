@@ -128,7 +128,6 @@ class Handler:
             scraped_data[k] = data[k]
 
         print("-------- STORING TWEETS --------")
-        print("Crawled tweets:", crawled_tweets)
         viewshandler.save_tweets(uid, crawled_tweets)
 
         print("------- STORE NEW DOCUMENTS -------")
