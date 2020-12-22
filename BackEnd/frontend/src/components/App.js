@@ -22,7 +22,7 @@ const App = () => {
             <Router basename="/static">
                 <Container>
                     <nav className="navbar navbar-expand-sm">
-                        <a className="navbar-brand" href="/">Propaganda analysis</a>
+                        <a className="navbar-brand" href="/">Propaganda Analysis</a>
                         <div className="collapse navbar-collapse" id="navbarNav">
                             <ul className="navbar-nav">
                                 <li className="nav-item">

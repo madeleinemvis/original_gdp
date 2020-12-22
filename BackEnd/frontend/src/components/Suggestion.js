@@ -4,8 +4,7 @@ import {
     Row, 
     Container,
     Form,
-    Spinner,
-    Button 
+    Button
 } from 'react-bootstrap';
 
 const Suggestion= props => {
@@ -51,7 +50,7 @@ const Suggestion= props => {
     }
     const handle = index => {
         let urls = [...links]
-        var checked = urls[index].isChecked
+        let checked = urls[index].isChecked;
         urls[index].isChecked = checked === 'false' ? 'true' : 'false'
         setLinks([...urls])
         add_links(links)

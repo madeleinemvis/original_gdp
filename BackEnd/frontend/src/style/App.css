@@ -1,10 +1,11 @@
 @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:regular,bold,italic&subset=latin,latin-ext');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
 
-* {
+*, body {
   text-align: left;
   color: #333333;
-  font-family: 'Poppins', sans-serif;;
+  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: small;
 }
 
 a {
@@ -32,9 +33,14 @@ a {
 }
 
 .navbar-brand {
+  text-transform: uppercase;
   font-size: xx-large;
   font-weight: 700;
   color: #2E43E1;
+}
+
+.nav-item{
+    top: 15%;
 }
 
 .nav-item-menu .nav-link:hover{
@@ -50,11 +56,13 @@ a {
 }
 
 
-.nav-item .nav-link {
+.nav-link {
+  font-size: medium;
+  top: 15%;
   position: relative;
   display: inline-block;
   color: #333333;
-  font-size: large;
+  font-size: medium;
   text-decoration: none;
 }
 
@@ -86,6 +94,7 @@ width: 100%;
   border-right: thick solid #333333;
   border-radius: 5px;
 }
+
 .jumbotron{
   background-color: white;
 }
@@ -104,17 +113,31 @@ width: 100%;
   position: absolute;
   top: 50%;
   left: 50%;
-  margin-left: -50px;
-  margin-top: -50px;
+  width: 50px;
+  height: 50px;
   background-size: 100%;
 }
 
-.card-deck .card{
-  min-width: 30%;
-  margin-bottom: 10px;
+.col {
+  text-align: center;
 }
 
-.highlight-card, .highlight-card .card-text, .highlight-card .card-title{
-  background-color: #2E43E1;
-  color: white;
+.col .spinner {
+  position: unset;
+}
+
+.dashboard{
+  border: #fbfbfb solid;
+}
+
+.tag-cloud{
+  text-align: center;
+}
+.widget {
+  margin: 5px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 5px;
+  background-color: #f9f9f9;
+  box-shadow: 0 8px 6px -6px grey;
 }

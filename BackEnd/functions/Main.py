@@ -5,6 +5,7 @@ import cufflinks as cf
 import pandas as pd
 import plotly.express as px
 
+from BackEnd.functions.analysis import NLPAnalyser
 from BackEnd.functions.causal import Causal, TrendMap
 from BackEnd.functions.dataretrieval import Crawler, Scraper
 from BackEnd.functions.dbmanager import DbManager
@@ -94,11 +95,10 @@ def make_sentiment_pie_chart(tweets):
     return fig
 
 
-
 # Function for the main workflow of the project
 def main(source_urls: [str], claim: str):
     start_t = datetime.now()
-    crawler, scraper, text_processor, causal = Crawler(), Scraper(), TextProcessor(), Causal()
+    analyser, crawler, scraper, text_processor, causal = NLPAnalyser(), Crawler(), Scraper(), TextProcessor(), Causal()
     db_manager = DbManager()
 
     print("-------- RETRIEVING DATA FROM DB MANAGER --------")
@@ -143,15 +143,12 @@ def main(source_urls: [str], claim: str):
     # print("-------- EXAMPLE SIMILARITY CHECKING --------")
     # do some similarity checking for the documents so far crawled
     # Throws errors if links weren't searched 
-    # analyser.create_topic_model(scraped_data)
-    # print("Similar Doc:", analyser.check_similarity(scraped_data[
-    # "https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/"]))
-    # print("Non-similar doc:", analyser.check_similarity(scraped_data["https://www.bbc.co.uk/news/uk-54779430"]))
+    analyser.create_tfidf_model(scraped_data)
 
     print("-------- RECURSIVE CRAWLING --------")
     # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
     recursive_urls = crawler.url_cleaner(urls)
-    final_crawled_urls = crawler.recursive_url_crawl(recursive_urls, MAXIMUM_URL_CRAWL_DEPTH)
+    final_crawled_urls = crawler.recursive_url_crawl(recursive_urls, MAXIMUM_URL_CRAWL_DEPTH, analyser)
     scraped_data.update(final_crawled_urls)
     print("------- SCRAPE REMAINING URLS -------")
     # retrieve and store all the data about a URL's not yet scraped

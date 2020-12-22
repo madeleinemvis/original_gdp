@@ -19,8 +19,8 @@ from requests import Response
 from tika import parser
 from trafilatura import extract
 
-from .analysis import NLP_Analyser
-from .textprocessing import TextProcessor
+from functions.analysis import NLPAnalyser
+from functions.textprocessing import TextProcessor
 
 MAX_THREADS = 50
 
@@ -28,6 +28,7 @@ MAX_THREADS = 50
 # class for crawling and scraping the internet
 class Crawler:
     def __init__(self):
+        self.THRESHOLD = 0.25
         with open(Path(__file__).parent.parent.parent / 'Data' / 'blacklist.txt') as f:
             regexes = []
             lines = f.readlines()
@@ -62,7 +63,7 @@ class Crawler:
 
     # Alex Ll
     # recursively crawl a set of URLs with batch checking similarities
-    def recursive_url_crawl(self, urls: [str], max_depth: int) -> dict:
+    def recursive_url_crawl(self, urls: [str], max_depth: int, analyser: NLPAnalyser) -> dict:
         scraper = Scraper()
         final_dict = {}
 
@@ -76,14 +77,21 @@ class Crawler:
             urls = url_depth[depth_index]
             if len(urls) == 0:
                 break
-            start_t = datetime.now()
 
-            print("Depth", depth_index)
+            # Determine how long it took to batch download the URLs in this depth
+            start_t = datetime.now()
             print("Batch Scraping", len(urls), "links: ")
             response = scraper.downloads(urls)
             print("Batch Scraping Complete.", len(response), "Links Scraped. Time Taken: ", datetime.now() - start_t)
+
+            # For each URL that was successfully downloaded
             for k in response.keys():
                 data = response[k]
+
+                # Check if data similar, if not then skip
+                if analyser.check_similarity(data) < self.THRESHOLD:
+                    continue
+
                 new_links = data.html_links
                 for url_new in new_links:
                     # if link empty, continue
@@ -173,7 +181,7 @@ class Crawler:
                             'user_location': TextProcessor.clean_location(tweet.user.location,
                                                                           countries, country_abbreviations,
                                                                           states, state_abbreviations),
-                            'sentiment': NLP_Analyser.get_tweet_sentiment(tweet.text)}
+                            'sentiment': NLPAnalyser.get_tweet_sentiment(tweet.text)}
             print("parsed tweet: ", parsed_tweet)
             tweets.append(parsed_tweet)
         print("number of tweets:", len(tweets))
@@ -206,8 +214,11 @@ class Scraper:
     def get_data_from_source(self, source: str) -> (str, Data):
         # If the source begins with HTTP(S) scheme, treat as a hyperlink
         if re.match(r'^https?://', source):
-            response = requests.get(source, allow_redirects=False, timeout=5)
-            data = self.get_data_from_url(source, response)
+            try:
+                response = requests.get(source, allow_redirects=False, timeout=5)
+                data = self.get_data_from_url(source, response)
+            except:
+                data = None
         # If the source does not begin with HTTP(S) scheme, treat as path
         else:
             data = self.get_data_from_path(source)
@@ -218,8 +229,6 @@ class Scraper:
         # if seen_urls is default, set as an empty list to begin with
         if seen_urls is None:
             seen_urls = []
-
-        print("Processing:", url)
 
         # if there is no response, no point in processing further
         if response is None:
@@ -273,7 +282,6 @@ class Scraper:
             # if there is a location header, we have to handle redirects
             if 'location' in response.headers.keys():
                 location = response.headers['location']
-                print("Seen URLs Length", len(seen_urls))
 
                 # check if we have seen this url before
                 if location in seen_urls:

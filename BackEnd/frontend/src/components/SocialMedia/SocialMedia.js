@@ -1,7 +1,6 @@
 import Card from "react-bootstrap/Card";
 import {CardDeck, Container} from "reactstrap";
 import React from "react";
-import DocumentFreq from "../WebArticles/DocumentFreq";
 import TweetFreq from "./TweetFreq";
 import Tweets from "./Tweets";
 

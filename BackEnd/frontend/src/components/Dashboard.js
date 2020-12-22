@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Nav, NavItem, NavLink, Container } from 'reactstrap';
+import React from 'react';
+import { NavLink, Container } from 'reactstrap';
 import {
     HashRouter as Router,
     Switch,
@@ -9,16 +9,15 @@ import {
     NavLink as RRNavLink
 } from "react-router-dom";
 
-import Tweets from './SocialMedia/Tweets';
 import Sources from "./WebArticles/Sources";
-import SocialMedia from "./SocialMedia/SocialMedia";
+import TweetsDashboard from "./SocialMedia/TweetsDashboard";
+import ArticlesDashboard from "./WebArticles/ArticlesDashboard";
 
 // Source: https://bezkoder.com/react-hooks-crud-axios-api/
 const Dashboard = props => {
     const uid = props.uid
     let { path, url } = useRouteMatch();
     if(props.uid === 'null'){
-        console.log('redirecting')
         return <Redirect to={{ pathname: "/" }}/>
     }
     return (

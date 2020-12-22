@@ -3,57 +3,77 @@ import { Row, Col } from 'react-bootstrap';
 import { 
     Container, Card,CardTitle, 
     CardSubtitle, CardBody,
-    CardText, CardColumns
+    CardText
 } from 'reactstrap';
 
 import { Scrollbar } from "react-scrollbars-custom";
 
-import DB from '../../services/db.service';
 import http from '../../http-common';
+import Loading from "../Loading";
 
-const Tweets = () => {
+const Tweets = props => {
     
     const [tweets, setTweets] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     
     useEffect(() => {
         retrieveTweets();
     }, []);
 
     const retrieveTweets = () => {
-        http.post('/tweets')
-            .then( res => {
-                console.log('api')
+        const formdata = new FormData();
+        formdata.append("uid", props.uid);
+        http.post('/tweets', formdata)
+
+            .then(res => {
                 setTweets(res.data)
-                console.log(res.data)
+                console.log("Tweets:", tweets)
+                setIsLoading(false);
             })
             .catch(e => {
                 console.log(e)
             })
     }
-    const style = {
-        height: '250',
-        width: '250',
-    }
-
     
     return(
         <React.Fragment>
-        <Scrollbar style={{ width: "100%",  height: 400 }}>
-            {tweets && tweets.map( (tw, index) => (
-                <Card key={index}>
-                    <CardBody>
-                        <CardTitle tag="h5">Tweet #{index}</CardTitle>
-                        <CardSubtitle tag="h6" className="mb-2 text-muted">Sentiment: { tw.sentiment }</CardSubtitle>
-                        <CardSubtitle tag="h6" className="mb-2 text-muted">Favorite Count: { tw.favorite_count } Retweet Count: { tw.retweet_count }</CardSubtitle>
-                        <CardSubtitle tag="h6" className="mb-2 text-muted">Tweet Location: { tw.user_location }</CardSubtitle>
-
-                        <CardText> {  tw.text  }</CardText>
-                    </CardBody>
-                </Card>
-            ))}</Scrollbar>
-
+            {isLoading ?
+                <Loading/>
+                :
+                <Container>
+                    <Row>
+                        <Col>
+                            <h3>All Tweets Crawled:</h3>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <Scrollbar style={{width: "100%", height: 400}}>
+                                {tweets && tweets.map((tw, index) => (
+                                    <Card key={index}>
+                                        <CardBody>
+                                            <CardTitle tag="h5">Tweet #{index}</CardTitle>
+                                            <CardSubtitle tag="h6"
+                                                          className="mb-2 text-muted">Sentiment: {tw.sentiment}</CardSubtitle>
+                                            <CardSubtitle tag="h6" className="mb-2 text-muted">Favorite
+                                                Count: {tw.favorite_count}</CardSubtitle>
+                                            <CardSubtitle tag="h6" className="mb-2 text-muted">Retweet
+                                                Count: {tw.retweet_count}</CardSubtitle>
+                                            {(tw.user_location === "") ?
+                                                <CardSubtitle tag="h6" className="mb-2 text-muted">Tweet
+                                                    Location: {tw.user_location}</CardSubtitle> : null
+                                            }
+                                            <CardText> {tw.text}</CardText>
+                                        </CardBody>
+                                    </Card>
+                                ))}
+                            </Scrollbar>
+                        </Col>
+                    </Row>
+                </Container>
+            }
         </React.Fragment>
-    )
+    );
 }
 
 export default Tweets;
