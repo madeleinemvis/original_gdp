@@ -9,7 +9,9 @@ from threading import Lock
 from typing import Dict
 from urllib.parse import urldefrag, urlparse
 
-# import magic  # Requires python-magic-bin and python-magic libraries
+import magic  # Requires python-magic-bin and python-magic libraries
+import networkx as nx
+from networkx import DiGraph
 import requests
 import requests.exceptions
 import tweepy
@@ -63,15 +65,20 @@ class Crawler:
         return new_results
 
     # recursively crawl a set of URLs with batch checking similarities
-    def recursive_url_crawl(self, urls: [str], max_depth: int, analyser: NLPAnalyser) -> dict:
+    def recursive_url_crawl(self, urls: [str], max_depth: int, analyser: NLPAnalyser) -> (dict, DiGraph):
+        graph = nx.DiGraph()
         scraper = Scraper()
         final_dict = {}
 
         # for every base url
         url_depth = [[] for _ in range(0, max_depth + 1)]
+        parsed_urls = []
         for url in urls:
             # Create list of searched URL's for use by the program
             url_depth[0].append(url)
+            parsed_url = urlparse(url)
+            parsed_urls.append(parsed_url.netloc + parsed_url.path)
+
         # Loop through all URLs in url_depth
         for depth_index in range(0, max_depth):
             urls = url_depth[depth_index]
@@ -92,37 +99,47 @@ class Crawler:
                 if analyser.check_similarity(data) < self.THRESHOLD:
                     continue
 
+                # Get the base URL using urlparse for the graph
+                base_url = None
+                if data.url:
+                    parsed_url = urlparse(data.url)
+                    base_url = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_url)
+
                 new_links = data.html_links
                 for url_new in new_links:
                     # if link empty, continue
                     if url_new is None:
                         continue
                     flag = False  # Flag is true if website has been searched before
-                    parsed_url = urlparse(url_new)
-                    new_link = parsed_url.netloc + parsed_url.path
+                    parsed_new_url = urlparse(url_new)
 
+                    # If there is a base URL, add a directed edge from that URL to this one on the graph
+                    if base_url:
+                        new_base_url = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_new_url)
+                        graph.add_edge(base_url, new_base_url)
+
+                    new_link = parsed_new_url.netloc + parsed_new_url.path
                     # Check to see if website has been visited before
                     if new_link in final_dict.keys():
                         flag = True
-                    else:
-                        for item in url_depth:
-                            parsed_check_urls = [urlparse(x) for x in item]
-                            new_parsed_links = [x.netloc + x.path for x in parsed_check_urls]
-                            parent = [x.netloc for x in parsed_check_urls]
-                            if len(parent) > 0:
-                                if parsed_url.netloc in parent:
-                                    flag = True
-                                    break
-                            elif new_link in new_parsed_links:
-                                flag = True
-                                break
+                    # If the new link is not in the final dictionary, check that netloc + path has not been checked
+                    elif new_link in parsed_urls:
+                        flag = True
 
                     if flag is False:
                         if not re.match(self.BLACKLIST_REGEX, url_new):
                             # Append url to search list, will be searched next
                             url_depth[depth_index + 1].append(url_new)
+                            parsed_urls.append(new_link)
             final_dict.update(response)
-        return final_dict
+
+        degrees = nx.degree(graph)
+        ds = {}
+        for name, d in degrees:
+            ds[name] = d
+        nx.set_node_attributes(graph, ds, 'degree')
+
+        return final_dict, graph
 
     # Instantiates the Twitter API with the correct credentials, these credentials need to be updated as they are
     # under a team member's account

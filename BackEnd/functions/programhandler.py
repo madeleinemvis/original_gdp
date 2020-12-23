@@ -162,9 +162,10 @@ class Handler:
         econ, heath, politics, map_countries, map_trends = self.trends_analysis(keywords[:5])
 
         print("-------- RECURSIVE CRAWLING --------")
-        # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
+        # recursively crawl the links upfto certain depth - includes batch checking so these are the final documents
+        nlpanalyser = NLPAnalyser()
         recursive_urls = self.crawler.url_cleaner(urls)
-        final_crawled_urls = self.crawler.recursive_url_crawl(recursive_urls, self.MAXIMUM_URL_CRAWL_DEPTH, nlpanalyser)
+        final_crawled_urls, graph = self.crawler.recursive_url_crawl(recursive_urls, self.MAXIMUM_URL_CRAWL_DEPTH)
         scraped_data.update(final_crawled_urls)
 
         print("------- SCRAPE REMAINING URLS -------")
