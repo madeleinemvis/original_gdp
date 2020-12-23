@@ -1,5 +1,6 @@
 import re
 import string
+from datetime import datetime
 from pathlib import Path
 from threading import Lock
 from typing import Tuple, List
@@ -94,7 +95,7 @@ class TextProcessor:
         return emoji_pattern.sub(r' ', location).strip()
 
     @staticmethod
-    def clean_location(location,  countries, country_abbreviations, states, state_abbreviations) -> str:
+    def clean_location(location, countries, country_abbreviations, states, state_abbreviations) -> str:
         if location is None:
             return ""
 
@@ -164,18 +165,20 @@ class TextProcessor:
 
     # method altered from https://towardsdatascience.com/textrank-for-keyword-extraction-by-python-c0bae21bcec0
     def calculate_keywords_with_text_rank(self, text, number_of_keywords=10) -> List[Tuple[str, float]]:
+        print("len of text:", len(text))
         if number_of_keywords < 1:
             return []
 
         word_types = ['NOUN', 'PROPN']
-        document = spacy.load('en_core_web_sm')(text)
+        nlp = spacy.load('en_core_web_sm')
+        nlp.max_length = 8000000
+        document = nlp(text)
 
         # make the sentences from the input text using spacy
         sentences = [[token.text.lower() for token in sent if token.pos_ in word_types and
                       token.text not in self.stop_words and token.text not in string.punctuation and len(token) > 1]
                      for sent in document.sents]
         sentences = list(filter(None, sentences))
-
 
         # generate a vocabulary of the text
         vocab = OrderedDict()
@@ -205,6 +208,7 @@ class TextProcessor:
             node_weight[word] = weight_matrix[index]
 
         word_ranking = OrderedDict(sorted(node_weight.items(), key=lambda t: t[1], reverse=True))
+
         return [(key, value) for key, value in list(word_ranking.items())[:number_of_keywords]]
 
     # method taken from: https://towardsdatascience.com/textrank-for-keyword-extraction-by-python-c0bae21bcec0
@@ -233,7 +237,7 @@ class TextProcessor:
             i, j = vocab[word1], vocab[word2]
             g[i][j] = 1
 
-        # Get Symmeric matrix
+        # Get Symmetric matrix
         g = g + g.T - np.diag(g.diagonal())
 
         # Normalize matrix by column

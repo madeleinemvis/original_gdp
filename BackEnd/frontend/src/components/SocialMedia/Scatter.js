@@ -47,7 +47,8 @@ const Scatter = props => {
 
     const layout = {
         width: '100%',
-        autosize: true,
+        height: '100%',
+        autosize: false,
         xaxis: {
         range: [ 0, Math.max(positive_data.map((el) => el['x'])
                 .concat(negative_data.map((el) => el['x']))

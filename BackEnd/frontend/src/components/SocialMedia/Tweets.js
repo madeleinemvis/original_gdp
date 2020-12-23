@@ -37,16 +37,18 @@ const Tweets = props => {
     
     return(
         <React.Fragment>
-            {isLoading ?
-                <Loading/>
-                :
-                <Container>
-                    <Row>
+            <Container>
+                <Row>
+                    <Col>
+                         <h4>All Tweets Crawled:</h4>
+                    </Col>
+                </Row>
+                <Row>
+                    {isLoading ?
                         <Col>
-                            <h3>All Tweets Crawled:</h3>
+                            <Loading/>
                         </Col>
-                    </Row>
-                    <Row>
+                    :
                         <Col>
                             <Scrollbar style={{width: "100%", height: 400}}>
                                 {tweets && tweets.map((tw, index) => (
@@ -59,7 +61,7 @@ const Tweets = props => {
                                                 Count: {tw.favorite_count}</CardSubtitle>
                                             <CardSubtitle tag="h6" className="mb-2 text-muted">Retweet
                                                 Count: {tw.retweet_count}</CardSubtitle>
-                                            {(tw.user_location === "") ?
+                                            {(tw.user_location !== "") ?
                                                 <CardSubtitle tag="h6" className="mb-2 text-muted">Tweet
                                                     Location: {tw.user_location}</CardSubtitle> : null
                                             }
@@ -69,9 +71,9 @@ const Tweets = props => {
                                 ))}
                             </Scrollbar>
                         </Col>
-                    </Row>
-                </Container>
-            }
+                    }
+                </Row>
+            </Container>
         </React.Fragment>
     );
 }

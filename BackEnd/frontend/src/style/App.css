@@ -133,6 +133,11 @@ width: 100%;
 .tag-cloud{
   text-align: center;
 }
+
+.icon {
+
+}
+
 .widget {
   margin: 5px;
   text-align: center;
@@ -140,4 +145,9 @@ width: 100%;
   padding: 5px;
   background-color: #f9f9f9;
   box-shadow: 0 8px 6px -6px grey;
+  border-radius: 4px;
+}
+
+.widget-alert {
+  background-color: #d3d3d3;
 }

@@ -168,11 +168,9 @@ class Crawler:
         # Retrieves all tweets with given keywords and count
         query = ' '.join(keywords[:2])
         searched_tweets = tweepy.Cursor(api.search, q="vaccine forced", result_type='popular').items(40)
-        print("searched tweets:", searched_tweets)
         countries, country_abbreviations, states, state_abbreviations = self.location_lists_init()
         tweets = []
         for tweet in searched_tweets:
-            print("tweet", tweet)
             parsed_tweet = {'uid': uid,
                             'created_at': tweet.created_at,
                             'text': tweet.text,
@@ -182,9 +180,7 @@ class Crawler:
                                                                           countries, country_abbreviations,
                                                                           states, state_abbreviations),
                             'sentiment': NLPAnalyser.get_tweet_sentiment(tweet.text)}
-            print("parsed tweet: ", parsed_tweet)
             tweets.append(parsed_tweet)
-        print("number of tweets:", len(tweets))
         return tweets
 
 

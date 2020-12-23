@@ -63,7 +63,6 @@ const Suggestion= props => {
                     <Form >
                         <Button type="submit" onClick={ e => submit(e)}>Submit</Button>
                          {links.map(
-
                             (link, index) => (
                                 <Form.Group key={link.url} controlId="formBasicCheckbox">
                                     <Form.Check 
