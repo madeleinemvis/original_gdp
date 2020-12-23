@@ -97,6 +97,8 @@ class Handler:
         return new_urls, new_scraped_data
 
     def run_program(self, viewshandler, uid: str, documents):
+        nlpanalyser = NLPAnalyser()
+
         print("-------- MANIFESTO --------")
         urls, scraped_data, key_words_with_scores = self.generate_manifesto(documents)
 
@@ -112,13 +114,15 @@ class Handler:
         urls.update(new_urls)
         scraped_data.update(new_scraped_data)
 
+        print("-------- CREATE TF-IDF MODEL --------")
+        nlpanalyser.create_tfidf_model(scraped_data)
+
         print("-------- SCRAPING TWITTER --------")
         # crawling with Twitter
         crawled_tweets = self.crawler.twitter_crawl(uid, keywords, self.NUMBER_OF_TWEETS_RESULTS_WANTED)
 
         print("-------- RECURSIVE CRAWLING --------")
         # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
-        nlpanalyser = NLPAnalyser()
         recursive_urls = self.crawler.url_cleaner(urls)
         final_crawled_urls = self.crawler.recursive_url_crawl(recursive_urls, self.MAXIMUM_URL_CRAWL_DEPTH, nlpanalyser)
         scraped_data.update(final_crawled_urls)
