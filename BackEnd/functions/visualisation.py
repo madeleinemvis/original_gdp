@@ -41,3 +41,7 @@ class DataVisualiser:
                 positive.append(dict({'y': t['retweet_count'], 'x': t['favorite_count']}))
 
         return dict({'positive': positive, 'neutral': neutral, 'negative': negative})
+
+    def get_sentiment_pie_chart(self, uid: str):
+        tweets = self.db_manager.get_all_tweets(uid)
+        return [x['sentiment'] for x in tweets]
