@@ -20,7 +20,6 @@ class Handler:
     def generate_manifesto(self, documents):
         urls = set()
         scraped_data = {}
-        # TODO adding documents with identical claims?
         for d in documents:
             scraped_data[d.url] = d
             urls.update(d.html_links)
@@ -61,14 +60,14 @@ class Handler:
         return urls
 
     def crawl_google(self, keywords):
-        urls_google = self.crawler.crawl_google_with_key_words(keywords, self.NUMBER_OF_GOOGLE_RESULTS_WANTED)
+        urls_google = self.crawler.crawl_google(keywords, self.NUMBER_OF_GOOGLE_RESULTS_WANTED)
         print(f"Top {self.NUMBER_OF_GOOGLE_RESULTS_WANTED} Google Results from Keywords ({keywords}):")
         for i, url in enumerate(urls_google):
             print(f"[{i + 1}]: {url}")
         return urls_google
 
     def crawl_google_suggested(self, keywords):
-        urls_google = self.crawler.crawl_google_with_key_words(keywords, self.NUMBER_OF_SUGGESTED)
+        urls_google = self.crawler.crawl_google(keywords, self.NUMBER_OF_SUGGESTED)
         print(f"Top {self.NUMBER_OF_SUGGESTED} Google Results from Keywords ({keywords}):")
         for i, url in enumerate(urls_google):
             print(f"[{i + 1}]: {url}")
