@@ -12,6 +12,7 @@ import {
 import Sources from "./WebArticles/Sources";
 import TweetsDashboard from "./SocialMedia/TweetsDashboard";
 import ArticlesDashboard from "./WebArticles/ArticlesDashboard";
+import TrendsDashboard from "./Trends/TrendsDashboard";
 
 // Source: https://bezkoder.com/react-hooks-crud-axios-api/
 const Dashboard = props => {
@@ -50,7 +51,7 @@ const Dashboard = props => {
                             <TweetsDashboard uid={uid}/>
                         </Route>
                         <Route exact path={`${path}/trends`}>
-                            <TweetsDashboard uid={uid}/>
+                            <TrendsDashboard uid={uid}/>
                         </Route>
                     </Switch>
                 </Container>

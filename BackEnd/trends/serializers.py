@@ -1,13 +1,10 @@
 from rest_framework import serializers
-from trends.models import Tweet
+from trends.models import Trend
 
-class TweetSerializer(serializers.ModelSerializer):
+class TrendSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Tweet
+        model = Trend
         fields = ('uid',
-                  'created_at',
-                  'text',
-                  'favorite_count',
-                  'retweet_count',
-                  'user_location',
-                  'sentiment')
+                  'econ', 
+                  'health', 
+                  'politics')
