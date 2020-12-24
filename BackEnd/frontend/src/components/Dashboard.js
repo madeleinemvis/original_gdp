@@ -35,6 +35,9 @@ const Dashboard = props => {
                                     <li className="nav-item-menu">
                                         <NavLink exact to={`${url}/tweets`} tag={RRNavLink} activeClassName="active">Tweets</NavLink>
                                     </li>
+                                    <li className="nav-item-menu">
+                                        <NavLink exact to={`${url}/tweets`} tag={RRNavLink} activeClassName="active">Trends</NavLink>
+                                    </li>
                                 </ul>
                             </div>
                         </nav>

@@ -105,33 +105,33 @@ class Handler:
         keywords = [k for k, v in key_words_with_scores]
         print(f"Top {self.NUMBER_OF_KEY_WORDS} keywords from manifesto: {keywords}")
 
-        print("-------- CRAWLING GOOGLE --------")
-        urls_google = self.crawl_google(keywords)
+        # print("-------- CRAWLING GOOGLE --------")
+        # urls_google = self.crawl_google(keywords)
 
-        print("-------- SCRAPING GOOGLE URLS --------")
-        # retrieve and store all the data about a URL
-        new_urls, new_scraped_data = self.scrape_google_results(urls_google)
-        urls.update(new_urls)
-        scraped_data.update(new_scraped_data)
+        # print("-------- SCRAPING GOOGLE URLS --------")
+        # # retrieve and store all the data about a URL
+        # new_urls, new_scraped_data = self.scrape_google_results(urls_google)
+        # urls.update(new_urls)
+        # scraped_data.update(new_scraped_data)
 
-        print("-------- CREATE TF-IDF MODEL --------")
-        nlpanalyser.create_tfidf_model(scraped_data)
+        # print("-------- CREATE TF-IDF MODEL --------")
+        # nlpanalyser.create_tfidf_model(scraped_data)
 
         print("-------- SCRAPING TWITTER --------")
         # crawling with Twitter
         crawled_tweets = self.crawler.twitter_crawl(uid, keywords, self.NUMBER_OF_TWEETS_RESULTS_WANTED)
 
-        print("-------- RECURSIVE CRAWLING --------")
-        # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
-        recursive_urls = self.crawler.url_cleaner(urls)
-        final_crawled_urls = self.crawler.recursive_url_crawl(recursive_urls, self.MAXIMUM_URL_CRAWL_DEPTH, nlpanalyser)
-        scraped_data.update(final_crawled_urls)
-        print("------- SCRAPE REMAINING URLS -------")
-        # retrieve and store all the data about a URL's not yet scraped
-        urls_to_scrape = [u for u in urls if u not in scraped_data.keys()]
-        data = self.scraper.downloads(urls_to_scrape)
-        for k in data.keys():
-            scraped_data[k] = data[k]
+        # print("-------- RECURSIVE CRAWLING --------")
+        # # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
+        # recursive_urls = self.crawler.url_cleaner(urls)
+        # final_crawled_urls = self.crawler.recursive_url_crawl(recursive_urls, self.MAXIMUM_URL_CRAWL_DEPTH, nlpanalyser)
+        # scraped_data.update(final_crawled_urls)
+        # print("------- SCRAPE REMAINING URLS -------")
+        # # retrieve and store all the data about a URL's not yet scraped
+        # urls_to_scrape = [u for u in urls if u not in scraped_data.keys()]
+        # data = self.scraper.downloads(urls_to_scrape)
+        # for k in data.keys():
+        #     scraped_data[k] = data[k]
 
         print("-------- STORING TWEETS --------")
         viewshandler.save_tweets(uid, crawled_tweets)
