@@ -3,6 +3,7 @@ from ast import literal_eval
 from django.utils.datastructures import MultiValueDictKeyError
 from documents.models import Document, Claim
 from tweets.models import Tweet
+from trends.models import Trend
 
 from .dataretrieval import Scraper
 from .dbmanager import DbManager
@@ -54,6 +55,12 @@ class ViewsHandler:
         return c_save
 
     @staticmethod
+    def set_trends(uid, trends):
+        t_save = []
+        t_save.append(Trend(uid=uid, econ_count=trends[0], health_count=trends[1], politics_count=trends[2]))
+        return t_save
+
+    @staticmethod
     def get_objects_from_request(request, request_form):
         uid = request_form.cleaned_data['uid']
         claim = request_form.cleaned_data['claim']
@@ -77,3 +84,7 @@ class ViewsHandler:
     def save_tweets(self, uid: str, tweets):
         t_save = self. set_tweets(uid, tweets)
         Tweet.objects.bulk_create(t_save)
+
+    def save_trends(self, uid: str, trends):
+        t_save = self.set_trends(uid, trends)
+        Trend.objects.bulk_create(t_save)

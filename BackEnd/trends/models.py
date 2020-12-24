@@ -1,11 +1,8 @@
 from django.db import models
 
 
-class Tweet(models.Model):
+class Trend(models.Model):
     uid = models.TextField(blank=False)
-    created_at = models.DateTimeField()
-    text = models.TextField(blank=True, default='')
-    favorite_count = models.IntegerField(default=0)
-    retweet_count = models.IntegerField(default=0)
-    user_location = models.TextField(blank=True, default='')
-    sentiment = models.TextField(blank=True, default='')
+    econ_count = models.IntegerField(default=0)
+    health_count = models.IntegerField(default=0)
+    politics_count = models.IntegerField(default=0)

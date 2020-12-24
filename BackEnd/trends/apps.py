@@ -1,4 +1,4 @@
 from django.apps import AppConfig
 
-class TweetsConfig(AppConfig):
-    name = 'tweets'
+class TrendsConfig(AppConfig):
+    name = 'trends'

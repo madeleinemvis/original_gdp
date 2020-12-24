@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from causal.models import Tweet
+from trends.models import Tweet
 
 class TweetSerializer(serializers.ModelSerializer):
     class Meta:

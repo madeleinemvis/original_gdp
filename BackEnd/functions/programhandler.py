@@ -3,6 +3,7 @@ import random
 from functions.dataretrieval import Scraper, Crawler
 from functions.analysis import NLPAnalyser
 from functions.textprocessing import TextProcessor
+from functions.causal import Causal, TrendMap
 
 
 class Handler:
@@ -16,6 +17,8 @@ class Handler:
         self.scraper = Scraper()
         self.crawler = Crawler()
         self.text_processor = TextProcessor()
+        self.causal = Causal()
+        self.trend_map = TrendMap()
 
     def generate_manifesto(self, documents):
         urls = set()
@@ -121,6 +124,15 @@ class Handler:
         # crawling with Twitter
         crawled_tweets = self.crawler.twitter_crawl(uid, keywords, self.NUMBER_OF_TWEETS_RESULTS_WANTED)
 
+        print("-------- CAUSAL ANALYSIS --------")
+        test_keywords = ['vaccine', 'vaccination', 'eu', 'confidence', 'trending']
+        print(test_keywords)
+        econ, health, politics = self.causal.analyse(test_keywords[:5])
+        trends_data = [econ.value, health.value, politics.value]
+        #world_trends_map = self.trend_map(test_keywords[:5])
+        # econ, health, politics = self.causal.analyse(key_words[:5])
+        # world_trends_map = self.trend_map(key_words[:5])
+
         # print("-------- RECURSIVE CRAWLING --------")
         # # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
         # recursive_urls = self.crawler.url_cleaner(urls)
@@ -135,6 +147,9 @@ class Handler:
 
         print("-------- STORING TWEETS --------")
         viewshandler.save_tweets(uid, crawled_tweets)
+
+        print("-------- STORING TRENDS --------")
+        viewshandler.save_trends(uid, trends_data)
 
         print("------- STORE NEW DOCUMENTS -------")
         viewshandler.save_documents(uid, 'web-page', scraped_data.values())
