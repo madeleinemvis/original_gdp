@@ -36,7 +36,7 @@ const Dashboard = props => {
                                         <NavLink exact to={`${url}/tweets`} tag={RRNavLink} activeClassName="active">Tweets</NavLink>
                                     </li>
                                     <li className="nav-item-menu">
-                                        <NavLink exact to={`${url}/causal`} tag={RRNavLink} activeClassName="active">Trends</NavLink>
+                                        <NavLink exact to={`${url}/trends`} tag={RRNavLink} activeClassName="active">Trends</NavLink>
                                     </li>
                                 </ul>
                             </div>
@@ -49,7 +49,7 @@ const Dashboard = props => {
                         <Route exact path={`${path}/tweets`}>
                             <TweetsDashboard uid={uid}/>
                         </Route>
-                        <Route exact path={`${path}/causal`}>
+                        <Route exact path={`${path}/trends`}>
                             <TweetsDashboard uid={uid}/>
                         </Route>
                     </Switch>
