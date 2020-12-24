@@ -12,7 +12,7 @@ const TweetFreq = props => {
         const fetchData = () => {
             const formdata = new FormData();
             formdata.append("uid", props.uid);
-            http.post('/tweets/freq', formdata)
+            http.post('/causal/freq', formdata)
                 .then(res => {
                     setFrequency(res.data);
                     console.log("frequency:", frequency)

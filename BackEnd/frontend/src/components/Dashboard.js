@@ -49,6 +49,9 @@ const Dashboard = props => {
                         <Route exact path={`${path}/tweets`}>
                             <TweetsDashboard uid={uid}/>
                         </Route>
+                        <Route exact path={`${path}/causal`}>
+                            <TweetsDashboard uid={uid}/>
+                        </Route>
                     </Switch>
                 </Container>
             </Router>

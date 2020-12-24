@@ -23,7 +23,7 @@ const Tweets = props => {
     const retrieveTweets = () => {
         const formdata = new FormData();
         formdata.append("uid", props.uid);
-        http.post('/tweets', formdata)
+        http.post('/causal', formdata)
 
             .then(res => {
                 setTweets(res.data)

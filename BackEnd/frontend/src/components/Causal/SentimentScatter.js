@@ -10,7 +10,7 @@ const SentimentScatter = props => {
     const fetchData = () => {
         const formdata = new FormData();
         formdata.append("uid", props.uid);
-        http.post('/tweets/sentiment_scatter', formdata)
+        http.post('/causal/sentiment_scatter', formdata)
         .then(res => {
             const tweetsDf = res.data;
             setData(tweetsDf)
