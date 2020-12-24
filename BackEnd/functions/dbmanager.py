@@ -47,7 +47,7 @@ class DbManager:
             print("No Objects, UID: %s,  Found in Collection, Documents_Document", uid)
 
     # Deletes any record that holds true to the query
-    def delete_tuple(self, collection: str, query: str):
+    def delete_with_query(self, collection: str, query: str):
         try:
             self.database[collection].delete_many(query)
         except pymongo.errors.PyMongoError:

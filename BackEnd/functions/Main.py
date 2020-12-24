@@ -50,7 +50,7 @@ def generate_manifesto(scraper, text_processor, source_urls, all_sentences, docu
 def crawl_google(crawler, key_words):
     # TODO here we are using all 30 keywords for the google search,
     #  we might want to only use 5 or 6 to help with results
-    urls_google = crawler.crawl_google_with_key_words(key_words, NUMBER_OF_GOOGLE_RESULTS_WANTED)
+    urls_google = crawler.crawl_google(key_words, NUMBER_OF_GOOGLE_RESULTS_WANTED)
     print(f"Top {NUMBER_OF_GOOGLE_RESULTS_WANTED} Google Results from Keywords ({key_words}):")
     for i, url in enumerate(urls_google):
         print(f"[{i + 1}]: {url}")

@@ -6,6 +6,7 @@ import Loading from "../Loading";
 
 const WordCloud = props => {
     const[wordCloud, setWordCloud] = useState({});
+    const[isEmpty, setIsEmpty] = useState(true);
     const[isLoading, setIsLoading] = useState(true);
 
     useEffect(( ) => {
@@ -24,6 +25,9 @@ const WordCloud = props => {
                         x += 1;
                     }
                     setWordCloud(tempCloud);
+                    if (wordCloud !== {}){
+                        setIsEmpty(false);
+                    }
                     setIsLoading(false);
                 })
                 .catch(e => {
@@ -33,43 +37,38 @@ const WordCloud = props => {
         fetchData();
     }, []);
 
-    let randomColor = require('randomcolor');
-    const colors = randomColor({
-            count: 35,
-            hue: 'blue'});
+    const options = {hue: 'blue'};
 
-    console.log("colors:", colors)
+    console.log("colors:", options)
     return (
         <React.Fragment>
-                {isLoading &&
-                    <Container>
-                      <Loading/>
-                    </Container>
-                }
-                {!isLoading &&
-                    <Container>
-                        <Row>
-                            <Col>
-                                <h3>Word Cloud of High-Ranking Keywords</h3>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                                {wordCloud === {} ?
-                                    <p>No Documents Found</p>
-                                    :
-                                    <TagCloud
-                                        colorOptions={colors}
-                                        minSize={10}
-                                        maxSize={35}
-                                        tags={wordCloud}/>
-                                }
-                            </Col>
-                        </Row>
+            <Container>
+                <Row>
+                    <Col>
+                        <h3>Word Cloud of High-Ranking Keywords</h3>
+                    </Col>
+                </Row>
+                <Row>
+                    {isLoading ?
+                        <Col>
+                            <Loading/>
+                        </Col>
+                        :
+                        <Col>
+                            {isEmpty ?
+                                <p>No Documents Found</p>
+                                :
+                                <TagCloud
+                                    colorOptions={options}
+                                    minSize={10}
+                                    maxSize={35}
+                                    tags={wordCloud}/>
 
-                    </Container>
-
-                }
+                            }
+                        </Col>
+                    }
+                </Row>
+            </Container>
         </React.Fragment>
     );
 }

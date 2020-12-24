@@ -15,7 +15,7 @@ class ViewsHandler:
     def __init__(self):
         self.db_manager = DbManager()
 
-    def read_docs(self, docs: str):
+    def read_docs(self, docs: str) -> [str]:
         docs = literal_eval(docs)
         
         documents = []
@@ -30,7 +30,7 @@ class ViewsHandler:
         return doc_list
 
     @staticmethod
-    def set_documents(uid: str, content_type: str, documents):
+    def set_documents(uid: str, content_type: str, documents) -> [Document]:
         d_save = []
         for d in documents:
             # _id generated automatically
@@ -39,7 +39,7 @@ class ViewsHandler:
         return d_save
 
     @staticmethod
-    def set_tweets(uid: str, tweets):
+    def set_tweets(uid: str, tweets) -> [Tweet]:
         t_save = []
         for t in tweets:
             # _id generated automatically
@@ -49,7 +49,7 @@ class ViewsHandler:
         return t_save
 
     @staticmethod
-    def set_claim(uid, claim):
+    def set_claim(uid: str, claim: str) -> Claim:
         c_save = Claim(uid=uid, claim=claim)
         return c_save
 

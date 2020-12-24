@@ -13,7 +13,6 @@ from rest_framework.parsers import JSONParser
 
 @api_view(['POST'])
 def upload_documents(request):
-    print("entering")
     # POSTING URLs and PDFs from request
     if request.method == 'POST':
         views_handler = ViewsHandler()
@@ -31,8 +30,8 @@ def upload_documents(request):
                 if documents_pdfs:
                     documents_pdfs = views_handler.read_docs(documents_pdfs)
                     # views_handler.save_documents(uid, 'pdf', documents_pdfs)
-                # TODO files
-                print("MERGING DOCS")
+                #TODO: files
+
                 documents = [*documents_urls, *documents_pdfs]
                 handler = Handler()
                 handler.run_program(views_handler, uid, documents)
