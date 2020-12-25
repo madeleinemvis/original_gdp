@@ -76,7 +76,8 @@ const Home = props => {
                     }
                 })
                 .catch(e => {
-                    console.log(e)
+                    setIsLoading(false)
+                    alert(e.message)
                 })
         }
     };
