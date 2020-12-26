@@ -21,6 +21,7 @@ const Dashboard = props => {
     if(props.uid === 'null'){
         return <Redirect to={{ pathname: "/" }}/>
     }
+    console.log("UID", props.uid)
     return (
         <React.Fragment>
             <Router>

@@ -7,11 +7,6 @@ const TrendsDashboard = props => {
     return(
         <Container className="dashboard">
             <Row>
-                <Col>
-                    <html><body><h1>Test</h1></body></html>
-                </Col>
-            </Row>
-            <Row>
                 <Col className="col-md widget">
                     <EconGauge uid={props.uid}/>
                 </Col>

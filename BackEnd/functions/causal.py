@@ -439,14 +439,14 @@ class TrendMap:
 
 if __name__ == "__main__":
     c = Causal()
-    keywords = ['Vaccine', 'Vaccination', 'Control', 'Government', 'MicroChip']
+    test_keywords = ['Vaccine', 'Vaccination', 'Control', 'Government', 'MicroChip']
     country = 'United Kingdom'
-    econ, health, politics = c.analyse(keywords, country)
+    econ, health, politics = c.analyse(test_keywords, country)
     print(econ)
     print(health)
     print(politics)
     t = TrendMap()
-    Map = t.map_maker(keywords)
-    print(Map)
+    test_map = t.map_maker(test_keywords)
+    print(test_map)
 
 

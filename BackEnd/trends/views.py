@@ -9,6 +9,7 @@ from trends.models import Trend
 from trends.serializers import TrendSerializer
 from functions.viewshandler import ViewsHandler
 
+
 @api_view(['POST'])
 def econ_gauge(request):
     datavisualiser = DataVisualiser()
@@ -17,9 +18,10 @@ def econ_gauge(request):
         if request_form.is_valid():
             uid = request_form.cleaned_data['uid']
             g = datavisualiser.get_causal_gauge(uid)
-            gauge = dict({'value': g.econ})
+            gauge = dict({'value': g['econ']})
             return JsonResponse(data=gauge, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
+
 
 @api_view(['POST'])
 def health_gauge(request):
@@ -33,6 +35,7 @@ def health_gauge(request):
             return JsonResponse(data=gauge, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
+
 @api_view(['POST'])
 def politics_gauge(request):
     datavisualiser = DataVisualiser()
@@ -45,6 +48,7 @@ def politics_gauge(request):
             return JsonResponse(data=gauge, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
+
 @api_view(['POST'])
 def econ_bar(request):
     datavisualiser = DataVisualiser()
@@ -54,9 +58,10 @@ def econ_bar(request):
             uid = request_form.cleaned_data['uid']
             b = datavisualiser.get_causal_bar(uid)
             bar = dict({'estimate': b.econ_estimate, 'random': b.econ_random,
-                       'unobserved': b.econ_unobserved, 'placebo': b.econ_placebo, 'subset': b.econ_subset})
+                        'unobserved': b.econ_unobserved, 'placebo': b.econ_placebo, 'subset': b.econ_subset})
             return JsonResponse(data=bar, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
+
 
 @api_view(['POST'])
 def health_bar(request):
@@ -71,6 +76,7 @@ def health_bar(request):
             return JsonResponse(data=bar, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
+
 @api_view(['POST'])
 def politics_bar(request):
     datavisualiser = DataVisualiser()
@@ -84,5 +90,3 @@ def politics_bar(request):
                         'subset': b.politics_subset})
             return JsonResponse(data=bar, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
-
-

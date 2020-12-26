@@ -113,14 +113,14 @@ class Handler:
         keywords = [k for k, v in key_words_with_scores]
         print(f"Top {self.NUMBER_OF_KEY_WORDS} keywords from manifesto: {keywords}")
 
-        # print("-------- CRAWLING GOOGLE --------")
-        # urls_google = self.crawl_google(keywords)
+        print("-------- CRAWLING GOOGLE --------")
+        urls_google = self.crawl_google(keywords)
 
-        # print("-------- SCRAPING GOOGLE URLS --------")
-        # # retrieve and store all the data about a URL
-        # new_urls, new_scraped_data = self.scrape_google_results(urls_google)
-        # urls.update(new_urls)
-        # scraped_data.update(new_scraped_data)
+        print("-------- SCRAPING GOOGLE URLS --------")
+        # retrieve and store all the data about a URL
+        new_urls, new_scraped_data = self.scrape_google_results(urls_google)
+        urls.update(new_urls)
+        scraped_data.update(new_scraped_data)
 
         # print("-------- CREATE TF-IDF MODEL --------")
         # nlpanalyser.create_tfidf_model(scraped_data)
