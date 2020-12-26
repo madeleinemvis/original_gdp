@@ -55,9 +55,14 @@ class ViewsHandler:
         return c_save
 
     @staticmethod
-    def set_trends(uid, trends):
+    def set_trends(uid, e, h, p, m):
         t_save = []
-        t_save.append(Trend(uid=uid, econ_count=trends[0], health_count=trends[1], politics_count=trends[2]))
+        t_save.append(Trend(uid=uid, econ_count=e.value, econ_estimate=e.estimate, econ_random=e.random,
+                            econ_unobserved=e.unobserved, econ_placebo=e.placebo, econ_subset=e.subset,
+                            health_count=h.value, health_estimate=h.estimate, health_random=h.random,
+                            health_unobserved=h.unobserved, health_placebo=h.placebo, health_subset=h.subset,
+                            politics_count=p.value, politics_estimate=p.estimate, politics_random=p.random,
+                            politics_unobserved=p.unobserved, politics_placebo=p.placebo, politics_subset=p.subset))
         return t_save
 
     @staticmethod
@@ -85,6 +90,6 @@ class ViewsHandler:
         t_save = self. set_tweets(uid, tweets)
         Tweet.objects.bulk_create(t_save)
 
-    def save_trends(self, uid: str, trends):
-        t_save = self.set_trends(uid, trends)
+    def save_trends(self, uid: str, econ, health, politics, map_data):
+        t_save = self.set_trends(uid, econ, health, politics, map_data)
         Trend.objects.bulk_create(t_save)

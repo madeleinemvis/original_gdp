@@ -99,6 +99,11 @@ class Handler:
                 new_urls.update(data[k].html_links)
         return new_urls, new_scraped_data
 
+    def trends_analysis(self, keywords):
+        econ, health, politics = self.causal.analyse(keywords[:5])
+        map_data = self.trend_map.map_maker(keywords[:5])
+        return econ, health, politics, map_data
+
     def run_program(self, viewshandler, uid: str, documents):
         nlpanalyser = NLPAnalyser()
 
@@ -126,13 +131,7 @@ class Handler:
 
         print("-------- CAUSAL ANALYSIS --------")
         test_keywords = ['vaccine', 'vaccination', 'eu', 'confidence', 'trending']
-        #print(test_keywords)
-        econ, health, politics = self.causal.analyse(test_keywords[:5])
-        map_data = self.trend_map.map_maker(test_keywords[:5])
-        #trends_data = [econ.value, health.value, politics.value]
-        #world_trends_map = self.trend_map(test_keywords[:5])
-        # econ, health, politics = self.causal.analyse(key_words[:5])
-        # world_trends_map = self.trend_map(key_words[:5])
+        econ, heath, politics, map_data = self.trends_analysis(test_keywords)
 
         # print("-------- RECURSIVE CRAWLING --------")
         # # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
@@ -149,8 +148,8 @@ class Handler:
         print("-------- STORING TWEETS --------")
         viewshandler.save_tweets(uid, crawled_tweets)
 
-        # print("-------- STORING TRENDS --------")
-        # viewshandler.save_trends(uid, trends_data)
+        print("-------- STORING TRENDS --------")
+        viewshandler.save_trends(uid, econ, heath, politics, map_data)
 
         print("------- STORE NEW DOCUMENTS -------")
         viewshandler.save_documents(uid, 'web-page', scraped_data.values())
