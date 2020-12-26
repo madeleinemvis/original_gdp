@@ -8,15 +8,31 @@ const Gauge = props => {
     const result = data['value']
     const threshold = 210
 
+    if (result < 0){
+      const colour = 'white'
+      const causal = 'Data Unavailable'
+      const val = None
+    } else if (result < threshold){
+      const colour = 'rgb(51, 51, 51)'
+      const causal = 'Causal Test Failed'
+      const val = result
+    } else {
+      const colour = 'rgb(47, 79, 255)'
+      const causal = 'Causal Test Passed'
+      const val = result
+    }
+
     const trace = [
       {
         domain: { x: [0, 1], y: [0, 1] },
-        value: 450,
-        title: { text: "Speed" },
+        value: val,
+        title: { text: causal },
         type: "indicator",
         mode: "gauge+number",
-        delta: { reference: 400 },
-        gauge: { axis: { range: [null, 500] }, 'bar': {'color': 'red'} }
+        gauge: { axis: { range: [null, 300] }, 'bar': {'color': colour},
+        'steps': [
+            {'range': [0, 300], 'color': 'rgb(235, 235, 235)'}, ],
+        'threshold': {'line': {'color': "black", 'width': 4}, 'thickness': 1, 'value': threshold} }
       }
     ];
 
