@@ -306,23 +306,26 @@ class Causal:
             print('Test failed', (runtime - flag), 'out of', runtime, 'times')
             return flag, bar_vals
 
-        return -1, bar_vals
+        return 0, bar_vals
 
     def analyse(self, keywords: [str], country: str = 'United Kingdom'):
         matplotlib.use('TkAgg')
         print('Country:', country)
         countries = pd.read_csv(Path(__file__).parent.parent.parent / 'Data' / 'countries.csv')
         ans = countries[countries == country].stack().index.tolist()
+        
+        CausalValues = namedtuple('CausalValues', 'value estimate random unobserved placebo subset')
+
         try:
             country_key = countries.code[ans[0][0]].upper()
         except:
             print('Error: Country unavailable')
-            return 0, 0, 0
+            return CausalValues(-1, 0, 0, 0, 0, 0), CausalValues(-1, 0, 0, 0, 0, 0), CausalValues(-1, 0, 0, 0, 0, 0)
 
         print('----- Collecting Data -----')
         trends = self.get_keyword_trends(keywords, country_key)
         if not isinstance(trends, pd.DataFrame):
-            return 0, 0, 0
+            return CausalValues(-1, 0, 0, 0, 0, 0), CausalValues(-1, 0, 0, 0, 0, 0), CausalValues(-1, 0, 0, 0, 0, 0)
 
         trends['trend'] = self.scale(trends['trend'])
 
@@ -334,8 +337,6 @@ class Causal:
         health_result = 0
         politics_result = 0
 
-        CausalValues = namedtuple('CausalValues', 'value estimate random unobserved placebo subset')
-
         if isinstance(econ, pd.DataFrame):
             econ = pd.merge(trends, econ, on='date', sort=False).dropna()
             econ['econ'] = self.scale(econ['econ'])
@@ -345,7 +346,7 @@ class Causal:
             econ_values = CausalValues(econ_result, econ_vals[0], econ_vals[1], econ_vals[2], econ_vals[3],
                                  econ_vals[4])
         else:
-            econ_values = CausalValues(round(econ_result / 3, 2), 0, 0, 0, 0, 0)
+            econ_values = CausalValues(-1, 0, 0, 0, 0, 0)
 
         if isinstance(health, pd.DataFrame):
             health = pd.merge(trends, health, on='date', sort=False).dropna()
@@ -356,7 +357,7 @@ class Causal:
             health_values = CausalValues(health_result, health_vals[0], health_vals[1], health_vals[2],
                                    health_vals[3], health_vals[4])
         else:
-            health_values = CausalValues(round(health_result / 3, 2), 0, 0, 0, 0, 0)
+            health_values = CausalValues(-1, 0, 0, 0, 0, 0)
 
         if isinstance(politics, pd.DataFrame):
             politics = pd.merge(trends, politics, on='date', sort=False).dropna()
@@ -367,7 +368,7 @@ class Causal:
             politics_values = CausalValues(politics_result, politics_vals[0], politics_vals[1],
                                      politics_vals[2], politics_vals[3], politics_vals[4])
         else:
-            politics_values = CausalValues(round(politics_result / 3, 2), 0, 0, 0, 0, 0)
+            politics_values = CausalValues(-1, 0, 0, 0, 0, 0)
 
         matplotlib.rcParams.update(matplotlib.rcParamsDefault)
 
