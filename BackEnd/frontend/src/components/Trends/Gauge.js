@@ -41,7 +41,7 @@ const Gauge = props => {
     ];
 
 
-    const layout = { width: 600, height: 400 };
+    const layout = { width: 475, height: 400 };
 
     const config = {
         responsive: true
