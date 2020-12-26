@@ -14,7 +14,7 @@ const EconGauge = props => {
         .then(res => {
             const causalDf = res.data;
             setData(causalDf)
-            console.log("causaul:"+ causalDf)
+            console.log("causal:"+ causalDf)
 
             setIsLoading(false);
         })
