@@ -334,7 +334,7 @@ class Causal:
         health_result = 0
         politics_result = 0
 
-        Values = namedtuple('Values', 'value estimate random unobserved placebo subset')
+        CausalValues = namedtuple('CausalValues', 'value estimate random unobserved placebo subset')
 
         if isinstance(econ, pd.DataFrame):
             econ = pd.merge(trends, econ, on='date', sort=False).dropna()
@@ -342,10 +342,10 @@ class Causal:
             econ['trend'] = self.scale(econ['trend'])
             print('----- Economics Causal Test -----')
             econ_result, econ_vals = self.dowhy(econ, 'econ')
-            econ_values = Values(econ_result, econ_vals[0], econ_vals[1], econ_vals[2], econ_vals[3],
+            econ_values = CausalValues(econ_result, econ_vals[0], econ_vals[1], econ_vals[2], econ_vals[3],
                                  econ_vals[4])
         else:
-            econ_values = Values(round(econ_result / 3, 2), 0, 0, 0, 0, 0)
+            econ_values = CausalValues(round(econ_result / 3, 2), 0, 0, 0, 0, 0)
 
         if isinstance(health, pd.DataFrame):
             health = pd.merge(trends, health, on='date', sort=False).dropna()
@@ -353,10 +353,10 @@ class Causal:
             health['trend'] = self.scale(health['trend'])
             print('----- Health Causal Test -----')
             health_result, health_vals = self.dowhy(health, 'health')
-            health_values = Values(health_result, health_vals[0], health_vals[1], health_vals[2],
+            health_values = CausalValues(health_result, health_vals[0], health_vals[1], health_vals[2],
                                    health_vals[3], health_vals[4])
         else:
-            health_values = Values(round(health_result / 3, 2), 0, 0, 0, 0, 0)
+            health_values = CausalValues(round(health_result / 3, 2), 0, 0, 0, 0, 0)
 
         if isinstance(politics, pd.DataFrame):
             politics = pd.merge(trends, politics, on='date', sort=False).dropna()
@@ -364,10 +364,10 @@ class Causal:
             politics['trend'] = self.scale(politics['trend'])
             print('----- Politics Causal Test -----')
             politics_result, politics_vals = self.dowhy(politics, 'politics')
-            politics_values = Values(politics_result, politics_vals[0], politics_vals[1],
+            politics_values = CausalValues(politics_result, politics_vals[0], politics_vals[1],
                                      politics_vals[2], politics_vals[3], politics_vals[4])
         else:
-            politics_values = Values(round(politics_result / 3, 2), 0, 0, 0, 0, 0)
+            politics_values = CausalValues(round(politics_result / 3, 2), 0, 0, 0, 0, 0)
 
         matplotlib.rcParams.update(matplotlib.rcParamsDefault)
 
@@ -411,28 +411,30 @@ class TrendMap:
                     country.append(key)
                     trend.append(temp)
 
-        vals = pd.DataFrame(country, columns=['country'])
-        vals['trend'] = trend
+        # vals = pd.DataFrame(country, columns=['country'])
+        # vals['trend'] = trend
 
-        fig = go.Figure(data=go.Choropleth(
-            locations=vals['country'],
-            z=vals['trend'],
-            colorscale=[[0, 'rgb(229,236,246)'], [1.0, 'rgb(47, 79, 255)']],
-            autocolorscale=False,
-            marker_line_color='rgb(51, 51, 51)',
-            marker_line_width=0.02,
-            colorbar_title='Trend<br>Value', ))
+        # fig = go.Figure(data=go.Choropleth(
+        #     locations=vals['country'],
+        #     z=vals['trend'],
+        #     colorscale=[[0, 'rgb(229,236,246)'], [1.0, 'rgb(47, 79, 255)']],
+        #     autocolorscale=False,
+        #     marker_line_color='rgb(51, 51, 51)',
+        #     marker_line_width=0.02,
+        #     colorbar_title='Trend<br>Value', ))
+        #
+        # fig.update_layout(
+        #     title=dict(text='Manifesto Trend Map', font_size=24, font_color='black'),
+        #     geo=dict(
+        #         showframe=False,
+        #         showcoastlines=False,
+        #         projection_type='equirectangular'
+        #     ),
+        #     font={'color': "rgb(51, 51, 51)", 'family': 'Poppins', 'size': 19.2})
 
-        fig.update_layout(
-            title=dict(text='Manifesto Trend Map', font_size=24, font_color='black'),
-            geo=dict(
-                showframe=False,
-                showcoastlines=False,
-                projection_type='equirectangular'
-            ),
-            font={'color': "rgb(51, 51, 51)", 'family': 'Poppins', 'size': 19.2})
-
-        return fig
+        MapValues = namedtuple('MapValues', 'countries trends')
+        Map = MapValues(country, trend)
+        return Map
 
 
 if __name__ == "__main__":
@@ -443,5 +445,8 @@ if __name__ == "__main__":
     print(econ)
     print(health)
     print(politics)
+    t = TrendMap()
+    Map = t.map_maker(keywords)
+    print(Map)
 
 
