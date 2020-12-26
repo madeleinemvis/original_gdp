@@ -9,7 +9,6 @@ import {
     NavLink as RRNavLink
 } from "react-router-dom";
 
-import Sources from "./WebArticles/Sources";
 import TweetsDashboard from "./SocialMedia/TweetsDashboard";
 import ArticlesDashboard from "./WebArticles/ArticlesDashboard";
 

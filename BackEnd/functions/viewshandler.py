@@ -67,6 +67,7 @@ class ViewsHandler:
         return uid, claim, document_urls, document_pdfs, files
 
     def save_documents(self, uid: str, content_type: str, documents):
+        self.db_manager.drop_collection('documents_document')
         d_save = self.set_documents(uid, content_type, documents)
         Document.objects.bulk_create(d_save)
 
