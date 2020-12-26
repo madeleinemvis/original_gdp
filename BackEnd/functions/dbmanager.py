@@ -146,3 +146,11 @@ class DbManager:
             return claim
         except pymongo.errors.PyMongoError:
             print("No Objects, UID: %s,  Found in Collection, Documents_claim", uid)
+
+    def get_causal(self, uid: str):
+        try:
+            causal = self.database['trends_trend'].find({"uid": uid})
+            causal_item = causal[0]
+            return causal_item
+        except pymongo.errors.PyMongoError:
+            print("No Objects, UID: %s,  Found in Collection, Trends_trend", uid)
