@@ -6,6 +6,7 @@ import TweetFreq from "./TweetFreq";
 
 
 const TweetsDashboard = props => {
+    const uid = props.uid
     return(
         <Container className="dashboard">
             <Row>
@@ -15,10 +16,10 @@ const TweetsDashboard = props => {
             </Row>
             <Row>
                 <Col className="col-md widget">
-                    <Tweets uid={props.uid}/>
+                    <Tweets uid={uid}/>
                 </Col>
                 <Col className="col-md widget">
-                    <TweetFreq uid={props.uid}/>
+                    <TweetFreq uid={uid}/>
                 </Col>
             </Row>
             <Row>
@@ -33,7 +34,7 @@ const TweetsDashboard = props => {
                             <p>The Tweets are colour-coded based on their sentiment that is predicted by a sentiment analysis model. The influence of a Tweet can be estimated by the number of interactions, by the number of Retweets and Favourites.</p>
                         </Col>
                     </Row>
-                    <SentimentScatter uid={props.uid}/>
+                    <SentimentScatter uid={uid}/>
                 </Col>
             </Row>
         </Container>
