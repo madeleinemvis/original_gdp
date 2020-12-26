@@ -16,7 +16,7 @@ const Gauge = props => {
         type: "indicator",
         mode: "gauge+number",
         delta: { reference: 400 },
-        gauge: { axis: { range: [null, 500] } }
+        gauge: { axis: { range: [null, 500] }, 'bar': {'color': 'red'} }
       }
     ];
 
