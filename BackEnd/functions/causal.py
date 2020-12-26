@@ -334,7 +334,7 @@ class Causal:
         health_result = 0
         politics_result = 0
 
-        Values = namedtuple('Values', 'value gauge bar')
+        Values = namedtuple('Values', 'value estimate random unobserved placebo subset')
 
         if isinstance(econ, pd.DataFrame):
             econ = pd.merge(trends, econ, on='date', sort=False).dropna()
@@ -342,10 +342,10 @@ class Causal:
             econ['trend'] = self.scale(econ['trend'])
             print('----- Economics Causal Test -----')
             econ_result, econ_vals = self.dowhy(econ, 'econ')
-            econ_values = Values(round(econ_result / 3, 2), self.gauge('Economics', econ_result),
-                                 self.bar('Economics', econ_vals))
+            econ_values = Values(econ_result, econ_vals[0], econ_vals[1], econ_vals[2], econ_vals[3],
+                                 econ_vals[4])
         else:
-            econ_values = Values(round(econ_result / 3, 2), self.gauge('Economics'), self.bar('Economics'))
+            econ_values = Values(round(econ_result / 3, 2), 0, 0, 0, 0, 0)
 
         if isinstance(health, pd.DataFrame):
             health = pd.merge(trends, health, on='date', sort=False).dropna()
@@ -353,10 +353,10 @@ class Causal:
             health['trend'] = self.scale(health['trend'])
             print('----- Health Causal Test -----')
             health_result, health_vals = self.dowhy(health, 'health')
-            health_values = Values(round(health_result / 3, 2), self.gauge('Health', health_result),
-                                   self.bar('Health', health_vals))
+            health_values = Values(health_result, health_vals[0], health_vals[1], health_vals[2],
+                                   health_vals[3], health_vals[4])
         else:
-            health_values = Values(round(health_result / 3, 2), self.gauge('Health'), self.bar('Health'))
+            health_values = Values(round(health_result / 3, 2), 0, 0, 0, 0, 0)
 
         if isinstance(politics, pd.DataFrame):
             politics = pd.merge(trends, politics, on='date', sort=False).dropna()
@@ -364,10 +364,10 @@ class Causal:
             politics['trend'] = self.scale(politics['trend'])
             print('----- Politics Causal Test -----')
             politics_result, politics_vals = self.dowhy(politics, 'politics')
-            politics_values = Values(round(politics_result / 3, 2), self.gauge('Politics', politics_result),
-                                     self.bar('Politics', politics_vals))
+            politics_values = Values(politics_result, politics_vals[0], politics_vals[1],
+                                     politics_vals[2], politics_vals[3], politics_vals[4])
         else:
-            politics_values = Values(round(politics_result / 3, 2), self.gauge('Politics'), self.bar('Politics'))
+            politics_values = Values(round(politics_result / 3, 2), 0, 0, 0, 0, 0)
 
         matplotlib.rcParams.update(matplotlib.rcParamsDefault)
 
@@ -440,5 +440,8 @@ if __name__ == "__main__":
     keywords = ['Vaccine', 'Vaccination', 'Control', 'Government', 'MicroChip']
     country = 'United Kingdom'
     econ, health, politics = c.analyse(keywords, country)
+    print(econ)
+    print(health)
+    print(politics)
 
 

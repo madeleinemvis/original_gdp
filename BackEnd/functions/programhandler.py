@@ -126,9 +126,9 @@ class Handler:
 
         print("-------- CAUSAL ANALYSIS --------")
         test_keywords = ['vaccine', 'vaccination', 'eu', 'confidence', 'trending']
-        print(test_keywords)
+        #print(test_keywords)
         econ, health, politics = self.causal.analyse(test_keywords[:5])
-        trends_data = [econ.value, health.value, politics.value]
+        #trends_data = [econ.value, health.value, politics.value]
         #world_trends_map = self.trend_map(test_keywords[:5])
         # econ, health, politics = self.causal.analyse(key_words[:5])
         # world_trends_map = self.trend_map(key_words[:5])
@@ -148,8 +148,8 @@ class Handler:
         print("-------- STORING TWEETS --------")
         viewshandler.save_tweets(uid, crawled_tweets)
 
-        print("-------- STORING TRENDS --------")
-        viewshandler.save_trends(uid, trends_data)
+        # print("-------- STORING TRENDS --------")
+        # viewshandler.save_trends(uid, trends_data)
 
         print("------- STORE NEW DOCUMENTS -------")
         viewshandler.save_documents(uid, 'web-page', scraped_data.values())
