@@ -131,7 +131,7 @@ class Handler:
 
         print("-------- CAUSAL ANALYSIS --------")
         test_keywords = ['vaccine', 'vaccination', 'eu', 'confidence', 'trending']
-        #econ, heath, politics, map_data = self.trends_analysis(test_keywords)
+        econ, heath, politics, map_data = self.trends_analysis(test_keywords)
 
         # print("-------- RECURSIVE CRAWLING --------")
         # # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
@@ -149,7 +149,7 @@ class Handler:
         viewshandler.save_tweets(uid, crawled_tweets)
 
         print("-------- STORING TRENDS --------")
-        #viewshandler.save_trends(uid, econ, heath, politics, map_data)
+        viewshandler.save_trends(uid, econ, heath, politics, map_data)
 
         print("------- STORE NEW DOCUMENTS -------")
         viewshandler.save_documents(uid, 'web-page', scraped_data.values())
