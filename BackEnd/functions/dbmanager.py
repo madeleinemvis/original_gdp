@@ -14,6 +14,7 @@ class DbManager:
         # self.drop_collection('documents_document')
         # self.drop_collection('documents_claim')
         # self.drop_collection('tweets_tweet')
+        # self.drop_collection('trends_trend')
 
     # Inserts a single document into a specified collection
     def insert_one(self, collection, document):

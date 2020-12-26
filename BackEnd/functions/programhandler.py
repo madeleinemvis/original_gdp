@@ -115,7 +115,7 @@ class Handler:
 
         # print("-------- CRAWLING GOOGLE --------")
         # urls_google = self.crawl_google(keywords)
-        #
+        
         # print("-------- SCRAPING GOOGLE URLS --------")
         # # retrieve and store all the data about a URL
         # new_urls, new_scraped_data = self.scrape_google_results(urls_google)
@@ -125,9 +125,9 @@ class Handler:
         # print("-------- CREATE TF-IDF MODEL --------")
         # nlpanalyser.create_tfidf_model(scraped_data)
 
-        print("-------- SCRAPING TWITTER --------")
-        # crawling with Twitter
-        crawled_tweets = self.crawler.twitter_crawl(uid, keywords, self.NUMBER_OF_TWEETS_RESULTS_WANTED)
+        # print("-------- SCRAPING TWITTER --------")
+        # # crawling with Twitter
+        # crawled_tweets = self.crawler.twitter_crawl(uid, keywords, self.NUMBER_OF_TWEETS_RESULTS_WANTED)
 
         print("-------- CAUSAL ANALYSIS --------")
         test_keywords = ['vaccine', 'vaccination', 'eu', 'confidence', 'trending']
@@ -146,7 +146,7 @@ class Handler:
         #     scraped_data[k] = data[k]
 
         print("-------- STORING TWEETS --------")
-        viewshandler.save_tweets(uid, crawled_tweets)
+        #viewshandler.save_tweets(uid, crawled_tweets)
 
         print("-------- STORING TRENDS --------")
         viewshandler.save_trends(uid, econ, heath, politics, map_data)
