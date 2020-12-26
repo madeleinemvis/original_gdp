@@ -128,6 +128,7 @@ class Handler:
         test_keywords = ['vaccine', 'vaccination', 'eu', 'confidence', 'trending']
         #print(test_keywords)
         econ, health, politics = self.causal.analyse(test_keywords[:5])
+        map_data = self.trend_map.map_maker(test_keywords[:5])
         #trends_data = [econ.value, health.value, politics.value]
         #world_trends_map = self.trend_map(test_keywords[:5])
         # econ, health, politics = self.causal.analyse(key_words[:5])
