@@ -22,7 +22,7 @@ const Bar = props => {
       }
     ];
 
-    const layout = { width: 475, height: 400, 
+    const layout = { width: 475, height: 400, paper_bgcolor: 'rgb(249, 249, 249)', 
       yaxis: {
         title: 'Estimate Value' }};
 

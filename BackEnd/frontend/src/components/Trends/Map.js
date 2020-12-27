@@ -30,7 +30,16 @@ const Map = props => {
       }
     }];
 
-    const layout = { width: 1000, height: 600};
+    const layout = { width: 1000, height: 600, paper_bgcolor: 'rgb(249, 249, 249)',
+                    geo:{
+                        showframe: false,
+                        showcoastlines: false,
+                        showocean: true, 
+                        oceancolor: 'rgb(249, 249, 249)',
+                        projection:{
+                            type: 'equirectangular'
+                        }
+                    }};
 
     const config = {
         responsive: true
