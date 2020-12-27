@@ -8,4 +8,5 @@ urlpatterns = [
     url(r'^api/trends/health_bar$', views.health_bar),
     url(r'^api/trends/politics_gauge$', views.politics_gauge),
     url(r'^api/trends/politics_bar$', views.politics_bar),
+    url(r'^api/trends/trend_map$', views.trend_map),
 ]

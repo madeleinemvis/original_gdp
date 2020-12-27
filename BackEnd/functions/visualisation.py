@@ -1,6 +1,6 @@
 from .textprocessing import TextProcessor
 from .dbmanager import DbManager
-
+import json
 
 # class for the data visualisation
 class DataVisualiser:
@@ -30,6 +30,14 @@ class DataVisualiser:
     def get_causal_gauge(self, uid: str):
         c = self.db_manager.get_causal(uid)
         causal = dict({'econ': c['econ_count'], 'health': c['health_count'], 'politics': c['politics_count']})
+        return causal
+    
+    def get_trend_map(self, uid: str):
+        c = self.db_manager.get_causal(uid)
+        countries = json.loads(c['map_countries'])
+        trends = json.loads(c['map_trends'])
+        causal = dict({'countries': countries, 'trends': trends})
+        print(causal)
         return causal
 
     def get_causal_bar(self, uid: str):

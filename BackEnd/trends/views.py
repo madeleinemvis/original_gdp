@@ -79,6 +79,7 @@ def politics_bar(request):
         request_form = RequestForm(request.POST)
         if request_form.is_valid():
             uid = request_form.cleaned_data['uid']
+            print("uid", uid)
             b = datavisualiser.get_causal_bar(uid)
             bar = dict({'estimate': b['politics_estimate'], 'random': b['politics_random'],
                         'unobserved': b['politics_unobserved'], 'placebo': b['politics_placebo'],
@@ -86,4 +87,18 @@ def politics_bar(request):
             return JsonResponse(data=bar, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
+@api_view(['POST'])
+def trend_map(request):
+    print('Made Trends')
+    datavisualiser = DataVisualiser()
+    if request.method == "POST":
+        print('Trends 2')
+        request_form = RequestForm(request.POST)
+        if request_form.is_valid():
+            print('Trends 3')
+            uid = request_form.cleaned_data['uid']
+            m = datavisualiser.get_trend_map(uid)
+            tmap = dict({'countries': m['countries'], 'trends': m['trends']})
+            return JsonResponse(data=tmap, status=status.HTTP_200_OK, safe=False)
+    return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
