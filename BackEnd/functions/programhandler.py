@@ -1,8 +1,10 @@
 import random
+import json 
 
 from functions.dataretrieval import Scraper, Crawler
 from functions.analysis import NLPAnalyser
 from functions.textprocessing import TextProcessor
+from functions.causal import Causal, TrendMap
 
 
 class Handler:
@@ -16,6 +18,8 @@ class Handler:
         self.scraper = Scraper()
         self.crawler = Crawler()
         self.text_processor = TextProcessor()
+        self.causal = Causal()
+        self.trend_map = TrendMap()
 
     def generate_manifesto(self, documents):
         urls = set()
@@ -61,14 +65,14 @@ class Handler:
 
     def crawl_google(self, keywords):
         urls_google = self.crawler.crawl_google(keywords, self.NUMBER_OF_GOOGLE_RESULTS_WANTED)
-        print(f"Top {self.NUMBER_OF_GOOGLE_RESULTS_WANTED} Google Results from Keywords ({keywords}):")
+        print(f"Top {self.NUMBER_OF_GOOGLE_RESULTS_WANTED} Google Results from Keywords ({keywords[:5]}):")
         for i, url in enumerate(urls_google):
             print(f"[{i + 1}]: {url}")
         return urls_google
 
     def crawl_google_suggested(self, keywords):
         urls_google = self.crawler.crawl_google(keywords, self.NUMBER_OF_SUGGESTED)
-        print(f"Top {self.NUMBER_OF_SUGGESTED} Google Results from Keywords ({keywords}):")
+        print(f"Top {self.NUMBER_OF_SUGGESTED} Google Results from Keywords ({keywords[:5]}):")
         for i, url in enumerate(urls_google):
             print(f"[{i + 1}]: {url}")
         return urls_google
@@ -95,6 +99,13 @@ class Handler:
                 new_urls.update(data[k].html_links)
         return new_urls, new_scraped_data
 
+    def trends_analysis(self, keywords):
+        econ, health, politics = self.causal.analyse(keywords[:5])
+        map_data = self.trend_map.map_maker(keywords[:5])
+        map_countries = json.dumps(map_data.countries)
+        map_trends = json.dumps(map_data.trends)
+        return econ, health, politics, map_countries, map_trends
+
     def run_program(self, viewshandler, uid: str, documents):
         nlpanalyser = NLPAnalyser()
 
@@ -106,7 +117,7 @@ class Handler:
 
         print("-------- CRAWLING GOOGLE --------")
         urls_google = self.crawl_google(keywords)
-
+        
         print("-------- SCRAPING GOOGLE URLS --------")
         # retrieve and store all the data about a URL
         new_urls, new_scraped_data = self.scrape_google_results(urls_google)
@@ -120,20 +131,26 @@ class Handler:
         # crawling with Twitter
         crawled_tweets = self.crawler.twitter_crawl(uid, keywords, self.NUMBER_OF_TWEETS_RESULTS_WANTED)
 
-        # print("-------- RECURSIVE CRAWLING --------")
-        # # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
-        # recursive_urls = self.crawler.url_cleaner(urls)
-        # final_crawled_urls = self.crawler.recursive_url_crawl(recursive_urls, self.MAXIMUM_URL_CRAWL_DEPTH, nlpanalyser)
-        # scraped_data.update(final_crawled_urls)
-        # print("------- SCRAPE REMAINING URLS -------")
-        # # retrieve and store all the data about a URL's not yet scraped
-        # urls_to_scrape = [u for u in urls if u not in scraped_data.keys()]
-        # data = self.scraper.downloads(urls_to_scrape)
-        # for k in data.keys():
-        #     scraped_data[k] = data[k]
+        print("-------- CAUSAL ANALYSIS --------")
+        econ, heath, politics, map_countries, map_trends = self.trends_analysis(keywords[:5])
+        
+        print("-------- RECURSIVE CRAWLING --------")
+        # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
+        recursive_urls = self.crawler.url_cleaner(urls)
+        final_crawled_urls = self.crawler.recursive_url_crawl(recursive_urls, self.MAXIMUM_URL_CRAWL_DEPTH, nlpanalyser)
+        scraped_data.update(final_crawled_urls)
+        print("------- SCRAPE REMAINING URLS -------")
+        # retrieve and store all the data about a URL's not yet scraped
+        urls_to_scrape = [u for u in urls if u not in scraped_data.keys()]
+        data = self.scraper.downloads(urls_to_scrape)
+        for k in data.keys():
+            scraped_data[k] = data[k]
 
         print("-------- STORING TWEETS --------")
         viewshandler.save_tweets(uid, crawled_tweets)
+
+        print("-------- STORING TRENDS --------")
+        viewshandler.save_trends(uid, econ, heath, politics, map_countries, map_trends)
 
         print("------- STORE NEW DOCUMENTS -------")
         viewshandler.save_documents(uid, 'web-page', scraped_data.values())
