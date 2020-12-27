@@ -18,10 +18,10 @@ const TweetsDashboard = props => {
             </Row>
             <Row>
                 <Col className="col-md widget">
-                    <Tweets uid={uid}/>
+                    <Tweets uid={props.uid}/>
                 </Col>
                 <Col className="col-md widget">
-                    <TweetSummary uid={uid}/>
+                    <TweetSummary uid={props.uid}/>
                 </Col>
             </Row>
             <Row>
@@ -36,7 +36,7 @@ const TweetsDashboard = props => {
                             <p>The Tweets are colour-coded based on their sentiment that is predicted by a sentiment analysis model. The influence of a Tweet can be estimated by the number of interactions, by the number of Retweets and Favourites.</p>
                         </Col>
                     </Row>
-                    <SentimentScatter uid={uid}/>
+                    <SentimentScatter uid={props.uid}/>
                 </Col>
             </Row>
              <Row>
@@ -51,7 +51,7 @@ const TweetsDashboard = props => {
                             <p>The following pie chart shows the distribution of detected sentiments for the crawled tweets.</p>
                         </Col>
                     </Row>
-                    <SentimentPie uid={uid}/>
+                    <SentimentPie uid={props.uid}/>
                 </Col>
             </Row>
             <Row>
@@ -68,7 +68,7 @@ const TweetsDashboard = props => {
                                 in the search results then it is not shown on the chart.</p>
                         </Col>
                     </Row>
-                    <DateImpact uid={uid}/>
+                    <DateImpact uid={props.uid}/>
                 </Col>
             </Row>
         </Container>
