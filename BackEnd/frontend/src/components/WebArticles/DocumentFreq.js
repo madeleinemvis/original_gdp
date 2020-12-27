@@ -26,22 +26,22 @@ const DocumentFreq = props => {
 
     }
 
-    return <React.Fragment>
-                {isLoading &&
-                    <Container>
-                       <Loading/>
-                    </Container>
-                }
-                {!isLoading &&
-                    <Container>
-                        <Row>
-                            <Col> <h4>Number of Documents Collected</h4></Col>
-                        </Row>
-                        <Row>
-                            <Col><h1>{frequency}</h1></Col>
-                        </Row>
-                    </Container>
-                }
-    </React.Fragment>;
+    return(
+        <React.Fragment>
+            <Container>
+                <Row>
+                    <Col><h4>Number of Documents Collected</h4></Col>
+                </Row>
+                <Row>
+                    {isLoading ?
+                        <Col>
+                            <Loading/>
+                        </Col>
+                    :
+                         <Col><h1>{frequency}</h1></Col>
+                    }
+                </Row>
+                </Container>
+        </React.Fragment>);
 }
 export default DocumentFreq;

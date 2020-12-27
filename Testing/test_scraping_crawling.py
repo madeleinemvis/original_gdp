@@ -78,7 +78,7 @@ def search_keywords_n_results():
 # TODO Maddy this currently fails
 def test_google_returns_n_results(search_keywords_n_results, get_crawler):
     for keywords, n_results in search_keywords_n_results:
-        assert len(get_crawler.crawl_google_with_key_words(keywords, n_results)) == n_results
+        assert len(get_crawler.crawl_google(keywords, n_results)) == n_results
 
 
 # check twitter search returns correct # of results

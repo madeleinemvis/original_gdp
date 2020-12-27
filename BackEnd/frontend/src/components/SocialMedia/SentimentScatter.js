@@ -29,20 +29,21 @@ const SentimentScatter = props => {
 
     return(
         <React.Fragment>
-          {isLoading ?
-              <Container>
-                  <Loading/>
-              </Container>
-          :
-              <Container>
+            <Container>
                 <Row>
-                    <Col><h3>Retweet Count vs Favorite Count</h3></Col>
+                    {isLoading ?
+                        <Col>
+                            <Loading/>
+                        </Col>
+                    :
+                        <Col>
+                            <div className="svg-container">
+                                <Scatter data={data}/>
+                            </div>
+                        </Col>
+                    }
                 </Row>
-                <Row>
-                    <Col><Scatter data={data}/></Col>
-                </Row>
-              </Container>
-          }
+            </Container>
         </React.Fragment>
     );
 }
