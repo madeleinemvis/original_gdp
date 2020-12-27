@@ -52,7 +52,7 @@ class Crawler:
     # Maddy
     # not sure how we want to use this method yet
     def crawl_google(self, key_words: [str], urls_returned: int) -> [str]:
-        query = ' '.join(key_words)
+        query = ' '.join(key_words[:5])
         google_result = search(query, tld="com", lang="en", num=urls_returned, start=0, stop=urls_returned, pause=1)
         new_results = set()
         for url in google_result:
