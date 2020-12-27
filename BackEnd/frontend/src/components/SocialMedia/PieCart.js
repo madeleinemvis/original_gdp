@@ -8,6 +8,13 @@ const PieChart = props => {
     const raw_data = {
         values: [data['positive'], data['neutral'], data['negative']],
         labels: ["Positive", "Neutral", "Negative"],
+        marker: {
+            colors: [
+                'rgb(51,255,51)',
+                'rgb(51,51,255)',
+                'rgb(255,51,51)'
+            ]
+        },
         type: 'pie',
         textinfo: "label+percent",
         textposition: "outside",
