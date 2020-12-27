@@ -1,5 +1,5 @@
-from django.conf.urls import url 
-from BackEnd.tweets import views
+from django.conf.urls import url
+from tweets import views
  
 urlpatterns = [
     url(r'^api/tweets$', views.tweets_list),

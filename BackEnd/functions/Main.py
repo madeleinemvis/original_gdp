@@ -91,7 +91,7 @@ def make_sentiment_pie_chart(tweets):
     cf.go_offline()
     cf.set_config_file(offline=False, world_readable=True)
     tweet_df = pd.DataFrame(tweets)
-    fig = px.pie(tweet_df, names='sentiment_score_cat')
+    fig = px.pie(tweet_df, names='sentiment')
     return fig
 
 
@@ -106,10 +106,8 @@ def main(source_urls: [str], claim: str):
     documents = db_manager.get_all_documents(uid)
     all_sentences = db_manager.get_all_main_texts(uid)
     document_html_links = db_manager.get_all_html_links(uid)
-    claim = db_manager.get_claim(uid)
-    # TODO: implement - wantSuggestions = db_manager.get_want_suggestions('some_random_hash')
+    # claim = db_manager.get_claim(uid)
     want_suggestions = True
-    # TODO: implement - no_of_suggestions = db_manager.get_no_of_suggestions('some_random_hash')
     no_of_suggestions = 25
 
     print("-------- MANIFESTO --------")

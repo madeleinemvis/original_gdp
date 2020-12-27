@@ -3,11 +3,11 @@ from bson import json_util
 from django.http.response import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view
-from BackEnd.tweets.forms import RequestForm
-from BackEnd.functions.visualisation import DataVisualiser
-from BackEnd.tweets.models import Tweet
-from BackEnd.tweets.serializers import TweetSerializer
-from BackEnd.functions.viewshandler import ViewsHandler
+from tweets.forms import RequestForm
+from functions.visualisation import DataVisualiser
+from tweets.models import Tweet
+from tweets.serializers import TweetSerializer
+from functions.viewshandler import ViewsHandler
 
 
 @api_view(['POST'])

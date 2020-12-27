@@ -1,5 +1,6 @@
 from .textprocessing import TextProcessor
 from .dbmanager import DbManager
+from collections import Counter
 
 
 # class for the data visualisation
@@ -44,4 +45,7 @@ class DataVisualiser:
 
     def get_sentiment_pie_chart(self, uid: str):
         tweets = self.db_manager.get_all_tweets(uid)
-        return [x['sentiment'] for x in tweets]
+        c = Counter(tweets['sentiment'])
+        c = dict(c)
+        print("$$$ Pie Chart sentiment counts:", c)
+        return c
