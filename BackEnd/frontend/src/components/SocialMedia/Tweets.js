@@ -10,12 +10,15 @@ import { Scrollbar } from "react-scrollbars-custom";
 
 import http from '../../http-common';
 import Loading from "../Loading";
+import Error from "../Error";
 
 const Tweets = props => {
     
     const [tweets, setTweets] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    
+    const [isError, setIsError] = useState(false);
+    const [errorCode, setErrorCode] = useState(201);
+
     useEffect(() => {
         retrieveTweets();
     }, []);
@@ -24,11 +27,15 @@ const Tweets = props => {
         const formdata = new FormData();
         formdata.append("uid", props.uid);
         http.post('/tweets', formdata)
-
             .then(res => {
+                let code = res.status;
+                if(code !== 201){
+                    setIsError(true)
+                    setErrorCode(code)
+                }
                 setTweets(res.data)
                 console.log("Tweets:", tweets)
-                setIsLoading(false);
+                setIsLoading(false)
             })
             .catch(e => {
                 console.log(e)
@@ -49,6 +56,7 @@ const Tweets = props => {
                             <Loading/>
                         </Col>
                     :
+                        {isError ?
                         <Col>
                             <Scrollbar style={{width: "100%", height: 400}}>
                                 {tweets && tweets.map((tw, index) => (
@@ -71,6 +79,11 @@ const Tweets = props => {
                                 ))}
                             </Scrollbar>
                         </Col>
+                                :
+                        <Error code={errorCode}/>
+
+                    }
+
                     }
                 </Row>
             </Container>
