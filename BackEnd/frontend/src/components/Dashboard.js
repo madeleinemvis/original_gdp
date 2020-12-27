@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { NavLink, Container } from 'reactstrap';
 import {
     BrowserRouter as Router,
@@ -15,7 +15,7 @@ import TrendsDashboard from "./Trends/TrendsDashboard";
 
 // Source: https://bezkoder.com/react-hooks-crud-axios-api/
 const Dashboard = props => {
-    const uid = props.uid | localStorage.getItem('uid')
+    const [uid, setUid] = useState(props.uid)
     let { path, url } = useRouteMatch();
     if(uid.toString() === 'null'){
         return <Redirect to={{ pathname: "/" }}/>

@@ -12,7 +12,8 @@ const WordCloud = props => {
 
 
     useEffect(( ) => {
-        if(wordCloud === 0){
+        if(wordCloud.length === 0){
+            setIsEmpty(true)
             fetchData();
         }else{
             setIsLoading(false)
@@ -37,7 +38,7 @@ const WordCloud = props => {
                 }
                 setWordCloud(tempCloud);
                 localStorage.setItem('wordcloud', JSON.stringify(tempCloud))
-                if (wordCloud !== {}){
+                if (tempCloud.length !== 0){
                     setIsEmpty(false);
                 }
                 setIsLoading(false);

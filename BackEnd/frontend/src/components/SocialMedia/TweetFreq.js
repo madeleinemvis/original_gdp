@@ -15,7 +15,6 @@ const TweetFreq = props => {
             http.post('/tweets/freq', formdata)
                 .then(res => {
                     setFrequency(res.data);
-                    console.log("frequency:", frequency)
                     setIsLoading(false);
                 })
                 .catch(e => {

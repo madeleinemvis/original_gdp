@@ -32,7 +32,7 @@ const Tweets = props => {
                 console.log(e)
             })
     }
-    
+
     return(
         <React.Fragment>
             <Container>
@@ -52,7 +52,7 @@ const Tweets = props => {
                                 {tweets && tweets.map((tw, index) => (
                                     <Card key={index}>
                                         <CardBody>
-                                            <CardTitle tag="h5">Name: {tw.screen_name}</CardTitle>
+                                            <CardTitle tag="h5">@{tw.screen_name}</CardTitle>
                                             <CardSubtitle tag="h6"
                                                           className="mb-2 text-muted">Sentiment: {tw.sentiment}</CardSubtitle>
                                             <CardSubtitle tag="h6" className="mb-2 text-muted">Favorite

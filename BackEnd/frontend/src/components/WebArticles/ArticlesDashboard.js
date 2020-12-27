@@ -6,6 +6,7 @@ import DocumentFreq from "./DocumentFreq";
 
 
 const ArticlesDashboard = props => {
+    console.log("uid articles:", props.uid);
     return(
         <Container className="dashboard">
             <Row>
