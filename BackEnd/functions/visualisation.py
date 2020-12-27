@@ -28,6 +28,16 @@ class DataVisualiser:
         count = self.db_manager.count_all_tweets(uid)
         return count
 
+    def get_tweet_summary(self, uid: str):
+        tweets = self.db_manager.get_all_tweets(uid)
+        favourites = 0
+        retweets = 0
+        no_of_tweets = len(tweets)
+        for t in tweets:
+            favourites += t['favorite_count']
+            retweets += t['retweet_count']
+        return [no_of_tweets, favourites, retweets]
+
     def get_sentiment_scatter(self, uid: str):
         tweets = self.db_manager.get_all_tweets(uid)
         positive = []

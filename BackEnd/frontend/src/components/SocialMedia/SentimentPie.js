@@ -37,9 +37,6 @@ const SentimentPie = props => {
           :
               <Container>
                 <Row>
-                    <Col><h3>Sentiment Pie Chart</h3></Col>
-                </Row>
-                <Row>
                     <Col><PieChart data={data}/></Col>
                 </Row>
               </Container>

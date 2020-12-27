@@ -3,6 +3,8 @@ import {Row, Col, Container} from "react-bootstrap";
 import Tweets from "./Tweets";
 import SentimentScatter from "./SentimentScatter";
 import TweetFreq from "./TweetFreq";
+import TweetSummary from "./TweetSummary"
+import SentimentPie from "./SentimentPie";
 
 
 const TweetsDashboard = props => {
@@ -18,7 +20,7 @@ const TweetsDashboard = props => {
                     <Tweets uid={props.uid}/>
                 </Col>
                 <Col className="col-md widget">
-                    <TweetFreq uid={props.uid}/>
+                    <TweetSummary uid={props.uid}/>
                 </Col>
             </Row>
             <Row>
@@ -34,6 +36,16 @@ const TweetsDashboard = props => {
                         </Col>
                     </Row>
                     <SentimentScatter uid={props.uid}/>
+                </Col>
+            </Row>
+             <Row>
+                <Col className="col-md widget">
+                    <Row>
+                        <Col className="col-md">
+                            <h4>Sentiment Pie Chart</h4>
+                        </Col>
+                    </Row>
+                    <SentimentPie uid={props.uid}/>
                 </Col>
             </Row>
         </Container>

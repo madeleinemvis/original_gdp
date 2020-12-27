@@ -19,7 +19,6 @@ const PieChart = props => {
     const layout = {
         width: '100%',
         autosize: true,
-        title:'Tweet Sentiment Pie Chart',
         showlegend: false
     };
 

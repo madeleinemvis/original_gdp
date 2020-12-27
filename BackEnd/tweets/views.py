@@ -44,6 +44,18 @@ def tweet_frequency(request):
 
 
 @api_view(['POST'])
+def tweet_summary(request):
+    datavisualiser = DataVisualiser()
+    if request.method == "POST":
+        request_form = RequestForm(request.POST)
+        if request_form.is_valid():
+            uid = request_form.cleaned_data['uid']
+            summary = datavisualiser.get_tweet_summary(uid)
+            return JsonResponse(data=summary, status=status.HTTP_200_OK, safe=False)
+    return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
+
+
+@api_view(['POST'])
 def sentiment_scatter(request):
     if request.method == "POST":
         request_form = RequestForm(request.POST)
