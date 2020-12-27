@@ -24,10 +24,8 @@ const Tweets = props => {
         const formdata = new FormData();
         formdata.append("uid", props.uid);
         http.post('/tweets', formdata)
-
             .then(res => {
                 setTweets(res.data)
-                console.log("Tweets:", tweets)
                 setIsLoading(false);
             })
             .catch(e => {
@@ -54,7 +52,7 @@ const Tweets = props => {
                                 {tweets && tweets.map((tw, index) => (
                                     <Card key={index}>
                                         <CardBody>
-                                            <CardTitle tag="h5">Tweet #{index}</CardTitle>
+                                            <CardTitle tag="h5">Name: {tw.screen_name}</CardTitle>
                                             <CardSubtitle tag="h6"
                                                           className="mb-2 text-muted">Sentiment: {tw.sentiment}</CardSubtitle>
                                             <CardSubtitle tag="h6" className="mb-2 text-muted">Favorite

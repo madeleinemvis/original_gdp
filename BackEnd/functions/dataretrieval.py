@@ -171,8 +171,8 @@ class Crawler:
         countries, country_abbreviations, states, state_abbreviations = self.location_lists_init()
         tweets = []
         for tweet in searched_tweets:
-            print("NAME: ", tweet.user)
             parsed_tweet = {'uid': uid,
+                            'screen_name': tweet.user.screen_name,
                             'created_at': tweet.created_at,
                             'text': tweet.text,
                             'favorite_count': tweet.favorite_count,

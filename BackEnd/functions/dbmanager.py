@@ -118,7 +118,7 @@ class DbManager:
             tweets = []
             for t in ini_list:
                 tweets.append(
-                    dict(uid=t['uid'], created_at=t['created_at'], text=t['text'], favorite_count=t['favorite_count'],
+                    dict(uid=t['uid'], screen_name=t['screen_name'], created_at=t['created_at'], text=t['text'], favorite_count=t['favorite_count'],
                          retweet_count=t['retweet_count'], user_location=t['user_location'],
                          sentiment=t['sentiment']))
             return ini_list
