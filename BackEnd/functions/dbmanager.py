@@ -14,6 +14,7 @@ class DbManager:
         # self.drop_collection('documents_document')
         # self.drop_collection('documents_claim')
         # self.drop_collection('tweets_tweet')
+        # self.drop_collection('trends_trend')
 
     # Inserts a single document into a specified collection
     def insert_one(self, collection, document):
@@ -146,3 +147,11 @@ class DbManager:
             return claim
         except pymongo.errors.PyMongoError:
             print("No Objects, UID: %s,  Found in Collection, Documents_claim", uid)
+
+    def get_causal(self, uid: str):
+        try:
+            causal = self.database['trends_trend'].find({"uid": uid})
+            causal_item = causal[0]
+            return causal_item
+        except pymongo.errors.PyMongoError:
+            print("No Objects, UID: %s,  Found in Collection, Trends_trend", uid)

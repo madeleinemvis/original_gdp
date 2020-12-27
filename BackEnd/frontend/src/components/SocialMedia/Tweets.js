@@ -38,7 +38,7 @@ const Tweets = props => {
             <Container>
                 <Row>
                     <Col>
-                         <h4>All Tweets Crawled:</h4>
+                         <h4>All Tweets Collected: (Sorted by Impact)</h4>
                     </Col>
                 </Row>
                 <Row>

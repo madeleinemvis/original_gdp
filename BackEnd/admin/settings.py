@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'frontend',
 
     'tweets.apps.TweetsConfig',
+    'trends.apps.TrendsConfig',
 ]
 
 MIDDLEWARE = [
