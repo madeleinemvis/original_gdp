@@ -37,7 +37,6 @@ class DataVisualiser:
         countries = json.loads(c['map_countries'])
         trends = json.loads(c['map_trends'])
         causal = dict({'countries': countries, 'trends': trends})
-        print(causal)
         return causal
 
     def get_causal_bar(self, uid: str):
