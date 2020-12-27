@@ -1,6 +1,5 @@
 from django.db import models
 
-
 class Trend(models.Model):
     uid = models.TextField(blank=False)
     econ_count = models.IntegerField(default=0)
@@ -21,3 +20,5 @@ class Trend(models.Model):
     politics_unobserved = models.FloatField(default=0.0)
     politics_placebo = models.FloatField(default=0.0)
     politics_subset = models.FloatField(default=0.0)
+    map_countries = models.CharField(max_length=600)
+    map_trends = models.CharField(max_length=600)

@@ -215,7 +215,7 @@ class Causal:
 
     def dowhy(self, data, indicator: str):
         flag = 0
-        runtime = 300  # Adjust if slow
+        runtime = 5  # Adjust if slow
         np.warnings.filterwarnings('ignore', category=np.VisibleDeprecationWarning)
 
         esti_total = 0

@@ -1,4 +1,5 @@
 import random
+import json 
 
 from functions.dataretrieval import Scraper, Crawler
 from functions.analysis import NLPAnalyser
@@ -102,7 +103,9 @@ class Handler:
     def trends_analysis(self, keywords):
         econ, health, politics = self.causal.analyse(keywords[:5])
         map_data = self.trend_map.map_maker(keywords[:5])
-        return econ, health, politics, map_data
+        map_countries = json.dumps(map_data.countries)
+        map_trends = json.dumps(map_data.trends)
+        return econ, health, politics, map_countries, map_trends
 
     def run_program(self, viewshandler, uid: str, documents):
         nlpanalyser = NLPAnalyser()
@@ -131,8 +134,7 @@ class Handler:
 
         print("-------- CAUSAL ANALYSIS --------")
         test_keywords = ['vaccine', 'vaccination', 'eu', 'confidence', 'trending']
-        econ, heath, politics, map_data = self.trends_analysis(test_keywords)
-
+        econ, heath, politics, map_countries, map_trends = self.trends_analysis(test_keywords)
         # print("-------- RECURSIVE CRAWLING --------")
         # # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
         # recursive_urls = self.crawler.url_cleaner(urls)
@@ -149,7 +151,7 @@ class Handler:
         #viewshandler.save_tweets(uid, crawled_tweets)
 
         print("-------- STORING TRENDS --------")
-        viewshandler.save_trends(uid, econ, heath, politics, map_data)
+        viewshandler.save_trends(uid, econ, heath, politics, map_countries, map_trends)
 
         print("------- STORE NEW DOCUMENTS -------")
         viewshandler.save_documents(uid, 'web-page', scraped_data.values())
