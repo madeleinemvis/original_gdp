@@ -158,11 +158,11 @@ def main(source_urls: [str], claim: str):
         scraped_data[k] = data[k]
 
     print("-------- CAUSAL ANALYSIS --------")
-    causal_t = datetime.now()
+    #causal_t = datetime.now()
     econ, health, politics = causal.analyse(key_words[:5])
-    print("Causal time: ", datetime.now()-causal_t)
-    trend = TrendMap()
-    trend_map = trend(key_words[:5])
+    #print("Causal time: ", datetime.now()-causal_t)
+    #trend = TrendMap()
+    #trend_map = trend(key_words[:5])
 
     print("-------- STORING --------")
     # db_manager.insert_many('documents_document')  # Collection name for web pages

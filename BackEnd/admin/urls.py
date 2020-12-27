@@ -25,6 +25,10 @@ urlpatterns = [
     path('', include('frontend.urls')),
     url(r'^', include('documents.urls')),
     url(r'^', include('tweets.urls')),
+<<<<<<< HEAD
+=======
+    url(r'^', include('trends.urls'))
+>>>>>>> AlexLL_Visuals
 ]
 
 # If the web-page is refreshed.
