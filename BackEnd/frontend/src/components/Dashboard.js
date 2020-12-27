@@ -14,16 +14,15 @@ import ArticlesDashboard from "./WebArticles/ArticlesDashboard";
 
 // Source: https://bezkoder.com/react-hooks-crud-axios-api/
 const Dashboard = props => {
-    const uid = props.uid
+    const uid = props.uid | localStorage.getItem('uid')
     let { path, url } = useRouteMatch();
-    if(props.uid === 'null'){
+    if(uid.toString() === 'null'){
         return <Redirect to={{ pathname: "/" }}/>
     }
     return (
         <React.Fragment>
             <Router>
                 <Container>
-                    {/*TODO: active buttons*/}
                     <Container>
                         <nav className="navbar navbar-expand-sm">
                             <div className="collapse navbar-collapse" id="navbarNav">

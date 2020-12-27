@@ -5,41 +5,49 @@ import http from '../../http-common'
 import Loading from "../Loading";
 
 const WordCloud = props => {
-    const[wordCloud, setWordCloud] = useState({});
+    const[wordCloud, setWordCloud] = useState(JSON.parse(localStorage.getItem('wordcloud')))
+
     const[isEmpty, setIsEmpty] = useState(true);
     const[isLoading, setIsLoading] = useState(true);
 
+
     useEffect(( ) => {
-        const fetchData = () => {
-            const formdata = new FormData();
-            formdata.append("uid", props.uid);
-            http.post('/documents/wordcloud', formdata)
-                .then(res => {
-                    const tempCloud = []
-                    let keywords;
-                    keywords = res.data;
-                    
-                    let x = 0;
-                    for (let k in keywords) {
-                        tempCloud[x] = {value: k, count: keywords[k]};
-                        x += 1;
-                    }
-                    setWordCloud(tempCloud);
-                    if (wordCloud !== {}){
-                        setIsEmpty(false);
-                    }
-                    setIsLoading(false);
-                })
-                .catch(e => {
-                    console.log(e)
-                })
+        if(wordCloud === 0){
+            fetchData();
+        }else{
+            setIsLoading(false)
+            setIsEmpty(false)
         }
-        fetchData();
     }, []);
 
-    const options = {hue: 'blue'};
 
-    console.log("colors:", options)
+    const fetchData = () => {
+        const formdata = new FormData();
+        formdata.append("uid", props.uid);
+        http.post('/documents/wordcloud', formdata)
+            .then(res => {
+                const tempCloud = []
+                let keywords;
+                keywords = res.data;
+
+                let x = 0;
+                for (let k in keywords) {
+                    tempCloud[x] = {value: k, count: keywords[k]};
+                    x += 1;
+                }
+                setWordCloud(tempCloud);
+                localStorage.setItem('wordcloud', JSON.stringify(tempCloud))
+                if (wordCloud !== {}){
+                    setIsEmpty(false);
+                }
+                setIsLoading(false);
+            })
+            .catch(e => {
+                console.log(e)
+            })
+    }
+
+    const options = {hue: 'blue'};
     return (
         <React.Fragment>
             <Container>
