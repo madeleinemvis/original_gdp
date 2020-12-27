@@ -5,26 +5,32 @@ const Map = props => {
 
     const[data, setData] = useState(props.data);
 
-    const estimate = 1;
-    const random = 1;
-    const unobserved = 1;
-    const placebo = 1;
-    const subset = 1;
+    const countries = data['countries'];
+    const trends = data['trends'];
 
-    const trace = [
-      {
-        x: ['estimate', 'random', 'unobserved', 'placebo', 'subset'],
-        y: [estimate, random, unobserved, placebo, subset],
-        marker:{
-          color: ['rgb(47, 79, 255)', 'rgb(47, 79, 255)', 'rgb(47, 79, 255)', 'rgb(51, 51, 51)', 'rgb(47, 79, 255)']
-        },
-        type: 'bar'
+    const trace = [{
+      type: 'choropleth',
+      locations: countries,
+      z: trends,
+      colorscale: [
+          [0,'rgb(229,236,246)'],[1.0,'rgb(47, 79, 255)']],
+      autocolorscale: false,
+      marker: {
+          line: {
+              color: 'rgb(51, 51, 51)',
+              width: 0.02
+          }
+      },
+      tick0: 0,
+      zmin: 0,
+      dtick: 1000,
+      colorbar: {
+          autotic: false,
+          title: 'Trends<br>Value'
       }
-    ];
+    }];
 
-    const layout = { width: 475, height: 400, 
-      yaxis: {
-        title: 'Estimate Value' }};
+    const layout = { width: 1000, height: 600};
 
     const config = {
         responsive: true
