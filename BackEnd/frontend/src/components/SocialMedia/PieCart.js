@@ -9,6 +9,10 @@ const PieChart = props => {
         values: [data['positive'], data['neutral'], data['negative']],
         labels: ["Positive", "Neutral", "Negative"],
         type: 'pie',
+        textinfo: "label+percent",
+        textposition: "outside",
+        automargin: true
+
     }
     const chart_data = [raw_data]
 
@@ -16,6 +20,7 @@ const PieChart = props => {
         width: '100%',
         autosize: true,
         title:'Tweet Sentiment Pie Chart',
+        showlegend: false
     };
 
     const config = {
