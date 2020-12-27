@@ -5,6 +5,7 @@ import SentimentScatter from "./SentimentScatter";
 import TweetFreq from "./TweetFreq";
 import TweetSummary from "./TweetSummary"
 import SentimentPie from "./SentimentPie";
+import DateImpact from "./DateImpact";
 
 
 const TweetsDashboard = props => {
@@ -45,7 +46,29 @@ const TweetsDashboard = props => {
                             <h4>Sentiment Pie Chart</h4>
                         </Col>
                     </Row>
+                    <Row>
+                        <Col className="col-md">
+                            <p>The following pie chart shows the distribution of detected sentiments for the crawled tweets.</p>
+                        </Col>
+                    </Row>
                     <SentimentPie uid={props.uid}/>
+                </Col>
+            </Row>
+            <Row>
+                <Col className="col-md widget">
+                    <Row>
+                        <Col className="col-md">
+                            <h4>Date Impact Chart</h4>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col className="col-md">
+                            <p>The following bar chart shows total impact (number of retweets plus number of favourites) for the tweets collected. Each bar
+                                represents the impact on each day, consisting of sub bars representing each individual tweet. If a day did not have any tweets
+                                in the search results then it is not shown on the chart.</p>
+                        </Col>
+                    </Row>
+                    <DateImpact uid={props.uid}/>
                 </Col>
             </Row>
         </Container>

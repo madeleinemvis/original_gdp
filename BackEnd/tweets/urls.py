@@ -7,5 +7,6 @@ urlpatterns = [
     url(r'^api/tweets/geo$', views.tweets_geo),
     url(r'^api/tweets/sentiment_scatter$', views.sentiment_scatter),
     url(r'^api/tweets/sentiment_pie_chart$', views.sentiment_pie_chart),
-    url(r'^api/tweets/tweet_summary$', views.tweet_summary)
+    url(r'^api/tweets/tweet_summary$', views.tweet_summary),
+    url(r'^api/tweets/date_impact_bar$', views.date_impact_bar)
 ]
