@@ -47,4 +47,4 @@ const SentimentPie = props => {
         </React.Fragment>
     );
 }
-export default SentimentScatter;
+export default SentimentPie;

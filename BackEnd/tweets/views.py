@@ -65,5 +65,6 @@ def sentiment_pie_chart(request):
             uid = request_form.cleaned_data['uid']
             sentiments = dataVisualiser.get_sentiment_pie_chart(uid)
             sentiments = json.loads(json_util.dumps(sentiments))
+            print("RETURNING SENTIMENT")
             return JsonResponse(data=sentiments, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)

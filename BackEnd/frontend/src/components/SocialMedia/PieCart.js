@@ -5,14 +5,12 @@ const PieChart = props => {
 
     const[data, setData] = useState(props.data);
 
-    const chart_data = {
-        type: 'pie',
+    const raw_data = {
         values: [data['positive'], data['neutral'], data['negative']],
         labels: ["Positive", "Neutral", "Negative"],
-        textinfo: "label+percent",
-        textposition: "outside",
-        automargin: true
+        type: 'pie',
     }
+    const chart_data = [raw_data]
 
     const layout = {
         width: '100%',
