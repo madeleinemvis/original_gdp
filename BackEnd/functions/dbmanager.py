@@ -128,3 +128,11 @@ class DbManager:
             return causal_item
         except pymongo.errors.PyMongoError:
             print("No Objects, UID: %s,  Found in Collection, Trends_trend", uid)
+
+    def get_website_graph(self, uid: str):
+        try:
+            g_result = self.database['documents_graph'].find({"uid": uid})
+            graph = g_result[0]['graph']
+            return graph
+        except pymongo.errors.PyMongoError:
+            print("No Objects, UID: %s,  Found in Collection, Documents_graph", uid)

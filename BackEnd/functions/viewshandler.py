@@ -1,13 +1,11 @@
 from ast import literal_eval
-
 from django.utils.datastructures import MultiValueDictKeyError
-from documents.models import Document, Claim
-from tweets.models import Tweet, Query
-from trends.models import Trend
 
-from .article_sentiments import PredictSentiment
-from .dataretrieval import Scraper
-from .dbmanager import DbManager
+from BackEnd.documents.models import Document, Claim
+from BackEnd.functions.dataretrieval import Scraper
+from BackEnd.functions.dbmanager import DbManager
+from BackEnd.trends.models import Trend
+from BackEnd.tweets.models import Tweet, Query
 
 
 # Handles all tasks that are used directly used by the end-point

@@ -1,12 +1,15 @@
 from datetime import datetime
 
 from django.http.response import JsonResponse
-from documents.forms import RequestForm
-from functions.programhandler import Handler
-from functions.viewshandler import ViewsHandler
-from functions.visualisation import DataVisualiser
 from rest_framework import status
 from rest_framework.decorators import api_view
+
+from BackEnd.documents.forms import RequestForm
+from BackEnd.documents.models import Document
+from BackEnd.documents.serializers import DocumentSerializer
+from BackEnd.functions.programhandler import Handler
+from BackEnd.functions.viewshandler import ViewsHandler
+from BackEnd.functions.visualisation import DataVisualiser
 
 
 # This function is the main function used when the web-app sends a upload request to the web-server
@@ -108,4 +111,24 @@ def document_frequency(request):
         uid = request.data['uid']
         frequency = datavisualiser.get_document_frequency(uid)
         return JsonResponse(data=frequency, status=status.HTTP_200_OK, safe=False)
+    return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
+
+
+@api_view(['POST'])
+def document_frequency(request):
+    datavisualiser = DataVisualiser()
+    if request.method == "POST":
+        uid = request.data['uid']
+        frequency = datavisualiser.get_document_frequency(uid)
+        return JsonResponse(data=frequency, status=status.HTTP_200_OK, safe=False)
+    return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
+
+
+@api_view(['POST'])
+def website_graph(request):
+    datavisualiser = DataVisualiser()
+    if request.method == "POST":
+        uid = request.data['uid']
+        graph = datavisualiser.get_website_graph(uid)
+        return JsonResponse(data=graph, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)

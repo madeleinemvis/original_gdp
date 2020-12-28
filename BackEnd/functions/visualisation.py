@@ -1,8 +1,9 @@
-from .textprocessing import TextProcessor
-from .dbmanager import DbManager
-from collections import Counter
-import pandas as pd
 import json
+import pandas as pd
+from collections import Counter
+
+from BackEnd.functions.dbmanager import DbManager
+from BackEnd.functions.textprocessing import TextProcessor
 
 
 # class for the data visualisation
@@ -122,3 +123,7 @@ class DataVisualiser:
             doc_list.append(dict({'title': d['title'], 'url': d['url'], 'sentiment': d['sentiment'],
                                   'stance': d['stance']}))
         return doc_list
+
+    def get_website_graph(self, uid: str):
+        graph = self.db_manager.get_website_graph(uid)
+        return graph

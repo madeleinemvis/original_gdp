@@ -6,7 +6,7 @@ import gensim.corpora as corpora
 from gensim.models import CoherenceModel
 from textblob import TextBlob
 
-from functions.textprocessing import TextProcessor
+from BackEnd.functions.textprocessing import TextProcessor
 
 
 class NLPAnalyser:

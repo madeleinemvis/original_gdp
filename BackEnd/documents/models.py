@@ -20,3 +20,8 @@ class Document(models.Model):
 class Claim(models.Model):
     uid = models.TextField(blank=False, default='')
     claim = models.TextField(blank=False, default='')
+
+
+class Graph(models.Model):
+    uid = models.TextField(blank=False, default='')
+    graph_json = models.TextField(blank=False, default='')

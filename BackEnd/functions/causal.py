@@ -2,18 +2,17 @@ import datetime
 import logging
 import re
 import warnings
-import numpy as np
-import pandas as pd
-
-from pathlib import Path
 from collections import namedtuple
-from dowhy import CausalModel
-from pytrends.request import TrendReq
+from pathlib import Path
 
 import matplotlib
+import numpy as np
+import pandas as pd
+import plotly.graph_objects as go
 import requests
 import yfinance as yf
-import plotly.graph_objects as go
+from dowhy import CausalModel
+from pytrends.request import TrendReq
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 logging.disable(logging.CRITICAL)
