@@ -163,9 +163,9 @@ class Handler:
 
         print("-------- RECURSIVE CRAWLING --------")
         # recursively crawl the links upfto certain depth - includes batch checking so these are the final documents
-        nlpanalyser = NLPAnalyser()
+        nlp_analyser = NLPAnalyser()
         recursive_urls = self.crawler.url_cleaner(urls)
-        final_crawled_urls, graph = self.crawler.recursive_url_crawl(recursive_urls, self.MAXIMUM_URL_CRAWL_DEPTH)
+        final_crawled_urls, graph = self.crawler.recursive_url_crawl(recursive_urls, self.MAXIMUM_URL_CRAWL_DEPTH, nlp_analyser)
         scraped_data.update(final_crawled_urls)
 
         print("------- SCRAPE REMAINING URLS -------")
