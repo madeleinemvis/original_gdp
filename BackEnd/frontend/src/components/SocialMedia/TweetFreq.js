@@ -15,7 +15,6 @@ const TweetFreq = props => {
             http.post('/tweets/freq', formdata)
                 .then(res => {
                     setFrequency(res.data);
-                    console.log("frequency:", frequency)
                     setIsLoading(false);
                 })
                 .catch(e => {
@@ -28,18 +27,24 @@ const TweetFreq = props => {
     }, []);
 
     return <React.Fragment>
-                {isLoading ?
-                    <Loading/>
-                :
-                    <Container>
-                        <Row>
-                            <Col> <h4>Number of Tweets Collected</h4></Col>
-                        </Row>
-                        <Row>
-                            <Col><h1>{frequency}</h1></Col>
-                        </Row>
-                    </Container>
-                }
+            <Container>
+                <Row>
+                    <Col>
+                        <h4>Number of Tweets Collected</h4>
+                    </Col>
+                </Row>
+                <Row>
+                    {isLoading ?
+                        <Col>
+                            <Loading/>
+                        </Col>
+                        :
+                        <Col>
+                            <h1>{frequency}</h1>
+                        </Col>
+                    }
+                </Row>
+            </Container>
     </React.Fragment>;
 }
 

@@ -1,10 +1,10 @@
 import json
 from bson import json_util
 from django.http.response import JsonResponse
-from tweets.forms import RequestForm
-from functions.visualisation import DataVisualiser
 from rest_framework import status
 from rest_framework.decorators import api_view
+from tweets.forms import RequestForm
+from functions.visualisation import DataVisualiser
 from tweets.models import Tweet
 from tweets.serializers import TweetSerializer
 from functions.viewshandler import ViewsHandler
@@ -44,6 +44,18 @@ def tweet_frequency(request):
 
 
 @api_view(['POST'])
+def tweet_summary(request):
+    datavisualiser = DataVisualiser()
+    if request.method == "POST":
+        request_form = RequestForm(request.POST)
+        if request_form.is_valid():
+            uid = request_form.cleaned_data['uid']
+            summary = datavisualiser.get_tweet_summary(uid)
+            return JsonResponse(data=summary, status=status.HTTP_200_OK, safe=False)
+    return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
+
+
+@api_view(['POST'])
 def sentiment_scatter(request):
     if request.method == "POST":
         request_form = RequestForm(request.POST)
@@ -53,4 +65,29 @@ def sentiment_scatter(request):
             tweets = datavisualiser.get_sentiment_scatter(uid)
             tweets = json.loads(json_util.dumps(tweets))
             return JsonResponse(data=tweets, status=status.HTTP_200_OK, safe=False)
+    return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
+
+
+@api_view(['POST'])
+def sentiment_pie_chart(request):
+    if request.method == "POST":
+        request_form = RequestForm(request.POST)
+        if request_form.is_valid():
+            dataVisualiser = DataVisualiser()
+            uid = request_form.cleaned_data['uid']
+            sentiments = dataVisualiser.get_sentiment_pie_chart(uid)
+            sentiments = json.loads(json_util.dumps(sentiments))
+            return JsonResponse(data=sentiments, status=status.HTTP_200_OK, safe=False)
+    return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
+
+
+@api_view(['POST'])
+def date_impact_bar(request):
+    if request.method == "POST":
+        request_form = RequestForm(request.POST)
+        if request_form.is_valid():
+            dataVisualiser = DataVisualiser()
+            uid = request_form.cleaned_data['uid']
+            data = dataVisualiser.get_date_impact(uid)
+            return JsonResponse(data=data, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)

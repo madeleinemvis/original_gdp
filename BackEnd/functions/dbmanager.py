@@ -14,6 +14,7 @@ class DbManager:
         # self.drop_collection('documents_document')
         # self.drop_collection('documents_claim')
         # self.drop_collection('tweets_tweet')
+        # self.drop_collection('trends_trend')
 
     # Inserts a single document into a specified collection
     def insert_one(self, collection, document):
@@ -47,7 +48,7 @@ class DbManager:
             print("No Objects, UID: %s,  Found in Collection, Documents_Document", uid)
 
     # Deletes any record that holds true to the query
-    def delete_tuple(self, collection: str, query: str):
+    def delete_with_query(self, collection: str, query: str):
         try:
             self.database[collection].delete_many(query)
         except pymongo.errors.PyMongoError:
@@ -118,7 +119,7 @@ class DbManager:
             tweets = []
             for t in ini_list:
                 tweets.append(
-                    dict(uid=t['uid'], created_at=t['created_at'], text=t['text'], favorite_count=t['favorite_count'],
+                    dict(uid=t['uid'], screen_name=t['screen_name'], created_at=t['created_at'], text=t['text'], favorite_count=t['favorite_count'],
                          retweet_count=t['retweet_count'], user_location=t['user_location'],
                          sentiment=t['sentiment']))
             return ini_list
@@ -146,3 +147,11 @@ class DbManager:
             return claim
         except pymongo.errors.PyMongoError:
             print("No Objects, UID: %s,  Found in Collection, Documents_claim", uid)
+
+    def get_causal(self, uid: str):
+        try:
+            causal = self.database['trends_trend'].find({"uid": uid})
+            causal_item = causal[0]
+            return causal_item
+        except pymongo.errors.PyMongoError:
+            print("No Objects, UID: %s,  Found in Collection, Trends_trend", uid)

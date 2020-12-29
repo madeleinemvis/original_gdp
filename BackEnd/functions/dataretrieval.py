@@ -51,8 +51,8 @@ class Crawler:
 
     # Maddy
     # not sure how we want to use this method yet
-    def crawl_google_with_key_words(self, key_words: [str], urls_returned: int) -> [str]:
-        query = ' '.join(key_words)
+    def crawl_google(self, key_words: [str], urls_returned: int) -> [str]:
+        query = ' '.join(key_words[:5])
         google_result = search(query, tld="com", lang="en", num=urls_returned, start=0, stop=urls_returned, pause=1)
         new_results = set()
         for url in google_result:
@@ -167,13 +167,12 @@ class Crawler:
         api = self.twitter_init()
         # Retrieves all tweets with given keywords and count
         query = ' '.join(keywords[:2])
-        searched_tweets = tweepy.Cursor(api.search, q="vaccine forced", result_type='popular').items(40)
-        print("searched tweets:", searched_tweets)
+        searched_tweets = tweepy.Cursor(api.search, q=query, result_type='popular').items(40)
         countries, country_abbreviations, states, state_abbreviations = self.location_lists_init()
         tweets = []
         for tweet in searched_tweets:
-            print("tweet", tweet)
             parsed_tweet = {'uid': uid,
+                            'screen_name': tweet.user.screen_name,
                             'created_at': tweet.created_at,
                             'text': tweet.text,
                             'favorite_count': tweet.favorite_count,
@@ -182,9 +181,8 @@ class Crawler:
                                                                           countries, country_abbreviations,
                                                                           states, state_abbreviations),
                             'sentiment': NLPAnalyser.get_tweet_sentiment(tweet.text)}
-            print("parsed tweet: ", parsed_tweet)
             tweets.append(parsed_tweet)
-        print("number of tweets:", len(tweets))
+        tweets.sort(key=lambda x: x['favorite_count'] + x['retweet_count'], reverse=True)
         return tweets
 
 

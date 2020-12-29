@@ -1,10 +1,12 @@
 from rest_framework import serializers
 from tweets.models import Tweet
 
+
 class TweetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tweet
         fields = ('uid',
+                  'screen_name',
                   'created_at',
                   'text',
                   'favorite_count',

@@ -15,12 +15,23 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from django.conf.urls import url, include 
+from django.conf.urls import url, include
+
+from admin import settings
+from django.views.generic import TemplateView
  
-urlpatterns = [ 
+urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('frontend.urls')),
     url(r'^', include('documents.urls')),
-    url(r'^', include('tweets.urls'))
+    url(r'^', include('tweets.urls')),
+    url(r'^', include('trends.urls'))
 ]
+
+# If the web-page is refreshed.
+react_routes = getattr(settings, 'REACT_ROUTES', [])
+for route in react_routes:
+    urlpatterns += [
+        path('{}'.format(route), TemplateView.as_view(template_name='frontend/index.html'))
+    ]
 

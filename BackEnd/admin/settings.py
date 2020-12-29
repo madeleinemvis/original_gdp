@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'frontend',
 
     'tweets.apps.TweetsConfig',
+    'trends.apps.TrendsConfig',
 ]
 
 MIDDLEWARE = [
@@ -147,3 +148,10 @@ MEDIA_URL = '/media/'
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': []
 }
+
+REACT_ROUTES = [
+    'dashboard/trends',
+    'dashboard',
+    'dashboard/tweets',
+    'dashboard/sources',
+]

@@ -5,8 +5,7 @@ import Dashboard from './Dashboard';
 import {
     HashRouter as Router,
     Switch,
-    Route,
-    Link
+    Route
   } from "react-router-dom";
 import '../style/App.css';
 import {Container} from "react-bootstrap";
@@ -14,7 +13,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 const App = () => {
 
-    const [uid, setUid] = useState(uuidv4())
+    const uid = set_uid(uuidv4())
+
+    function set_uid(uid) {
+        localStorage.setItem('uid', uid)
+        return uid
+    }
 
 
     return (

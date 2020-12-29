@@ -50,7 +50,7 @@ def generate_manifesto(scraper, text_processor, source_urls, all_sentences, docu
 def crawl_google(crawler, key_words):
     # TODO here we are using all 30 keywords for the google search,
     #  we might want to only use 5 or 6 to help with results
-    urls_google = crawler.crawl_google_with_key_words(key_words, NUMBER_OF_GOOGLE_RESULTS_WANTED)
+    urls_google = crawler.crawl_google(key_words, NUMBER_OF_GOOGLE_RESULTS_WANTED)
     print(f"Top {NUMBER_OF_GOOGLE_RESULTS_WANTED} Google Results from Keywords ({key_words}):")
     for i, url in enumerate(urls_google):
         print(f"[{i + 1}]: {url}")
@@ -91,7 +91,7 @@ def make_sentiment_pie_chart(tweets):
     cf.go_offline()
     cf.set_config_file(offline=False, world_readable=True)
     tweet_df = pd.DataFrame(tweets)
-    fig = px.pie(tweet_df, names='sentiment_score_cat')
+    fig = px.pie(tweet_df, names='sentiment')
     return fig
 
 
@@ -106,10 +106,8 @@ def main(source_urls: [str], claim: str):
     documents = db_manager.get_all_documents(uid)
     all_sentences = db_manager.get_all_main_texts(uid)
     document_html_links = db_manager.get_all_html_links(uid)
-    claim = db_manager.get_claim(uid)
-    # TODO: implement - wantSuggestions = db_manager.get_want_suggestions('some_random_hash')
+    # claim = db_manager.get_claim(uid)
     want_suggestions = True
-    # TODO: implement - no_of_suggestions = db_manager.get_no_of_suggestions('some_random_hash')
     no_of_suggestions = 25
 
     print("-------- MANIFESTO --------")
@@ -158,11 +156,11 @@ def main(source_urls: [str], claim: str):
         scraped_data[k] = data[k]
 
     print("-------- CAUSAL ANALYSIS --------")
-    causal_t = datetime.now()
+    #causal_t = datetime.now()
     econ, health, politics = causal.analyse(key_words[:5])
-    print("Causal time: ", datetime.now()-causal_t)
-    trend = TrendMap()
-    trend_map = trend(key_words[:5])
+    #print("Causal time: ", datetime.now()-causal_t)
+    #trend = TrendMap()
+    #trend_map = trend(key_words[:5])
 
     print("-------- STORING --------")
     # db_manager.insert_many('documents_document')  # Collection name for web pages
@@ -181,6 +179,5 @@ if __name__ == "__main__":
         "https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/",
         "https://www.healthline.com/health/vaccinations/opposition",
         "https://ec.europa.eu/health/sites/health/files/vaccination/docs/2018_vaccine_confidence_en.pdf",
-        "https://www.theguardian.com/world/2020/nov/10/coronavirus-anti-vaxxers-seek-to-discredit-pfizers-vaccine",
-        "https://www.healthline.com/health/vaccinations/opposition"]
+        "https://www.theguardian.com/world/2020/nov/10/coronavirus-anti-vaxxers-seek-to-discredit-pfizers-vaccine"]
     main(sources, "vaccines cause autism")

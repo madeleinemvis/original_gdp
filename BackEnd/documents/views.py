@@ -13,7 +13,6 @@ from rest_framework.parsers import JSONParser
 
 @api_view(['POST'])
 def upload_documents(request):
-    print("entering")
     # POSTING URLs and PDFs from request
     if request.method == 'POST':
         views_handler = ViewsHandler()
@@ -31,11 +30,13 @@ def upload_documents(request):
                 if documents_pdfs:
                     documents_pdfs = views_handler.read_docs(documents_pdfs)
                     # views_handler.save_documents(uid, 'pdf', documents_pdfs)
-                # TODO files
-                print("MERGING DOCS")
+                #TODO: files
+
                 documents = [*documents_urls, *documents_pdfs]
                 handler = Handler()
+                start_t = datetime.now()
                 handler.run_program(views_handler, uid, documents)
+                print("TOTAL TIME TAKEN:", datetime.now()-start_t)
                 return JsonResponse(data=uid, status=status.HTTP_201_CREATED, safe=False)
     return JsonResponse(data=request.data, status=status.HTTP_400_BAD_REQUEST, safe=False)
 
@@ -99,6 +100,7 @@ def keywords_wordcloud(request):
     if request.method == "POST":
         uid = request.data['uid']
         keywords = datavisualiser.word_cloud(uid)
+        print(keywords)
         return JsonResponse(data=keywords, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 

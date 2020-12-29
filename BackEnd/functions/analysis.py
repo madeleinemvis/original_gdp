@@ -34,7 +34,6 @@ class NLPAnalyser:
         else:
             return 'negative'
 
-    # Alex Lockwood
     # Method that creates the topic model from a list of documents
     # Assumed that the documents have not been cleaned - will be cleaned as a result
     def create_tfidf_model(self, scraped_data: Dict):
