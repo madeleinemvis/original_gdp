@@ -5,7 +5,8 @@ import Dashboard from './Dashboard';
 import {
     HashRouter as Router,
     Switch,
-    Route
+    Route,
+    Link
   } from "react-router-dom";
 import '../style/App.css';
 import {Container} from "react-bootstrap";
@@ -16,8 +17,14 @@ const App = () => {
     const uid = set_uid(uuidv4())
 
     function set_uid(uid) {
-        localStorage.setItem('uid', uid)
-        return uid
+        let id = ''
+        if(sessionStorage.uid){
+            id = sessionStorage.uid
+        }else{
+            id = uid
+            sessionStorage.setItem('uid',uid)
+        }
+        return id
     }
 
 

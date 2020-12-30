@@ -183,6 +183,7 @@ class Crawler:
                             'sentiment': NLPAnalyser.get_tweet_sentiment(tweet.text)}
             tweets.append(parsed_tweet)
         tweets.sort(key=lambda x: x['favorite_count'] + x['retweet_count'], reverse=True)
+        
         return tweets
 
 

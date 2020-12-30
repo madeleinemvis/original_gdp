@@ -8,23 +8,10 @@ const DocumentFreq = props => {
     const[isLoading, setIsLoading] = useState(true);
 
     useEffect(( ) => {
-        fetchData();
-    }, []);
+        setFrequency(props.docFreq)
+    }, [props.docFreq]);
 
-    const fetchData = () => {
-        const formdata = new FormData();
-        formdata.append("uid", props.uid);
-        http.post('/documents/freq', formdata)
-
-            .then(res => {
-                setFrequency(res.data);
-                setIsLoading(false);
-            })
-            .catch(e => {
-                console.log(e)
-            })
-
-    }
+   
 
     return(
         <React.Fragment>
@@ -33,7 +20,7 @@ const DocumentFreq = props => {
                     <Col><h4>Number of Documents Collected</h4></Col>
                 </Row>
                 <Row>
-                    {isLoading ?
+                    {frequency === 0 ?
                         <Col>
                             <Loading/>
                         </Col>

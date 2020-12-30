@@ -8,7 +8,6 @@ import {
 
 import { Scrollbar } from "react-scrollbars-custom";
 
-import http from '../../http-common';
 import Loading from "../Loading";
 
 const Tweets = props => {
@@ -17,32 +16,18 @@ const Tweets = props => {
     const [isLoading, setIsLoading] = useState(true);
     
     useEffect(() => {
-        retrieveTweets();
-    }, []);
+        setTweets(props.tweets)
+    }, [props.tweets]);
 
-    const retrieveTweets = () => {
-        const formdata = new FormData();
-        formdata.append("uid", props.uid);
-        http.post('/tweets', formdata)
-            .then(res => {
-                setTweets(res.data)
-                setIsLoading(false);
-            })
-            .catch(e => {
-                console.log(e)
-            })
-    }
-
+    
+    
     return(
         <React.Fragment>
-            <Container>
-                <Row>
-                    <Col>
-                         <h4>All Tweets Collected: (Sorted by Impact)</h4>
-                    </Col>
-                </Row>
-                <Row>
-                    {isLoading ?
+            {tweets.length === 0 ?
+                <Loading/>
+                :
+                <Container>
+                    <Row>
                         <Col>
                             <Loading/>
                         </Col>
@@ -69,9 +54,9 @@ const Tweets = props => {
                                 ))}
                             </Scrollbar>
                         </Col>
-                    }
+                    
                 </Row>
-            </Container>
+            </Container>}
         </React.Fragment>
     );
 }

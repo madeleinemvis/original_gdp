@@ -1,30 +1,18 @@
 import React, {useEffect, useState} from 'react'
-import {Container, Spinner, Row, Col} from 'react-bootstrap';
+import {Container, Row, Col} from 'react-bootstrap';
 
-import http from '../../http-common'
+
 import Loading from "../Loading";
 const TweetFreq = props => {
     const[frequency, setFrequency] = useState(0);
     const[isLoading, setIsLoading] = useState(true);
     const[isEmpty, setIsEmpty] = useState(false);
 
-    useEffect(( ) => {
-        const fetchData = () => {
-            const formdata = new FormData();
-            formdata.append("uid", props.uid);
-            http.post('/tweets/freq', formdata)
-                .then(res => {
-                    setFrequency(res.data);
-                    setIsLoading(false);
-                })
-                .catch(e => {
-                    console.log(e)
-                })
-
-        }
-
-        fetchData();
-    }, []);
+    useEffect(() => {
+        setIsLoading(true)
+        setFrequency(props.tweetsFreq)
+        setIsLoading(false)        
+    }, [props.tweetsFreq]);
 
     return <React.Fragment>
             <Container>
@@ -34,7 +22,7 @@ const TweetFreq = props => {
                     </Col>
                 </Row>
                 <Row>
-                    {isLoading ?
+                    {frequency === 0 ?
                         <Col>
                             <Loading/>
                         </Col>

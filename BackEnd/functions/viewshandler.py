@@ -44,9 +44,11 @@ class ViewsHandler:
         t_save = []
         for t in tweets:
             # _id generated automatically
-            t_save.append(Tweet(uid=uid, screen_name=t['screen_name'], created_at=t['created_at'], text=t['text'], favorite_count=t['favorite_count'],
+            time = t['created_at']
+            tweet = Tweet(uid=uid, screen_name=t['screen_name'], created_at=time, text=t['text'], favorite_count=t['favorite_count'],
                                 retweet_count=t['retweet_count'], user_location=t['user_location'],
-                                sentiment=t['sentiment']))
+                                sentiment=t['sentiment'])
+            t_save.append(tweet)
         return t_save
 
     @staticmethod
