@@ -16,18 +16,21 @@ class ViewsHandler:
     def __init__(self):
         self.db_manager = DbManager()
 
-    def read_docs(self, docs: str) -> [str]:
-        docs = literal_eval(docs)
-        
+    def read_docs(self, docs) -> [str]:
         documents = []
-        for d in docs:
-            documents.append(docs[d])
+        try:
+            docs = literal_eval(docs)
+            for d in docs:
+                documents.append(docs[d])
+        except:
+            documents.extend(docs) # Object is a File.
+
         documents = self.scraper.downloads(documents)
-        
+
         doc_list = []
         for d in documents:
             doc_list.append(documents[d])
-        
+
         return doc_list
 
     @staticmethod
@@ -44,7 +47,8 @@ class ViewsHandler:
         t_save = []
         for t in tweets:
             # _id generated automatically
-            t_save.append(Tweet(uid=uid, screen_name=t['screen_name'], created_at=t['created_at'], text=t['text'], favorite_count=t['favorite_count'],
+            t_save.append(Tweet(uid=uid, screen_name=t['screen_name'], created_at=t['created_at'], text=t['text'],
+                                favorite_count=t['favorite_count'],
                                 retweet_count=t['retweet_count'], user_location=t['user_location'],
                                 sentiment=t['sentiment']))
         return t_save
@@ -88,7 +92,7 @@ class ViewsHandler:
         c_save.save()
 
     def save_tweets(self, uid: str, tweets):
-        t_save = self. set_tweets(uid, tweets)
+        t_save = self.set_tweets(uid, tweets)
         Tweet.objects.bulk_create(t_save)
 
     def save_trends(self, uid: str, econ, health, politics, map_countries, map_trends):

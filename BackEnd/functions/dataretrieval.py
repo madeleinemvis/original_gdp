@@ -9,7 +9,7 @@ from threading import Lock
 from typing import Dict
 from urllib.parse import urldefrag, urlparse
 
-import magic  # Requires python-magic-bin and python-magic libraries
+# import magic  # Requires python-magic-bin and python-magic libraries
 import requests
 import requests.exceptions
 import tweepy
@@ -21,6 +21,7 @@ from trafilatura import extract
 
 from functions.analysis import NLPAnalyser
 from functions.textprocessing import TextProcessor
+import pdfplumber
 
 MAX_THREADS = 50
 
@@ -196,11 +197,11 @@ class Scraper:
         self.url_regex = r"(https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}(?:[-a-zA-Z0-9(" \
                          r")@:%_\+.~#?&//=]*))"
 
-    def downloads(self, urls: [str]) -> Dict[str, Data]:
+    def downloads(self, docs) -> Dict[str, Data]:
         responses = {}
-        threads = min(MAX_THREADS, len(urls))
+        threads = min(MAX_THREADS, len(docs))
         with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
-            result = executor.map(self.get_data_from_source, urls)
+            result = executor.map(self.get_data_from_source, docs)
         for r in result:
             url = r[0]
             data = r[1]
@@ -209,9 +210,9 @@ class Scraper:
         return responses
 
     # method for getting raw text and cleaned tokens from a source
-    def get_data_from_source(self, source: str) -> (str, Data):
+    def get_data_from_source(self, source) -> (str, Data):
         # If the source begins with HTTP(S) scheme, treat as a hyperlink
-        if re.match(r'^https?://', source):
+        if re.match(r'^https?://', str(source)):
             try:
                 response = requests.get(source, allow_redirects=False, timeout=5)
                 data = self.get_data_from_url(source, response)
@@ -336,46 +337,41 @@ class Scraper:
                     text_body=main_text, cleaned_tokens=cleaned_tokens, html_links=urls)
 
     # method for getting raw text and cleaned tokens from a file, which can be a pdf or text file
-    def get_data_from_path(self, path: str):
-        mime_type = None
-        try:
-            mime_type = magic.Magic(mime=True).from_file(path)
-        except FileNotFoundError as fe:
-            print("ERROR:", fe)
+    def get_data_from_path(self, path):
 
-        # if no mime type could be recovered, return no data
-        if mime_type is None:
+        if path.content_type is None:
             return None
 
         # if mime type is not a pdf or plain text file, return no data
-        if "application/pdf" not in mime_type and "text/plain" not in mime_type:
+        if "application/pdf" not in path.content_type and "text/plain" not in path.content_type:
             return None
 
         # if we are dealing with a pdf, use the Tika library to get the pdf from the path specified
-        if "application/pdf" in mime_type:
+        if "application/pdf" in path.content_type:
             content_type = "application/pdf"
             self.lock.acquire()
             try:
-                processed_text = parser.from_file(path)['content']
+                try:
+                    with pdfplumber.open(path) as pdf:
+                        processed_text = " ".join(page.extract_text() for page in pdf.pages)
+                except Exception as e:
+                    print("Error:", e)
             finally:
                 self.lock.release()
 
-            # if we get a processed pdf out, get the make text and collect the urls from the text
-            if processed_text is not None:
-                main_text = ' '.join(processed_text.split())
-            else:
-                return None
-        # if we are dealing with a plain text file, open and read it
         else:
             content_type = "text/plain"
-            with open(path, 'r') as f:
-                main_text = f.read()
+            with open(path) as f:
+                processed_text = f.read()
 
-        urls = re.findall(self.url_regex, main_text)
+        if processed_text is None:
+            return None
+
+        urls = re.findall(self.url_regex, processed_text)
 
         # make the tokens from the main text, and create a clean form
-        tokens = TextProcessor.create_tokens_from_text(main_text)
+        tokens = TextProcessor.create_tokens_from_text(processed_text)
         cleaned_tokens = self.processor.clean_tokens(tokens)
 
-        return Data(uid="", content_type=content_type, url='', raw_html='', title='',
-                    text_body=main_text, cleaned_tokens=cleaned_tokens, html_links=urls)
+        return Data(uid='', content_type=content_type, url='', raw_html='', title='',
+                    text_body=processed_text, cleaned_tokens=cleaned_tokens, html_links=urls)

@@ -12,7 +12,7 @@ const WordCloud = props => {
 
 
     useEffect(( ) => {
-        if(wordCloud.length === 0){
+        if(!wordCloud || wordCloud.length === 0){
             setIsEmpty(true)
             fetchData();
         }else{

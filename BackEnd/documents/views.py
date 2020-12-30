@@ -14,9 +14,11 @@ from rest_framework.parsers import JSONParser
 @api_view(['POST'])
 def upload_documents(request):
     # POSTING URLs and PDFs from request
+    print("Entering")
     if request.method == 'POST':
         views_handler = ViewsHandler()
         request_form = RequestForm(request.POST, request.FILES)
+        print(request_form.is_valid())
         if request_form.is_valid():
             uid, claim, documents_urls, documents_pdfs, files = views_handler.get_objects_from_request(request,
                                                                                                        request_form)
@@ -26,13 +28,12 @@ def upload_documents(request):
                 views_handler.save_claim(uid, claim)
                 if documents_urls:
                     documents_urls = views_handler.read_docs(documents_urls)
-                    # views_handler.save_documents(uid, 'web-page', documents_urls)
                 if documents_pdfs:
                     documents_pdfs = views_handler.read_docs(documents_pdfs)
-                    # views_handler.save_documents(uid, 'pdf', documents_pdfs)
-                #TODO: files
+                if files:
+                    files = views_handler.read_docs(files)
 
-                documents = [*documents_urls, *documents_pdfs]
+                documents = [*documents_urls, *documents_pdfs, *files]
                 handler = Handler()
                 start_t = datetime.now()
                 handler.run_program(views_handler, uid, documents)
