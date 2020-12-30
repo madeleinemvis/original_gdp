@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react'
-import {TagCloud} from "react-tagcloud";
 import {Row, Col, Container} from 'react-bootstrap';
 import http from '../../http-common'
 import Loading from "../Loading";
+import Graph from "./Graph";
 
 const WebsiteGraph = props => {
     const [graph, setGraph] = useState({});
@@ -28,13 +28,6 @@ const WebsiteGraph = props => {
         fetchData();
     }, []);
 
-    let randomColor = require('randomcolor');
-    const colors = randomColor({
-        count: 35,
-        hue: 'blue'
-    });
-
-    console.log("colors:", colors)
     return (
         <React.Fragment>
             {isLoading &&
@@ -54,11 +47,7 @@ const WebsiteGraph = props => {
                         {graph === {} ?
                             <p>No Websites Found</p>
                             :
-                            <TagCloud
-                                colorOptions={colors}
-                                minSize={10}
-                                maxSize={35}
-                                tags={wordCloud}/>
+                            <Graph graph={graph}/>
                         }
                     </Col>
                 </Row>

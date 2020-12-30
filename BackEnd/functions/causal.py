@@ -25,7 +25,6 @@ class Causal:
 
     # Test function to make gauge showing number of tests passed
     def gauge(self, title: str, val: int = -1):
-
         threshold = 210
 
         # Set cases for if tests pass or fail or if no data
