@@ -19,6 +19,7 @@ const App = () => {
 
     function set_uid(uid) {
         localStorage.setItem('uid', uid)
+        console.log("UID:", uid)
         return uid
     }
 
