@@ -3,6 +3,7 @@ import {TagCloud} from "react-tagcloud";
 import {Row, Col, Container} from 'react-bootstrap';
 import http from '../../http-common'
 import Loading from "../Loading";
+import Error from "../Error";
 
 const WordCloud = props => {
     const[wordCloud, setWordCloud] = useState(JSON.parse(localStorage.getItem('wordcloud')))
@@ -10,9 +11,11 @@ const WordCloud = props => {
     const[isEmpty, setIsEmpty] = useState(true);
     const[isLoading, setIsLoading] = useState(true);
 
+    const[isError, setIsError] = useState(false);
+
 
     useEffect(( ) => {
-        if(wordCloud === 0){
+        if(wordCloud === 0 || wordCloud == null){
             fetchData();
         }else{
             setIsLoading(false)
@@ -43,6 +46,7 @@ const WordCloud = props => {
                 setIsLoading(false);
             })
             .catch(e => {
+                setIsError(true);
                 console.log(e)
             })
     }
@@ -56,26 +60,34 @@ const WordCloud = props => {
                         <h3>Word Cloud of High-Ranking Keywords</h3>
                     </Col>
                 </Row>
-                <Row>
-                    {isLoading ?
+                {isError ?
+                    <Row>
                         <Col>
-                            <Loading/>
+                            <Error/>
                         </Col>
-                        :
-                        <Col>
-                            {isEmpty ?
-                                <p>No Documents Found</p>
-                                :
-                                <TagCloud
-                                    colorOptions={options}
-                                    minSize={10}
-                                    maxSize={35}
-                                    tags={wordCloud}/>
+                    </Row>
+                    :
+                    <Row>
+                        {isLoading ?
+                            <Col>
+                                <Loading/>
+                            </Col>
+                            :
+                            <Col>
+                                {isEmpty ?
+                                    <p>No Documents Found</p>
+                                    :
+                                    <TagCloud
+                                        colorOptions={options}
+                                        minSize={10}
+                                        maxSize={35}
+                                        tags={wordCloud}/>
 
-                            }
-                        </Col>
-                    }
-                </Row>
+                                }
+                            </Col>
+                        }
+                    </Row>
+                }
             </Container>
         </React.Fragment>
     );

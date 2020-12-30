@@ -3,10 +3,11 @@ import {Container, Spinner, Row, Col} from 'react-bootstrap';
 
 import http from '../../http-common'
 import Loading from "../Loading";
+import Error from "../Error";
 const TweetFreq = props => {
     const[frequency, setFrequency] = useState(0);
     const[isLoading, setIsLoading] = useState(true);
-    const[isEmpty, setIsEmpty] = useState(false);
+    const[isError, setIsError] = useState(false);
 
     useEffect(( ) => {
         const fetchData = () => {
@@ -15,11 +16,11 @@ const TweetFreq = props => {
             http.post('/tweets/freq', formdata)
                 .then(res => {
                     setFrequency(res.data);
-                    console.log("frequency:", frequency)
                     setIsLoading(false);
                 })
                 .catch(e => {
-                    console.log(e)
+                    setIsError(true);
+                    console.log(e);
                 })
 
         }
@@ -34,17 +35,25 @@ const TweetFreq = props => {
                         <h4>Number of Tweets Collected</h4>
                     </Col>
                 </Row>
-                <Row>
-                    {isLoading ?
+                {isError ?
+                    <Row>
                         <Col>
-                            <Loading/>
+                            <Error/>
                         </Col>
-                        :
-                        <Col>
-                            <h1>{frequency}</h1>
-                        </Col>
-                    }
-                </Row>
+                    </Row>
+                    :
+                    <Row>
+                        {isLoading ?
+                            <Col>
+                                <Loading/>
+                            </Col>
+                            :
+                            <Col>
+                                <h1>{frequency}</h1>
+                            </Col>
+                        }
+                    </Row>
+                }
             </Container>
     </React.Fragment>;
 }

@@ -30,7 +30,6 @@ def upload_documents(request):
                 if documents_pdfs:
                     documents_pdfs = views_handler.read_docs(documents_pdfs)
                     # views_handler.save_documents(uid, 'pdf', documents_pdfs)
-                #TODO: files
 
                 documents = [*documents_urls, *documents_pdfs]
                 handler = Handler()

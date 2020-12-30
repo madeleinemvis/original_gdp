@@ -3,9 +3,11 @@ import {Row, Col, Container} from 'react-bootstrap';
 import http from '../../http-common'
 import Scatter from "./Scatter";
 import Loading from "../Loading";
+import Error from "../Error";
 const SentimentScatter = props => {
     const[data, setData] = useState([]);
     const[isLoading, setIsLoading] = useState(true);
+    const[isError, setIsError] = useState(false);
 
     const fetchData = () => {
         const formdata = new FormData();
@@ -14,11 +16,10 @@ const SentimentScatter = props => {
         .then(res => {
             const tweetsDf = res.data;
             setData(tweetsDf)
-            console.log(tweetsDf)
-
             setIsLoading(false);
         })
         .catch(e => {
+            setIsError(true);
             console.log(e)
         })
     }
@@ -30,19 +31,27 @@ const SentimentScatter = props => {
     return(
         <React.Fragment>
             <Container>
-                <Row>
-                    {isLoading ?
+                {isError ?
+                    <Row>
                         <Col>
-                            <Loading/>
+                            <Error/>
                         </Col>
-                    :
-                        <Col>
-                            <div className="svg-container">
-                                <Scatter data={data}/>
-                            </div>
-                        </Col>
-                    }
-                </Row>
+                    </Row>
+                :
+                    <Row>
+                        {isLoading ?
+                            <Col>
+                                <Loading/>
+                            </Col>
+                        :
+                            <Col>
+                                <div className="svg-container">
+                                    <Scatter data={data}/>
+                                </div>
+                            </Col>
+                        }
+                    </Row>
+                }
             </Container>
         </React.Fragment>
     );
