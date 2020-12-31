@@ -107,6 +107,11 @@ class Handler:
         return econ, health, politics, map_countries, map_trends
 
     def run_program(self, viewshandler, uid: str, documents):
+        print("------- CLEARING OUT THE DATABASE --------)")
+        viewshandler.db_manager.drop_collection('documents_document')
+        viewshandler.db_manager.drop_collection('documents_claim')
+        viewshandler.db_manager.drop_collection('tweets_tweet')
+        viewshandler.db_manager.drop_collection('trends_trend')
         nlpanalyser = NLPAnalyser()
 
         print("-------- MANIFESTO --------")

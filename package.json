@@ -32,6 +32,7 @@
         "d3": "^6.3.1",
         "holderjs": "^2.9.7",
         "jszip": "^3.5.0",
+        "plotly": "^1.0.6",
         "plotly.js": "^1.58.2",
         "prop-types": "^15.7.2",
         "randomcolor": "^0.6.2",

@@ -11,10 +11,6 @@ class DbManager:
         self.client = pymongo.MongoClient(
             "mongodb+srv://gdp:gdp@propaganda.m00hm.mongodb.net/Trilateral?retryWrites=true&w=majority")
         self.database = self.client.Trilateral
-        # self.drop_collection('documents_document')
-        # self.drop_collection('documents_claim')
-        # self.drop_collection('tweets_tweet')
-        # self.drop_collection('trends_trend')
 
     # Inserts a single document into a specified collection
     def insert_one(self, collection, document):
