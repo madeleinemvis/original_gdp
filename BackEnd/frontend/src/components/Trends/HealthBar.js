@@ -3,9 +3,12 @@ import {Row, Col, Container} from 'react-bootstrap';
 import http from '../../http-common'
 import Bar from "./Bar";
 import Loading from "../Loading";
+import Error from "../Error";
 const HealthBar = props => {
     const[data, setData] = useState([]);
     const[isLoading, setIsLoading] = useState(true);
+
+    const[isError, setIsError] = useState(false);
 
     const fetchData = () => {
         const formdata = new FormData();
@@ -39,7 +42,15 @@ const HealthBar = props => {
                     <Col><h3>Health Causal Results</h3></Col>
                 </Row>
                 <Row>
-                    <Col><Bar data={data}/></Col>
+                {isError ?
+                            <Col>
+                                <Error/>
+                            </Col>
+                            :
+                            <Col>
+                                <Bar data={data}/>
+                            </Col>
+                        }
                 </Row>
               </Container>
           }

@@ -3,9 +3,12 @@ import {Row, Col, Container} from 'react-bootstrap';
 import http from '../../http-common'
 import Gauge from "./Gauge";
 import Loading from "../Loading";
+import Error from "../Error";
 const EconGauge = props => {
     const[data, setData] = useState([]);
     const[isLoading, setIsLoading] = useState(true);
+
+    const[isError, setIsError] = useState(false);
 
     const fetchData = () => {
         const formdata = new FormData();
@@ -39,7 +42,15 @@ const EconGauge = props => {
                     <Col><h3>Economics Causal Test</h3></Col>
                 </Row>
                 <Row>
-                    <Col><Gauge data={data}/></Col>
+                {isError ?
+                            <Col>
+                                <Error/>
+                            </Col>
+                            :
+                            <Col>
+                                <Gauge data={data}/>
+                            </Col>
+                        }
                 </Row>
               </Container>
           }

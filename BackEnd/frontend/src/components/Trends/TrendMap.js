@@ -3,9 +3,12 @@ import {Row, Col, Container} from 'react-bootstrap';
 import http from '../../http-common'
 import Map from "./Map";
 import Loading from "../Loading";
+import Error from "../Error";
 const TrendMap = props => {
     const[data, setData] = useState([]);
     const[isLoading, setIsLoading] = useState(true);
+
+    const[isError, setIsError] = useState(false);
 
     const fetchData = () => {
         const formdata = new FormData();
@@ -39,7 +42,15 @@ const TrendMap = props => {
                     <Col><h3>World Trend Map</h3></Col>
                 </Row>
                 <Row>
-                    <Col><Map data={data}/></Col>
+                {isError ?
+                            <Col>
+                                <Error/>
+                            </Col>
+                            :
+                            <Col>
+                                <Map data={data}/>
+                            </Col>
+                        }
                 </Row>
               </Container>
           }
