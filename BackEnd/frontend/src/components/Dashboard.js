@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { NavLink, Container } from 'reactstrap';
 import {
     BrowserRouter as Router,
@@ -11,14 +11,16 @@ import {
 
 import TweetsDashboard from "./SocialMedia/TweetsDashboard";
 import ArticlesDashboard from "./WebArticles/ArticlesDashboard";
+import TrendsDashboard from "./Trends/TrendsDashboard";
 
 // Source: https://bezkoder.com/react-hooks-crud-axios-api/
 const Dashboard = props => {
-    const uid = props.uid | localStorage.getItem('uid')
+    const [uid, setUid] = useState(props.uid)
     let { path, url } = useRouteMatch();
     if(uid.toString() === 'null'){
         return <Redirect to={{ pathname: "/" }}/>
     }
+    console.log("UID", props.uid)
     return (
         <React.Fragment>
             <Router>
@@ -33,6 +35,9 @@ const Dashboard = props => {
                                     <li className="nav-item-menu">
                                         <NavLink exact to={`${url}/tweets`} tag={RRNavLink} activeClassName="active">Tweets</NavLink>
                                     </li>
+                                    <li className="nav-item-menu">
+                                        <NavLink exact to={`${url}/trends`} tag={RRNavLink} activeClassName="active">Trends</NavLink>
+                                    </li>
                                 </ul>
                             </div>
                         </nav>
@@ -43,6 +48,9 @@ const Dashboard = props => {
                         </Route>
                         <Route exact path={`${path}/tweets`}>
                             <TweetsDashboard uid={uid}/>
+                        </Route>
+                        <Route exact path={`${path}/trends`}>
+                            <TrendsDashboard uid={uid}/>
                         </Route>
                     </Switch>
                 </Container>

@@ -36,13 +36,14 @@ const Tweets = props => {
                 console.log(e)
             })
     }
-    
+
     return(
         <React.Fragment>
             <Container>
                  <Row>
                     <Col>
                         <h4>All Tweets Crawled:</h4>
+                         <h4>All Tweets Collected: (Sorted by Impact)</h4>
                     </Col>
                 </Row>
                 {isError ?
@@ -83,6 +84,36 @@ const Tweets = props => {
                         }
                     </Row>
                 }
+                <Row>
+                    {isLoading ?
+                        <Col>
+                            <Loading/>
+                        </Col>
+                    :
+                        <Col>
+                            <Scrollbar style={{width: "100%", height: 400}}>
+                                {tweets && tweets.map((tw, index) => (
+                                    <Card key={index}>
+                                        <CardBody>
+                                            <CardTitle tag="h5">@{tw.screen_name}</CardTitle>
+                                            <CardSubtitle tag="h6"
+                                                          className="mb-2 text-muted">Sentiment: {tw.sentiment}</CardSubtitle>
+                                            <CardSubtitle tag="h6" className="mb-2 text-muted">Favorite
+                                                Count: {tw.favorite_count}</CardSubtitle>
+                                            <CardSubtitle tag="h6" className="mb-2 text-muted">Retweet
+                                                Count: {tw.retweet_count}</CardSubtitle>
+                                            {(tw.user_location !== "") ?
+                                                <CardSubtitle tag="h6" className="mb-2 text-muted">Tweet
+                                                    Location: {tw.user_location}</CardSubtitle> : null
+                                            }
+                                            <CardText> {tw.text}</CardText>
+                                        </CardBody>
+                                    </Card>
+                                ))}
+                            </Scrollbar>
+                        </Col>
+                    }
+                </Row>
             </Container>
         </React.Fragment>
     );

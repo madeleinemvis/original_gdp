@@ -2,20 +2,18 @@ import React, {Fragment, useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import Home from './Home';
 import Dashboard from './Dashboard';
-import Suggestion from './Suggestion'
 import {
     BrowserRouter as Router,
     Switch,
-    Route,
-    Link
+    Route
   } from "react-router-dom";
 import '../style/App.css';
-import {Navbar, Nav, Container} from "react-bootstrap";
+import {Container} from "react-bootstrap";
 import { v4 as uuidv4 } from 'uuid';
 
 const App = () => {
 
-    const uid = set_uid(uuidv4()) | localStorage.getItem('uid')
+    const uid = set_uid(uuidv4())
 
     function set_uid(uid) {
         localStorage.setItem('uid', uid)

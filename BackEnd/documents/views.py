@@ -26,14 +26,16 @@ def upload_documents(request):
                 views_handler.save_claim(uid, claim)
                 if documents_urls:
                     documents_urls = views_handler.read_docs(documents_urls)
-                    # views_handler.save_documents(uid, 'web-page', documents_urls)
                 if documents_pdfs:
                     documents_pdfs = views_handler.read_docs(documents_pdfs)
-                    # views_handler.save_documents(uid, 'pdf', documents_pdfs)
+                if files:
+                    files = views_handler.read_docs(files)
 
-                documents = [*documents_urls, *documents_pdfs]
+                documents = [*documents_urls, *documents_pdfs, *files]
                 handler = Handler()
+                start_t = datetime.now()
                 handler.run_program(views_handler, uid, documents)
+                print("TOTAL TIME TAKEN:", datetime.now()-start_t)
                 return JsonResponse(data=uid, status=status.HTTP_201_CREATED, safe=False)
     return JsonResponse(data=request.data, status=status.HTTP_400_BAD_REQUEST, safe=False)
 

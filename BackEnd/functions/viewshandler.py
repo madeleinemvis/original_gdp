@@ -3,6 +3,7 @@ from ast import literal_eval
 from django.utils.datastructures import MultiValueDictKeyError
 from documents.models import Document, Claim
 from tweets.models import Tweet
+from trends.models import Trend
 
 from .dataretrieval import Scraper
 from .dbmanager import DbManager
@@ -15,18 +16,21 @@ class ViewsHandler:
     def __init__(self):
         self.db_manager = DbManager()
 
-    def read_docs(self, docs: str) -> [str]:
-        docs = literal_eval(docs)
-        
+    def read_docs(self, docs) -> [str]:
         documents = []
-        for d in docs:
-            documents.append(docs[d])
+        try:
+            docs = literal_eval(docs)
+            for d in docs:
+                documents.append(docs[d])
+        except:
+            documents.extend(docs) # Object is a File.
+
         documents = self.scraper.downloads(documents)
-        
+
         doc_list = []
         for d in documents:
             doc_list.append(documents[d])
-        
+
         return doc_list
 
     @staticmethod
@@ -43,7 +47,8 @@ class ViewsHandler:
         t_save = []
         for t in tweets:
             # _id generated automatically
-            t_save.append(Tweet(uid=uid, created_at=t['created_at'], text=t['text'], favorite_count=t['favorite_count'],
+            t_save.append(Tweet(uid=uid, screen_name=t['screen_name'], created_at=t['created_at'], text=t['text'],
+                                favorite_count=t['favorite_count'],
                                 retweet_count=t['retweet_count'], user_location=t['user_location'],
                                 sentiment=t['sentiment']))
         return t_save
@@ -52,6 +57,18 @@ class ViewsHandler:
     def set_claim(uid: str, claim: str) -> Claim:
         c_save = Claim(uid=uid, claim=claim)
         return c_save
+
+    @staticmethod
+    def set_trends(uid, e, h, p, mc, mt):
+        t_save = []
+        t_save.append(Trend(uid=uid, econ_count=e.value, econ_estimate=e.estimate, econ_random=e.random,
+                            econ_unobserved=e.unobserved, econ_placebo=e.placebo, econ_subset=e.subset,
+                            health_count=h.value, health_estimate=h.estimate, health_random=h.random,
+                            health_unobserved=h.unobserved, health_placebo=h.placebo, health_subset=h.subset,
+                            politics_count=p.value, politics_estimate=p.estimate, politics_random=p.random,
+                            politics_unobserved=p.unobserved, politics_placebo=p.placebo, politics_subset=p.subset,
+                            map_countries=mc, map_trends=mt))
+        return t_save
 
     @staticmethod
     def get_objects_from_request(request, request_form):
@@ -75,5 +92,9 @@ class ViewsHandler:
         c_save.save()
 
     def save_tweets(self, uid: str, tweets):
-        t_save = self. set_tweets(uid, tweets)
+        t_save = self.set_tweets(uid, tweets)
         Tweet.objects.bulk_create(t_save)
+
+    def save_trends(self, uid: str, econ, health, politics, map_countries, map_trends):
+        t_save = self.set_trends(uid, econ, health, politics, map_countries, map_trends)
+        Trend.objects.bulk_create(t_save)
