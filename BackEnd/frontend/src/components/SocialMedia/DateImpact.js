@@ -3,10 +3,12 @@ import {Row, Col, Container} from 'react-bootstrap';
 import http from '../../http-common'
 import DateImpactBarChart from "./DateImpactBarChart";
 import Loading from "../Loading";
+import Error from "../Error";
 
 const DateImpact = props => {
     const[data, setData] = useState([]);
     const[isLoading, setIsLoading] = useState(true);
+    const[isError, setIsError] = useState(false);
 
     const fetchData = () => {
         const formdata = new FormData();
@@ -20,6 +22,7 @@ const DateImpact = props => {
             setIsLoading(false);
         })
         .catch(e => {
+            setIsError(true);
             console.log(e)
         })
     }
@@ -30,17 +33,29 @@ const DateImpact = props => {
 
     return(
         <React.Fragment>
-          {isLoading ?
-              <Container>
-                  <Loading/>
-              </Container>
-          :
-              <Container>
-                <Row>
-                    <Col><DateImpactBarChart data={data}/></Col>
-                </Row>
-              </Container>
-          }
+            <Container>
+                {isError ?
+                    <Row>
+                        <Col>
+                            <Error/>
+                        </Col>
+                    </Row>
+                :
+                    <Row>
+                        {isLoading ?
+                            <Col>
+                                <Loading/>
+                            </Col>
+                        :
+                            <Col>
+                                <div className="date-impact">
+                                    <DateImpactBarChart data={data}/>
+                                </div>
+                            </Col>
+                        }
+                    </Row>
+                }
+            </Container>
         </React.Fragment>
     );
 }

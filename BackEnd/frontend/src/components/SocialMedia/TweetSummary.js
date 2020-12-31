@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {Container, Spinner, Row, Col} from 'react-bootstrap';
+import Error from "../Error";
 
 import http from '../../http-common'
 import Loading from "../Loading";
@@ -9,6 +10,7 @@ const TweetSummary = props => {
     const[retweets, setRetweets] = useState(0);
     const[isLoading, setIsLoading] = useState(true);
     const[isEmpty, setIsEmpty] = useState(false);
+    const[isError, setIsError] = useState(false);
 
     useEffect(( ) => {
         const fetchData = () => {
@@ -23,6 +25,7 @@ const TweetSummary = props => {
                     setIsLoading(false);
                 })
                 .catch(e => {
+                    setIsError(true);
                     console.log(e)
                 })
 
@@ -33,54 +36,64 @@ const TweetSummary = props => {
 
     return <React.Fragment>
             <Container>
-                <Row>
+                {isError ?
+                    <Row>
+                        <Col>
+                            <Error/>
+                        </Col>
+                    </Row>
+                :
                     <Col>
-                        <h4>Number of Tweets Collected</h4>
+                        <Row>
+                            <Col>
+                                <h4>Number of Tweets Collected</h4>
+                            </Col>
+                        </Row>
+                        <Row>
+                        {isLoading ?
+                            <Col>
+                                <Loading/>
+                            </Col>
+                            :
+                            <Col>
+                                <h1>{frequency}</h1>
+                            </Col>
+                        }
+                        </Row>
+                        <Row>
+                            <Col>
+                                <h4>Total Favourites</h4>
+                            </Col>
+                        </Row>
+                        <Row>
+                            {isLoading ?
+                                <Col>
+                                    <Loading/>
+                                </Col>
+                                :
+                                <Col>
+                                    <h1>{favourites}</h1>
+                                </Col>
+                            }
+                        </Row>
+                        <Row>
+                            <Col>
+                                <h4>Total Retweets</h4>
+                            </Col>
+                        </Row>
+                        <Row>
+                            {isLoading ?
+                                <Col>
+                                    <Loading/>
+                                </Col>
+                                :
+                                <Col>
+                                    <h1>{retweets}</h1>
+                                </Col>
+                            }
+                        </Row>
                     </Col>
-                </Row>
-                <Row>
-                    {isLoading ?
-                        <Col>
-                            <Loading/>
-                        </Col>
-                        :
-                        <Col>
-                            <h1>{frequency}</h1>
-                        </Col>
-                    }
-                </Row>
-                <Row>
-                    <Col>
-                        <h4>Total Favourites</h4>
-                    </Col>
-                </Row>
-                <Row>
-                    {isLoading ?
-                        <Col>
-                            <Loading/>
-                        </Col>
-                        :
-                        <Col>
-                            <h1>{favourites}</h1>
-                        </Col>
-                    }
-                </Row>
-                <Row>
-                    <Col>
-                        <h4>Total Retweets</h4>
-                    </Col>
-                </Row>
-                <Row>
-                    {isLoading ?
-                        <Col>
-                            <Loading/>
-                        </Col>
-                        :
-                        <Col>
-                            <h1>{retweets}</h1>
-                        </Col>
-                    }
-                </Row>
+                }
             </Container>
     </React.Fragment>;
 }
