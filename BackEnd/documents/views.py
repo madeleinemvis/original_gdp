@@ -14,11 +14,9 @@ from rest_framework.parsers import JSONParser
 @api_view(['POST'])
 def upload_documents(request):
     # POSTING URLs and PDFs from request
-    print("Entering")
     if request.method == 'POST':
         views_handler = ViewsHandler()
         request_form = RequestForm(request.POST, request.FILES)
-        print(request_form.is_valid())
         if request_form.is_valid():
             uid, claim, documents_urls, documents_pdfs, files = views_handler.get_objects_from_request(request,
                                                                                                        request_form)
