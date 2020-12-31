@@ -61,17 +61,17 @@ const WordCloud = props => {
                         <h3>Word Cloud of High-Ranking Keywords</h3>
                     </Col>
                 </Row>
-                {isError ?
+                {isLoading ?
                     <Row>
                         <Col>
-                            <Error/>
+                            <Loading/>
                         </Col>
                     </Row>
                     :
                     <Row>
-                        {isLoading ?
+                        {isError ?
                             <Col>
-                                <Loading/>
+                                <Error/>
                             </Col>
                             :
                             <Col>
