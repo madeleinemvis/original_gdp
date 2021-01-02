@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-import views
+from . import views
 
 # All Document related URLs that the web-page can call, with the respective function to be called in documents/views.py
 urlpatterns = [
@@ -10,4 +10,5 @@ urlpatterns = [
     url(r'api/documents/wordcloud$', views.keywords_wordcloud),
     url(r'api/documents/freq$', views.document_frequency),
     url(r'api/documents/graph$', views.website_graph),
+
 ]

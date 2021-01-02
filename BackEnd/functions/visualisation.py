@@ -5,7 +5,6 @@ from collections import Counter
 from BackEnd.functions.dbmanager import DbManager
 from BackEnd.functions.textprocessing import TextProcessor
 
-
 # class for the data visualisation
 # Each function returns data formatted for a particular visual on the dashboard.
 # All visuals are processed in this class

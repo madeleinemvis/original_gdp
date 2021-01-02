@@ -4,12 +4,12 @@ from django.http.response import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view
 
-from BackEnd.documents.forms import RequestForm
-from BackEnd.documents.models import Document
-from BackEnd.documents.serializers import DocumentSerializer
-from BackEnd.functions.programhandler import Handler
-from BackEnd.functions.viewshandler import ViewsHandler
-from BackEnd.functions.visualisation import DataVisualiser
+from .forms import RequestForm
+from .models import Document
+from .serializers import DocumentSerializer
+from functions.programhandler import Handler
+from functions.viewshandler import ViewsHandler
+from functions.visualisation import DataVisualiser
 
 
 # This function is the main function used when the web-app sends a upload request to the web-server
