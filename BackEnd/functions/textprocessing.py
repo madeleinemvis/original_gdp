@@ -171,6 +171,7 @@ class TextProcessor:
 
         word_types = ['NOUN', 'PROPN']
         nlp = spacy.load('en_core_web_sm')
+        print("nlp formed.")
         nlp.max_length = 8000000
         document = nlp(text)
 

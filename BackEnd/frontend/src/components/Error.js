@@ -6,11 +6,9 @@ const Error = props => {
         <Container>
             <Row>
                 <Col>
-                    <h2>Error {props.code}</h2>
+                    <p><strong>ERROR OCCURRED</strong></p>
+                    <p>Oops! Something went wrong! Process could not be completed.</p>
                 </Col>
-            </Row>
-            <Row>
-                <h4>Oops! Something went wrong! Process could not be completed.</h4>
             </Row>
         </Container>
     );

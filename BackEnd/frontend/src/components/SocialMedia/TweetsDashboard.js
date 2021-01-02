@@ -3,10 +3,12 @@ import {Row, Col, Container} from "react-bootstrap";
 import Tweets from "./Tweets";
 import SentimentScatter from "./SentimentScatter";
 import TweetFreq from "./TweetFreq";
+import TweetSummary from "./TweetSummary"
+import SentimentPie from "./SentimentPie";
+import DateImpact from "./DateImpact";
 
 
 const TweetsDashboard = props => {
-    const uid = props.uid
     return(
         <Container className="dashboard">
             <Row>
@@ -16,10 +18,10 @@ const TweetsDashboard = props => {
             </Row>
             <Row>
                 <Col className="col-md widget">
-                    <Tweets uid={uid}/>
+                    <Tweets uid={props.uid}/>
                 </Col>
                 <Col className="col-md widget">
-                    <TweetFreq uid={uid}/>
+                    <TweetSummary uid={props.uid}/>
                 </Col>
             </Row>
             <Row>
@@ -34,7 +36,39 @@ const TweetsDashboard = props => {
                             <p>The Tweets are colour-coded based on their sentiment that is predicted by a sentiment analysis model. The influence of a Tweet can be estimated by the number of interactions, by the number of Retweets and Favourites.</p>
                         </Col>
                     </Row>
-                    <SentimentScatter uid={uid}/>
+                    <SentimentScatter uid={props.uid}/>
+                </Col>
+            </Row>
+             <Row>
+                <Col className="col-md widget">
+                    <Row>
+                        <Col className="col-md">
+                            <h4>Sentiment Pie Chart</h4>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col className="col-md">
+                            <p>The following pie chart shows the distribution of detected sentiments for the crawled tweets.</p>
+                        </Col>
+                    </Row>
+                    <SentimentPie uid={props.uid}/>
+                </Col>
+            </Row>
+            <Row>
+                <Col className="col-md widget">
+                    <Row>
+                        <Col className="col-md">
+                            <h4>Date Impact Chart</h4>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col className="col-md">
+                            <p>The following bar chart shows total impact (number of retweets plus number of favourites) for the tweets collected. Each bar
+                                represents the impact on each day, consisting of sub bars representing each individual tweet. If a day did not have any tweets
+                                in the search results then it is not shown on the chart.</p>
+                        </Col>
+                    </Row>
+                    <DateImpact uid={props.uid}/>
                 </Col>
             </Row>
         </Container>

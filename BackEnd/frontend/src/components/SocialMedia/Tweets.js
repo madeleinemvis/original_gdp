@@ -10,12 +10,15 @@ import { Scrollbar } from "react-scrollbars-custom";
 
 import http from '../../http-common';
 import Loading from "../Loading";
+import Error from "../Error";
 
 const Tweets = props => {
     
     const [tweets, setTweets] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    
+    const [isError, setIsError] = useState(false);
+    const [errorCode, setErrorCode] = useState(201);
+
     useEffect(() => {
         retrieveTweets();
     }, []);
@@ -24,26 +27,32 @@ const Tweets = props => {
         const formdata = new FormData();
         formdata.append("uid", props.uid);
         http.post('/tweets', formdata)
-
             .then(res => {
                 setTweets(res.data)
-                console.log("Tweets:", tweets)
-                setIsLoading(false);
+                setIsLoading(false)
             })
             .catch(e => {
+                setIsError(true)
                 console.log(e)
             })
     }
-    
+
     return(
         <React.Fragment>
             <Container>
-                <Row>
+                 <Row>
                     <Col>
-                         <h4>All Tweets Crawled:</h4>
+                        <h4>All Tweets Collected: (Sorted by Impact)</h4>
                     </Col>
                 </Row>
-                <Row>
+                {isError ?
+                    <Row>
+                        <Col>
+                            <Error/>
+                        </Col>
+                    </Row>
+                :
+                    <Row>
                     {isLoading ?
                         <Col>
                             <Loading/>
@@ -54,7 +63,7 @@ const Tweets = props => {
                                 {tweets && tweets.map((tw, index) => (
                                     <Card key={index}>
                                         <CardBody>
-                                            <CardTitle tag="h5">Tweet #{index}</CardTitle>
+                                            <CardTitle tag="h5">@{tw.screen_name}</CardTitle>
                                             <CardSubtitle tag="h6"
                                                           className="mb-2 text-muted">Sentiment: {tw.sentiment}</CardSubtitle>
                                             <CardSubtitle tag="h6" className="mb-2 text-muted">Favorite
@@ -73,6 +82,8 @@ const Tweets = props => {
                         </Col>
                     }
                 </Row>
+                }
+
             </Container>
         </React.Fragment>
     );

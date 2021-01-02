@@ -14,6 +14,7 @@ import '../style/App.css'
 import Suggestion from './Suggestion';
 import Input from "./Input";
 import Loading from "./Loading";
+import Error from "./Error";
 
 const Home = props => {
     // https://dev.to/fuchodeveloper/dynamic-form-fields-in-react-1h6c
@@ -27,6 +28,8 @@ const Home = props => {
     const [claim, setClaim] = useState('')
     const [links, setLinks] = useState([{url:''}])
     const [pdfs, setPdfs] = useState([{url:''}])
+
+    const [isError, setIsError] = useState(false);
 
     const formData = new FormData();
 
@@ -65,17 +68,19 @@ const Home = props => {
                 setSuggest(suggest)
             })
             .catch(e => {
+                setIsError(true)
                 console.log(e)
             })
         }else{
             http.post('/documents/upload', formData)
                 .then(res =>{
-                    if(res.status === 201){
+                    if(res.status === 201) {
                         setIsLoading(false)
                         setRedirect(true)
                     }
                 })
                 .catch(e => {
+                    setIsError(true)
                     console.log(e)
                 })
         }
@@ -138,38 +143,47 @@ const Home = props => {
 
 
     return (
-        
-        
         <React.Fragment>
-            {isLoading ? <Loading/> :
-
+            {isError ?
                 <Container>
                     <Row>
                         <Col>
-                            <Jumbotron>
-                                <h1 className="jumbotron-h1">Welcome</h1>
-                                <p className="jumbotron-p">Our system is here to show you how a particular theme of
-                                    propaganda has spread!</p>
-                                <hr/>
-                                <p className="jumbotron-p">Add a link to be analysed. More than one link can be
-                                    added.</p>
-                                <p>
-                                    <Button variant="primary" size="lg">
-                                        Learn More
-                                    </Button>
-                                </p>
-                            </Jumbotron>
-                </Col>
-                <span className="vertical-line"/>
-                <Col>
-                    {
-                        suggest ? <Suggestion submit={handleSubmit} suggested={suggestions} addLinks={add_links}/> : <Input uid={uid} submit={handleSubmit} setFiles={set_files} setClaim={set_claim} setLinks={set_links} setPdfs={set_pdfs}/>}
-                    {
-                        isLoading && <Loading/>
+                            <Error/>
+                        </Col>
+                    </Row>
+                </Container>
+                :
+                <Container>
+                    {!isLoading ?
+                        <Row>
+                            <Col>
+                                <Jumbotron>
+                                    <h1 className="jumbotron-h1">Welcome</h1>
+                                    <p className="jumbotron-p">Our system is here to show you how a particular theme of
+                                        propaganda has spread!</p>
+                                    <hr/>
+                                    <p className="jumbotron-p">Add a link to be analysed. More than one link can be
+                                        added.</p>
+                                    <p>
+                                        <Button variant="primary" size="lg">
+                                            Learn More
+                                        </Button>
+                                    </p>
+                                </Jumbotron>
+                            </Col>
+                            <span className="vertical-line"/>
+                            <Col>
+                                {suggest ?
+                                    <Suggestion submit={handleSubmit} suggested={suggestions} addLinks={add_links}/>
+                                    :
+                                    <Input uid={uid} submit={handleSubmit} setFiles={set_files} setClaim={set_claim} setLinks={set_links} setPdfs={set_pdfs}/>
+                                }
+                            </Col>
+                        </Row>
+                    :
+                       <Loading/>
                     }
-                </Col>
-                </Row>
-            </Container>
+                </Container>
             }
     </React.Fragment> 
     )
