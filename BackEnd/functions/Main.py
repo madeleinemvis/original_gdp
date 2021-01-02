@@ -170,28 +170,6 @@ def main(source_urls: [str], claim: str):
     trend = TrendMap()
     trend_map = trend(key_words[:5])
 
-    print("-------- STANCE DETECTION --------")
-
-    with open('StanceDetection/test_stances.csv', 'w') as csvfile:
-        fieldnames = ['Headline', 'Body ID']
-        writer = DictWriter(csvfile, fieldnames=fieldnames, lineterminator='\n')
-        writer.writeheader()
-        for index, item in enumerate(list(scraped_data.keys())):
-            writer.writerow({'Headline': claim, 'Body ID': index})
-
-    with open('StanceDetection/test_bodies.csv', 'w', newline='', encoding='utf-8') as csvfile:
-        fieldnames = ['Body ID', 'articleBody']
-        writer = DictWriter(csvfile, fieldnames=fieldnames, lineterminator='\n')
-        writer.writeheader()
-        for index, item in enumerate(list(scraped_data.values())):
-            writer.writerow({'Body ID': index, 'articleBody': item.text_body})
-
-    predict_stance.getPredictions(list(scraped_data.keys()))
-
-    print("-------- SENTIMENT ANALYSIS --------")
-
-    predict_sentiment.getPredictions("StanceDetection/test_bodies.csv")
-
     print("-------- STORING --------")
     # db_manager.insert_many('documents_document')  # Collection name for web pages
 
