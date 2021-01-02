@@ -103,8 +103,8 @@ def make_sentiment_pie_chart(tweets):
 # Function for the main workflow of the project
 def main(source_urls: [str], claim: str):
     start_t = datetime.now()
-    analyser, crawler, scraper, text_processor, causal, predict_stance, predict_sentiment = NLPAnalyser(), Crawler(), Scraper(), TextProcessor(), Causal(), PredictStance(), PredictSentiment()
-
+    analyser, crawler, scraper, text_processor, causal, predict_stance, predict_sentiment = NLPAnalyser(), Crawler(),\
+        Scraper(), TextProcessor(), Causal(), PredictStance(), PredictSentiment()
     db_manager = DbManager()
 
     print("-------- RETRIEVING DATA FROM DB MANAGER --------")
@@ -170,10 +170,37 @@ def main(source_urls: [str], claim: str):
     trend = TrendMap()
     trend_map = trend(key_words[:5])
 
+
+    print("-------- TEST DATA PREPARATION --------")
+
+    with open('StanceDetection/test_stances.csv', 'w') as csvfile:
+        fieldnames = ['Headline', 'Body ID']
+        writer = DictWriter(csvfile, fieldnames=fieldnames, lineterminator='\n')
+        writer.writeheader()
+        for index, item in enumerate(list(scraped_data.keys())):
+            writer.writerow({'Headline': claim, 'Body ID': index})
+
+    with open('StanceDetection/test_bodies.csv', 'w', newline='', encoding='utf-8') as csvfile:
+        fieldnames = ['Body ID', 'articleBody']
+        writer = DictWriter(csvfile, fieldnames=fieldnames, lineterminator='\n')
+        writer.writeheader()
+        for index, item in enumerate(list(scraped_data.values())):
+            writer.writerow({'Body ID': index, 'articleBody': item.text_body})
+
+    print("-------- STANCE DETECTION --------")
+
+    predict_stance.getPredictions()
+
+
+    print("-------- SENTIMENT ANALYSIS --------")
+
+    predict_sentiment.getPredictions("StanceDetection/test_bodies.csv")
+
+
     print("-------- STORING --------")
     # db_manager.insert_many('documents_document')  # Collection name for web pages
 
-    db_manager.insert_many('tweets_tweet', crawled_tweets)  # Collection name for tweets
+    # db_manager.insert_many('tweets_tweet', crawled_tweets)  # Collection name for tweets
     # perform analysis on the scraped dataS
 
     # perform data visualisation
