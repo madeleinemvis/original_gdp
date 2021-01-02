@@ -254,6 +254,5 @@ def save_predictions(pred):
         fieldnames = ['Body ID', 'Stance']
         writer = DictWriter(csvfile, fieldnames=fieldnames, lineterminator='\n')
         writer.writeheader()
-        print(len(pred))
         for index, instance in enumerate(pred):
             writer.writerow({'Body ID': index, 'Stance': label_ref_rev[instance]})
