@@ -39,7 +39,6 @@ def upload_documents(request):
                     handler.run_program(views_handler, uid, documents)
                 except Exception as e:
                     print("e:", e)
-
                 print("TOTAL TIME TAKEN:", datetime.now() - start_t)
                 return JsonResponse(data=uid, status=status.HTTP_201_CREATED, safe=False)
     return JsonResponse(data=request.data, status=status.HTTP_400_BAD_REQUEST, safe=False)
@@ -68,31 +67,14 @@ def suggest_urls(request):
     return JsonResponse(data=request.data, status=status.HTTP_400_BAD_REQUEST, safe=False)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def document_detail(request, pk):
-    # find document by pk (id)
-    try:
-        document = Document.objects.get(pk=pk)
-    except Document.DoesNotExist:
-        return JsonResponse({'message': 'The document does not exist'}, status=status.HTTP_404_NOT_FOUND)
-
-        # GET / PUT / DELETE document
-    if request.method == 'GET':
-        document_serializer = DocumentSerializer(document)
-        return JsonResponse(document_serializer.data)
-
-    elif request.method == 'PUT':
-        document_data = JSONParser().parse(request)
-        document_serializer = DocumentSerializer(document, data=document_data)
-        if document_serializer.is_valid():
-            document_serializer.save()
-            return JsonResponse(document_serializer.data)
-        return JsonResponse(document_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    elif request.method == 'DELETE':
-        count = Document.objects.all().delete()
-        return JsonResponse({'message': '{} Tutorials were deleted successfully!'.format(count[0])},
-                            status=status.HTTP_204_NO_CONTENT)
+@api_view(['POST'])
+def document_list(request):
+    if request.method == "POST":
+        datavisualiser = DataVisualiser()
+        uid = request.data["uid"]
+        documents = datavisualiser.get_all_documents(uid)
+        return JsonResponse(data=documents, status=status.HTTP_200_OK, safe=False)
+    return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
 
 @api_view(['POST'])
@@ -108,8 +90,8 @@ def keywords_wordcloud(request):
 
 @api_view(['POST'])
 def document_frequency(request):
-    datavisualiser = DataVisualiser()
     if request.method == "POST":
+        datavisualiser = DataVisualiser()
         uid = request.data['uid']
         frequency = datavisualiser.get_document_frequency(uid)
         return JsonResponse(data=frequency, status=status.HTTP_200_OK, safe=False)

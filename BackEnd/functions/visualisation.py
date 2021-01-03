@@ -4,6 +4,7 @@ from collections import Counter
 import pandas as pd
 import json
 
+
 # class for the data visualisation
 class DataVisualiser:
     db_manager = None
@@ -95,3 +96,10 @@ class DataVisualiser:
         dates = sorted(tweets_df['date'].tolist(), key=lambda x: (int(x.split("/")[1]), int(x.split("/")[0])))
         impact = [sum(i) for i in zip(tweets_df['retweet_count'].tolist(), tweets_df['favorite_count'].tolist())]
         return [dates, impact]
+
+    def get_all_documents(self, uid: str):
+        documents = self.db_manager.get_all_documents(uid)
+        doc_list = []
+        for d in documents:
+            doc_list.append(dict({'title': d['title'], 'url': d['url'], 'sentiment': d['sentiment']}))
+        return doc_list
