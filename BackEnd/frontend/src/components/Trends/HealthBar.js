@@ -5,11 +5,20 @@ import Bar from "./Bar";
 import Loading from "../Loading";
 import Error from "../Error";
 const HealthBar = props => {
-    const[data, setData] = useState([]);
+    const[data, setData] = useState(JSON.parse(sessionStorage.getItem('health')));
     const[isLoading, setIsLoading] = useState(true);
 
     const[isError, setIsError] = useState(false);
 
+    useEffect(( ) => {
+        if(data === null){
+            fetchData();
+        }else{
+            setIsLoading(false)
+        }
+    }, []);
+
+    
     const fetchData = () => {
         const formdata = new FormData();
         formdata.append("uid", props.uid);
@@ -18,17 +27,14 @@ const HealthBar = props => {
             const causalDf = res.data;
             setData(causalDf)
             console.log("causal:"+ causalDf)
-
+            sessionStorage.setItem('health', JSON.stringify(causalDf))
             setIsLoading(false);
         })
         .catch(e => {
             console.log(e)
+            setIsError(true)
         })
     }
-
-    useEffect(( ) => {
-        fetchData();
-    }, []);
 
     return(
         <React.Fragment>

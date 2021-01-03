@@ -6,7 +6,7 @@ import Loading from "../Loading";
 import Error from "../Error";
 
 const WordCloud = props => {
-    const[wordCloud, setWordCloud] = useState(JSON.parse(localStorage.getItem('wordcloud')))
+    const[wordCloud, setWordCloud] = useState(JSON.parse(sessionStorage.getItem('wordcloud')))
 
     const[isEmpty, setIsEmpty] = useState(true);
     const[isLoading, setIsLoading] = useState(true);
@@ -15,7 +15,7 @@ const WordCloud = props => {
 
 
     useEffect(( ) => {
-        if(!wordCloud || wordCloud.length === 0){
+        if(wordCloud === null){
             setIsEmpty(true)
             fetchData();
         }else{
@@ -40,7 +40,7 @@ const WordCloud = props => {
                     x += 1;
                 }
                 setWordCloud(tempCloud);
-                localStorage.setItem('wordcloud', JSON.stringify(tempCloud))
+                sessionStorage.setItem('wordcloud', JSON.stringify(tempCloud))
                 if (tempCloud.length !== 0){
                     setIsEmpty(false);
                 }

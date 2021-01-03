@@ -6,10 +6,21 @@ import Loading from "../Loading";
 import Error from "../Error";
 
 const DateImpact = props => {
-    const[data, setData] = useState([]);
+    const[data, setData] = useState(JSON.parse(sessionStorage.getItem('dateImpact')));
     const[isLoading, setIsLoading] = useState(true);
     const[isError, setIsError] = useState(false);
 
+
+    useEffect(( ) => {
+        if(data === null){
+            fetchData();
+        }else{
+            setIsLoading(false)
+        }
+        
+    }, []);
+
+    
     const fetchData = () => {
         const formdata = new FormData();
         formdata.append("uid", props.uid);
@@ -18,7 +29,7 @@ const DateImpact = props => {
             const tweetsDf = res.data;
             setData(tweetsDf)
             console.log(tweetsDf)
-
+            sessionStorage.setItem('dateImpact', JSON.stringify(tweetsDf))
             setIsLoading(false);
         })
         .catch(e => {
@@ -26,11 +37,6 @@ const DateImpact = props => {
             console.log(e)
         })
     }
-
-    useEffect(( ) => {
-        fetchData();
-    }, []);
-
     return(
         <React.Fragment>
             <Container>

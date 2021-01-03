@@ -5,7 +5,7 @@ import Scatter from "./Scatter";
 import Loading from "../Loading";
 import Error from "../Error";
 const SentimentScatter = props => {
-    const[data, setData] = useState([]);
+    const[data, setData] = useState(JSON.parse(sessionStorage.getItem('sentScatterData')));
     const[isLoading, setIsLoading] = useState(true);
     const[isError, setIsError] = useState(false);
 
@@ -16,6 +16,7 @@ const SentimentScatter = props => {
         .then(res => {
             const tweetsDf = res.data;
             setData(tweetsDf)
+            sessionStorage.setItem('sentScatterData', JSON.stringify(tweetsDf))
             setIsLoading(false);
         })
         .catch(e => {
@@ -25,7 +26,11 @@ const SentimentScatter = props => {
     }
 
     useEffect(( ) => {
-        fetchData();
+        if(data === null){
+            fetchData()
+        }else{
+            setIsLoading(false)
+        }
     }, []);
 
     return(

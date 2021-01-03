@@ -5,34 +5,58 @@ import Error from "../Error";
 import http from '../../http-common'
 import Loading from "../Loading";
 const TweetSummary = props => {
-    const[frequency, setFrequency] = useState(0);
-    const[favourites, setFavourites] = useState(0);
-    const[retweets, setRetweets] = useState(0);
+    const[frequency, setFrequency] = useState(JSON.parse(sessionStorage.getItem('tweetFreq')));
+    const[favourites, setFavourites] = useState(JSON.parse(sessionStorage.getItem('tweetFavourites')));
+    const[retweets, setRetweets] = useState(JSON.parse(sessionStorage.getItem('retweets')));
     const[isLoading, setIsLoading] = useState(true);
-    const[isEmpty, setIsEmpty] = useState(false);
     const[isError, setIsError] = useState(false);
 
     useEffect(( ) => {
-        const fetchData = () => {
-            const formdata = new FormData();
-            formdata.append("uid", props.uid);
-            http.post('/tweets/tweet_summary', formdata)
-                .then(res => {
-                    setFrequency(res.data[0]);
-                    setFavourites(res.data[1])
-                    setRetweets(res.data[2])
-                    console.log("frequency:", frequency, "favourites:", favourites, "retweets:", retweets)
-                    setIsLoading(false);
-                })
-                .catch(e => {
-                    setIsError(true);
-                    console.log(e)
-                })
-
+        if(frequency === null || favourites === null || retweets === null){
+            fetchData();
+        }else{
+            setIsLoading(false)
         }
-
-        fetchData();
     }, []);
+
+    const fetchData = () => {
+        const formdata = new FormData();
+        formdata.append("uid", props.uid);
+        http.post('/tweets/tweet_summary', formdata)
+            .then(res => {
+                if(res.data[0] !== null){
+                    setFrequency(res.data[0]);
+                    sessionStorage.setItem('tweetFreq', JSON.stringify(res.data[0]))  
+                }else{
+                    setFrequency(0);
+                      
+                }
+
+                if(res.data[1] !== null){
+                    setFavourites(res.data[1])
+                    sessionStorage.setItem('tweetFavourites', JSON.stringify(res.data[1]))  
+                }else{
+                    setFavourites(0)
+                }
+
+                if(res.data[2] !== null){
+                    setRetweets(res.data[2])   
+                    sessionStorage.setItem('retweets', JSON.stringify(res.data[2]))
+                }else{
+                    setRetweets(0)
+                }
+                
+                console.log("frequency:", frequency, "favourites:", favourites, "retweets:", retweets)
+                
+
+                setIsLoading(false);
+            })
+            .catch(e => {
+                setIsError(true);
+                console.log(e)
+            })
+
+    }
 
     return <React.Fragment>
             <Container>

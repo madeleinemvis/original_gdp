@@ -5,11 +5,21 @@ import Bar from "./Bar";
 import Loading from "../Loading";
 import Error from "../Error";
 const PoliticsBar = props => {
-    const[data, setData] = useState([]);
+    const[data, setData] = useState(JSON.parse(sessionStorage.getItem('politics')));
     const[isLoading, setIsLoading] = useState(true);
 
     const[isError, setIsError] = useState(false);
 
+
+    useEffect(( ) => {
+        if(data === null){
+            fetchData();
+        }else{
+            setIsLoading(false)
+        }
+    }, []);
+
+    
     const fetchData = () => {
         const formdata = new FormData();
         formdata.append("uid", props.uid);
@@ -18,17 +28,15 @@ const PoliticsBar = props => {
             const causalDf = res.data;
             setData(causalDf)
             console.log("causal:"+ causalDf)
-
+            sessionStorage.setItem('politics', JSON.stringify(causalDf))
             setIsLoading(false);
         })
         .catch(e => {
+            setIsError(true)
+            
             console.log(e)
         })
     }
-
-    useEffect(( ) => {
-        fetchData();
-    }, []);
 
     return(
         <React.Fragment>

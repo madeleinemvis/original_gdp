@@ -5,13 +5,18 @@ import http from '../../http-common'
 import Loading from "../Loading";
 import Error from "../Error";
 const DocumentFreq = props => {
-    const[frequency, setFrequency] = useState(0);
+    const[frequency, setFrequency] = useState(JSON.parse(sessionStorage.getItem('docFreq')))
     const[isLoading, setIsLoading] = useState(true);
 
     const[isError, setIsError] = useState(false);
 
     useEffect(( ) => {
-        fetchData();
+        if(frequency === null){
+            fetchData();
+        }else{
+            setIsLoading(false)
+        }
+        
     }, []);
 
     const fetchData = () => {
@@ -21,6 +26,7 @@ const DocumentFreq = props => {
 
             .then(res => {
                 setFrequency(res.data);
+                sessionStorage.setItem('docFreq', JSON.stringify(res.data))
                 setIsLoading(false);
             })
             .catch(e => {

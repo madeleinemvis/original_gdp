@@ -14,13 +14,22 @@ import Error from "../Error";
 
 const Tweets = props => {
     
-    const [tweets, setTweets] = useState([]);
+    const [tweets, setTweets] = useState(JSON.parse(sessionStorage.getItem('tweets')));
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
+    const[isEmpty, setIsEmpty] = useState(true);
     const [errorCode, setErrorCode] = useState(201);
 
     useEffect(() => {
-        retrieveTweets();
+        if(tweets === null){
+            setIsEmpty(true)
+            retrieveTweets();
+        }
+        else{
+            setIsLoading(false)
+            setIsEmpty(false)
+        }
+        
     }, []);
 
     const retrieveTweets = () => {
@@ -29,6 +38,10 @@ const Tweets = props => {
         http.post('/tweets', formdata)
             .then(res => {
                 setTweets(res.data)
+                sessionStorage.setItem('tweets', JSON.stringify(res.data))
+                if(res.data.length !== 0){
+                    setIsEmpty(false);
+                }
                 setIsLoading(false)
             })
             .catch(e => {
@@ -59,6 +72,9 @@ const Tweets = props => {
                         </Col>
                     :
                         <Col>
+                        {isEmpty ?
+                            <p>No Documents Found</p>
+                            :
                             <Scrollbar style={{width: "100%", height: 400}}>
                                 {tweets && tweets.map((tw, index) => (
                                     <Card key={index}>
@@ -79,6 +95,7 @@ const Tweets = props => {
                                     </Card>
                                 ))}
                             </Scrollbar>
+                        }
                         </Col>
                     }
                 </Row>
