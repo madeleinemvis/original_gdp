@@ -8,8 +8,6 @@ import Error from "../Error";
 const WordCloud = props => {
     const[wordCloud, setWordCloud] = useState(JSON.parse(sessionStorage.getItem('wordcloud')))
 
-    const[isEmpty, setIsEmpty] = useState(true);
-    const[isLoading, setIsLoading] = useState(true);
 
     const[isError, setIsError] = useState(false);
 

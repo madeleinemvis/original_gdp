@@ -8,7 +8,6 @@ import {
 
 import { Scrollbar } from "react-scrollbars-custom";
 
-import http from '../../http-common';
 import Loading from "../Loading";
 import Error from "../Error";
 
@@ -50,6 +49,8 @@ const Tweets = props => {
             })
     }
 
+    
+    
     return(
         <React.Fragment>
             <Container>
@@ -97,8 +98,8 @@ const Tweets = props => {
                             </Scrollbar>
                         }
                         </Col>
-                    }
-                </Row>
+                    
+                    }</Row>
                 }
 
             </Container>

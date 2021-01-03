@@ -1,5 +1,7 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
+
 import {Row, Col, Container} from "react-bootstrap";
+
 import Tweets from "./Tweets";
 import SentimentScatter from "./SentimentScatter";
 import TweetFreq from "./TweetFreq";
@@ -9,6 +11,17 @@ import DateImpact from "./DateImpact";
 
 
 const TweetsDashboard = props => {
+    const [tweets, setTweets] = useState([])
+    const [tweetFreq, setTweetFreq] = useState(0)
+    
+    useEffect(() => {
+        setTweets(props.tweets)
+    }, [props.tweets]);
+
+    useEffect(() => {
+        setTweetFreq(props.tweetFreq)
+    }, [props.tweetFreq])
+
     return(
         <Container className="dashboard">
             <Row>
@@ -18,7 +31,7 @@ const TweetsDashboard = props => {
             </Row>
             <Row>
                 <Col className="col-md widget">
-                    <Tweets uid={props.uid}/>
+                    <Tweets tweets={tweets}/>
                 </Col>
                 <Col className="col-md widget">
                     <TweetSummary uid={props.uid}/>

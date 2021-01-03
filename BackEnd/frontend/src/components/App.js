@@ -3,9 +3,10 @@ import ReactDOM from 'react-dom';
 import Home from './Home';
 import Dashboard from './Dashboard';
 import {
-    BrowserRouter as Router,
+    HashRouter as Router,
     Switch,
-    Route
+    Route,
+    Link
   } from "react-router-dom";
 import '../style/App.css';
 import {Container} from "react-bootstrap";
@@ -24,17 +25,17 @@ const App = () => {
 
     return (
         <Fragment>
-            <Router>
+            <Router basename="/static">
                 <Container>
                     <nav className="navbar navbar-expand-sm">
                         <a className="navbar-brand" href="/">Propaganda Analysis</a>
                         <div className="collapse navbar-collapse" id="navbarNav">
                             <ul className="navbar-nav">
                                 <li className="nav-item">
-                                    <a href="/" className="nav-link">Home</a>
+                                    <Link className="nav-link" to="/">Home</Link>
                                 </li>
                                 <li className="nav-item">
-                                  <a href="/about" className="nav-link">About</a>
+                                    <Link className="nav-link" to="/about">About</Link>
                                 </li>
                             </ul>
                         </div>

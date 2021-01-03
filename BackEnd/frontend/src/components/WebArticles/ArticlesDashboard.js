@@ -7,19 +7,20 @@ import DocumentFreq from "./DocumentFreq";
 
 const ArticlesDashboard = props => {
     console.log("uid articles:", props.uid);
+
     return(
         <Container className="dashboard">
             <Row>
                 <Col className="col-md widget">
-                    <TweetFreq uid={props.uid}/>
+                    <TweetFreq tweetsFreq={props.tweetsFreq}/>
                 </Col>
                 <Col className="col-md widget">
-                    <DocumentFreq uid={props.uid}/>
+                    <DocumentFreq docFreq={props.docFreq}/>
                 </Col>
             </Row>
             <Row>
                 <Col className="col-md widget">
-                    <WordCloud uid={props.uid} />
+                    <WordCloud wordCloud={props.wordCloud} />
                 </Col>
             </Row>
         </Container>
