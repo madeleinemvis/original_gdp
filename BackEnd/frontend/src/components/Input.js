@@ -84,7 +84,7 @@ const Input = props => {
             <form onSubmit={submit}>
                 <h5>Claim:</h5>
                 <div className="input-group">
-                    <input type="text" className="form-control" placeholder="Claim" aria-label="claim" aria-describedby="basic-addon2" onChange={e => set_claim(e.target.value)} />
+                    <input type="text" className="form-control" placeholder="Claim" aria-label="claim" aria-describedby="basic-addon2" onChange={e => set_claim(e.target.value)} required/>
                 </div>
                 <br/>
                 <h5>Links:</h5>
