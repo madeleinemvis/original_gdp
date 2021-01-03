@@ -25,7 +25,6 @@ class Handler:
         self.causal = Causal()
         self.trend_map = TrendMap()
         self.predict_stance = PredictStance()
-        self.predict_sentiment = PredictSentiment()
 
     def generate_manifesto(self, documents):
         urls = set()
@@ -158,10 +157,10 @@ class Handler:
             scraped_data[k] = data[k]
 
         print("-------- STORING TWEETS --------")
-        # viewshandler.save_tweets(uid, crawled_tweets)
+        viewshandler.save_tweets(uid, crawled_tweets)
 
         print("-------- STORING TRENDS --------")
-        #viewshandler.save_trends(uid, econ, heath, politics, map_countries, map_trends)
+        viewshandler.save_trends(uid, econ, heath, politics, map_countries, map_trends)
 
         print("------- STORE NEW DOCUMENTS -------")
         viewshandler.save_documents(uid, 'web-page', scraped_data.values(), predictions_dict)
