@@ -34,9 +34,10 @@ def upload_documents(request):
                 documents = [*documents_urls, *documents_pdfs, *files]
                 handler = Handler()
                 start_t = datetime.now()
+        
                 print("Starting program")
                 try:
-                    handler.run_program(views_handler, uid, documents)
+                    handler.run_program(views_handler, uid, claim, documents)
                 except Exception as e:
                     print("e:", e)
                 print("TOTAL TIME TAKEN:", datetime.now() - start_t)

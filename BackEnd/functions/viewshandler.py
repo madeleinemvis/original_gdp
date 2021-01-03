@@ -35,7 +35,8 @@ class ViewsHandler:
 
         return doc_list
 
-    def set_documents(self, uid: str, content_type: str, documents) -> [Document]:
+    @staticmethod
+    def set_documents(uid: str, content_type: str, documents, predictions_dict) -> [Document]:
         d_save = []
         for d in documents:
             # _id generated automatically
@@ -85,8 +86,8 @@ class ViewsHandler:
             pass
         return uid, claim, document_urls, document_pdfs, files
 
-    def save_documents(self, uid: str, content_type: str, documents):
-        d_save = self.set_documents(uid, content_type, documents)
+    def save_documents(self, uid: str, content_type: str, documents, predictions_dict):
+        d_save = self.set_documents(uid, content_type, documents,predictions_dict)
         Document.objects.bulk_create(d_save)
 
     def save_claim(self, uid: str, claim: str):

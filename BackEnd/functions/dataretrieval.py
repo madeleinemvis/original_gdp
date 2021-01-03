@@ -14,7 +14,7 @@ import requests
 import requests.exceptions
 import tweepy
 from googlesearch import search
-from readability import Document
+from readability.readability import Document
 from requests import Response
 from tika import parser
 from trafilatura import extract

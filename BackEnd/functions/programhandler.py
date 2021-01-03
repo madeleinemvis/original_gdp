@@ -1,11 +1,15 @@
 import random
 import json
+from csv import DictWriter
+
 
 import csv
 from functions.dataretrieval import Scraper, Crawler
 from functions.analysis import NLPAnalyser
 from functions.textprocessing import TextProcessor
 from functions.causal import Causal, TrendMap
+from functions.StanceDetection.pred import PredictStance
+from functions.article_sentiments import PredictSentiment
 
 
 class Handler:
@@ -21,6 +25,7 @@ class Handler:
         self.text_processor = TextProcessor()
         self.causal = Causal()
         self.trend_map = TrendMap()
+        self.predict_stance = PredictStance()
 
     def generate_manifesto(self, documents):
         urls = set()
@@ -107,7 +112,7 @@ class Handler:
         map_trends = json.dumps(map_data.trends)
         return econ, health, politics, map_countries, map_trends
 
-    def run_program(self, viewshandler, uid: str, documents):
+    def run_program(self, viewshandler, uid: str, claim: str, documents):
         print("------- CLEARING OUT THE DATABASE --------)")
         viewshandler.db_manager.drop_collection('documents_document')
         viewshandler.db_manager.drop_collection('documents_claim')
@@ -139,7 +144,7 @@ class Handler:
 
         print("-------- CAUSAL ANALYSIS --------")
         econ, heath, politics, map_countries, map_trends = self.trends_analysis(keywords[:5])
-        
+
         print("-------- RECURSIVE CRAWLING --------")
         # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
         recursive_urls = self.crawler.url_cleaner(urls)
@@ -152,6 +157,33 @@ class Handler:
         for k in data.keys():
             scraped_data[k] = data[k]
 
+        print("-------- TEST DATA PREPARATION --------")
+
+        name = "functions/StanceDetection/test_stances_" + uid
+        stances = "%s.csv" % name
+
+        with open(stances, 'w') as csvfile:
+            fieldnames = ['Headline', 'Body ID']
+            writer = DictWriter(csvfile, fieldnames=fieldnames, lineterminator='\n')
+            writer.writeheader()
+            for index, item in enumerate(list(scraped_data.keys())):
+                writer.writerow({'Headline': claim, 'Body ID': index})
+
+        name = "functions/StanceDetection/test_bodies_" + uid
+        bodies = "%s.csv" % name
+
+        with open(bodies, 'w', newline='', encoding='utf-8') as csvfile:
+            fieldnames = ['Body ID', 'articleBody']
+            writer = DictWriter(csvfile, fieldnames=fieldnames, lineterminator='\n')
+            writer.writeheader()
+            for index, item in enumerate(list(scraped_data.values())):
+                writer.writerow({'Body ID': index, 'articleBody': item.text_body})
+
+        print("-------- STANCE DETECTION --------")
+
+        predictions_dict = self.predict_stance.getPredictions(stances, bodies, list(scraped_data.keys()))
+        print(predictions_dict)
+
         print("-------- STORING TWEETS --------")
         viewshandler.save_tweets(uid, crawled_tweets)
 
@@ -159,4 +191,4 @@ class Handler:
         viewshandler.save_trends(uid, econ, heath, politics, map_countries, map_trends)
 
         print("------- STORE NEW DOCUMENTS -------")
-        viewshandler.save_documents(uid, 'web-page', scraped_data.values())
+        viewshandler.save_documents(uid, 'web-page', scraped_data.values(), predictions_dict)

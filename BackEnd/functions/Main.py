@@ -5,6 +5,7 @@ import cufflinks as cf
 import pandas as pd
 import plotly.express as px
 from csv import DictWriter
+import os
 
 from analysis import NLPAnalyser
 from causal import Causal, TrendMap
@@ -149,7 +150,7 @@ def main(source_urls: [str], claim: str):
     # Throws errors if links weren't searched
     analyser.create_tfidf_model(scraped_data)
 
-    print("-------- RECURSIVE CRAWLING --------")
+    # print("-------- RECURSIVE CRAWLING --------")
     # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
     recursive_urls = crawler.url_cleaner(urls)
     final_crawled_urls = crawler.recursive_url_crawl(recursive_urls, MAXIMUM_URL_CRAWL_DEPTH, analyser)
@@ -167,31 +168,6 @@ def main(source_urls: [str], claim: str):
     #print("Causal time: ", datetime.now()-causal_t)
     #trend = TrendMap()
     #trend_map = trend(key_words[:5])
-
-
-    print("-------- TEST DATA PREPARATION --------")
-
-    with open('StanceDetection/test_stances.csv', 'w') as csvfile:
-        fieldnames = ['Headline', 'Body ID']
-        writer = DictWriter(csvfile, fieldnames=fieldnames, lineterminator='\n')
-        writer.writeheader()
-        for index, item in enumerate(list(scraped_data.keys())):
-            writer.writerow({'Headline': claim, 'Body ID': index})
-
-    with open('StanceDetection/test_bodies.csv', 'w', newline='', encoding='utf-8') as csvfile:
-        fieldnames = ['Body ID', 'articleBody']
-        writer = DictWriter(csvfile, fieldnames=fieldnames, lineterminator='\n')
-        writer.writeheader()
-        for index, item in enumerate(list(scraped_data.values())):
-            writer.writerow({'Body ID': index, 'articleBody': item.text_body})
-
-    print("-------- STANCE DETECTION --------")
-
-    predict_stance.getPredictions()
-
-
-    print("-------- SENTIMENT ANALYSIS --------")
-    predict_sentiment.getPredictions("StanceDetection/test_bodies.csv")
 
 
     print("-------- STORING --------")
