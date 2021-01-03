@@ -34,7 +34,7 @@ def upload_documents(request):
                 documents = [*documents_urls, *documents_pdfs, *files]
                 handler = Handler()
                 start_t = datetime.now()
-                handler.run_program(views_handler, uid, documents)
+                handler.run_program(views_handler, uid, claim, documents)
                 print("TOTAL TIME TAKEN:", datetime.now()-start_t)
                 return JsonResponse(data=uid, status=status.HTTP_201_CREATED, safe=False)
     return JsonResponse(data=request.data, status=status.HTTP_400_BAD_REQUEST, safe=False)
