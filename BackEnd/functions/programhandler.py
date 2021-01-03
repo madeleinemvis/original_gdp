@@ -143,7 +143,7 @@ class Handler:
 
         print("-------- CAUSAL ANALYSIS --------")
         econ, heath, politics, map_countries, map_trends = self.trends_analysis(keywords[:5])
-        
+
         print("-------- RECURSIVE CRAWLING --------")
         # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
         recursive_urls = self.crawler.url_cleaner(urls)
@@ -155,6 +155,33 @@ class Handler:
         data = self.scraper.downloads(urls_to_scrape)
         for k in data.keys():
             scraped_data[k] = data[k]
+
+        print("-------- TEST DATA PREPARATION --------")
+
+        name = "functions/StanceDetection/test_stances_" + uid
+        stances = "%s.csv" % name
+
+        with open(stances, 'w') as csvfile:
+            fieldnames = ['Headline', 'Body ID']
+            writer = DictWriter(csvfile, fieldnames=fieldnames, lineterminator='\n')
+            writer.writeheader()
+            for index, item in enumerate(list(scraped_data.keys())):
+                writer.writerow({'Headline': claim, 'Body ID': index})
+
+        name = "functions/StanceDetection/test_bodies_" + uid
+        bodies = "%s.csv" % name
+
+        with open(bodies, 'w', newline='', encoding='utf-8') as csvfile:
+            fieldnames = ['Body ID', 'articleBody']
+            writer = DictWriter(csvfile, fieldnames=fieldnames, lineterminator='\n')
+            writer.writeheader()
+            for index, item in enumerate(list(scraped_data.values())):
+                writer.writerow({'Body ID': index, 'articleBody': item.text_body})
+
+        print("-------- STANCE DETECTION --------")
+
+        predictions_dict = self.predict_stance.getPredictions(stances, bodies, list(scraped_data.keys()))
+        print(predictions_dict)
 
         print("-------- STORING TWEETS --------")
         viewshandler.save_tweets(uid, crawled_tweets)
