@@ -1,10 +1,14 @@
 import random
-import json 
+import json
+from csv import DictWriter
+
 
 from functions.dataretrieval import Scraper, Crawler
 from functions.analysis import NLPAnalyser
 from functions.textprocessing import TextProcessor
 from functions.causal import Causal, TrendMap
+from functions.StanceDetection.pred import PredictStance
+from functions.article_sentiments import PredictSentiment
 
 
 class Handler:
@@ -20,6 +24,8 @@ class Handler:
         self.text_processor = TextProcessor()
         self.causal = Causal()
         self.trend_map = TrendMap()
+        self.predict_stance = PredictStance()
+        self.predict_sentiment = PredictSentiment()
 
     def generate_manifesto(self, documents):
         urls = set()
@@ -151,11 +157,38 @@ class Handler:
         for k in data.keys():
             scraped_data[k] = data[k]
 
+        print("-------- TEST DATA PREPARATION --------")
+
+        name = "functions/StanceDetection/test_stances_" + uid
+        stances = "%s.csv" % name
+
+        claim='vaccines are dangerous'
+        with open(stances, 'w') as csvfile:
+            fieldnames = ['Headline', 'Body ID']
+            writer = DictWriter(csvfile, fieldnames=fieldnames, lineterminator='\n')
+            writer.writeheader()
+            for index, item in enumerate(list(scraped_data.keys())):
+                writer.writerow({'Headline': claim, 'Body ID': index})
+
+        name = "functions/StanceDetection/test_bodies_" + uid
+        bodies = "%s.csv" % name
+
+        with open(bodies, 'w', newline='', encoding='utf-8') as csvfile:
+            fieldnames = ['Body ID', 'articleBody']
+            writer = DictWriter(csvfile, fieldnames=fieldnames, lineterminator='\n')
+            writer.writeheader()
+            for index, item in enumerate(list(scraped_data.values())):
+                writer.writerow({'Body ID': index, 'articleBody': item.text_body})
+
+        print("-------- STANCE DETECTION --------")
+
+        predictions_dict = self.predict_stance.getPredictions(stances, bodies, list(scraped_data.keys()))
+
         print("-------- STORING TWEETS --------")
-        viewshandler.save_tweets(uid, crawled_tweets)
+        # viewshandler.save_tweets(uid, crawled_tweets)
 
         print("-------- STORING TRENDS --------")
-        viewshandler.save_trends(uid, econ, heath, politics, map_countries, map_trends)
+        #viewshandler.save_trends(uid, econ, heath, politics, map_countries, map_trends)
 
         print("------- STORE NEW DOCUMENTS -------")
-        viewshandler.save_documents(uid, 'web-page', scraped_data.values())
+        viewshandler.save_documents(uid, 'web-page', scraped_data.values(), predictions_dict)

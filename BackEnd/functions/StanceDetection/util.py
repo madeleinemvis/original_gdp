@@ -256,3 +256,12 @@ def save_predictions(pred):
         writer.writeheader()
         for index, instance in enumerate(pred):
             writer.writerow({'Body ID': index, 'Stance': label_ref_rev[instance]})
+
+
+def get_predictions(pred, urls):
+    predictions = {}
+    for index, instance in enumerate(pred):
+        predictions[urls[index]] = label_ref_rev[instance]
+
+    return predictions
+
