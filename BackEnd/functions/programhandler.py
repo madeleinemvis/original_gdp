@@ -1,6 +1,7 @@
 import random
-import json 
+import json
 
+import csv
 from functions.dataretrieval import Scraper, Crawler
 from functions.analysis import NLPAnalyser
 from functions.textprocessing import TextProcessor

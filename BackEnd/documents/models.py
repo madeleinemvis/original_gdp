@@ -11,6 +11,7 @@ class Document(models.Model):
     text_body = models.TextField(blank=True, default='')
     cleaned_tokens = JSONField()
     html_links = JSONField()
+    sentiment = models.TextField(blank=True, default='')
 
 
 class Claim(models.Model):

@@ -191,7 +191,6 @@ def main(source_urls: [str], claim: str):
 
 
     print("-------- SENTIMENT ANALYSIS --------")
-
     predict_sentiment.getPredictions("StanceDetection/test_bodies.csv")
 
 

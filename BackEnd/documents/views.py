@@ -34,21 +34,25 @@ def upload_documents(request):
                 documents = [*documents_urls, *documents_pdfs, *files]
                 handler = Handler()
                 start_t = datetime.now()
-                handler.run_program(views_handler, uid, documents)
-                print("TOTAL TIME TAKEN:", datetime.now()-start_t)
+                print("Starting program")
+                try:
+                    handler.run_program(views_handler, uid, documents)
+                except Exception as e:
+                    print("e:", e)
+
+                print("TOTAL TIME TAKEN:", datetime.now() - start_t)
                 return JsonResponse(data=uid, status=status.HTTP_201_CREATED, safe=False)
     return JsonResponse(data=request.data, status=status.HTTP_400_BAD_REQUEST, safe=False)
 
 
 @api_view(['POST'])
 def suggest_urls(request):
-    start_t = datetime.now()
     if request.method == 'POST':
         views_handler = ViewsHandler()
         request_form = RequestForm(request.POST)
         if request_form.is_valid():
             uid, claim, documents_urls, documents_pdfs, files = views_handler.get_objects_from_request(request,
-                                                                                                    request_form)
+                                                                                                       request_form)
             # Convert data into Scraped Documents
             if documents_urls:
                 documents_urls = views_handler.read_docs(documents_urls)
@@ -99,6 +103,16 @@ def keywords_wordcloud(request):
         keywords = datavisualiser.word_cloud(uid)
         print(keywords)
         return JsonResponse(data=keywords, status=status.HTTP_200_OK, safe=False)
+    return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
+
+
+@api_view(['POST'])
+def document_frequency(request):
+    datavisualiser = DataVisualiser()
+    if request.method == "POST":
+        uid = request.data['uid']
+        frequency = datavisualiser.get_document_frequency(uid)
+        return JsonResponse(data=frequency, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
 

@@ -29,6 +29,7 @@ operations = [
             ('text_body', models.TextField(blank=True, default='')),
             ('cleaned_tokens', jsonfield.fields.JSONField()),
             ('html_links', jsonfield.fields.JSONField()),
+            ('sentiment', models.TextField(blank=True, default=''))
         ],
     ),
 ]
