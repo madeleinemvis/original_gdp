@@ -187,7 +187,7 @@ class Crawler:
         return tweets
 
 
-Data = namedtuple('Data', 'uid content_type url raw_html title text_body cleaned_tokens html_links')
+Data = namedtuple('Data', 'uid content_type url raw_html title text_body cleaned_tokens html_links sentiment')
 
 
 class Scraper:
@@ -334,7 +334,7 @@ class Scraper:
         cleaned_tokens = self.processor.clean_tokens(tokens)
 
         return Data(uid="", content_type=content_type, url=url, raw_html=initial_html, title=title,
-                    text_body=main_text, cleaned_tokens=cleaned_tokens, html_links=urls)
+                    text_body=main_text, cleaned_tokens=cleaned_tokens, html_links=urls, sentiment="")
 
     # method for getting raw text and cleaned tokens from a file, which can be a pdf or text file
     def get_data_from_path(self, path):
@@ -374,4 +374,4 @@ class Scraper:
         cleaned_tokens = self.processor.clean_tokens(tokens)
 
         return Data(uid='', content_type=content_type, url='', raw_html='', title='',
-                    text_body=processed_text, cleaned_tokens=cleaned_tokens, html_links=urls)
+                    text_body=processed_text, cleaned_tokens=cleaned_tokens, html_links=urls, sentiment="")

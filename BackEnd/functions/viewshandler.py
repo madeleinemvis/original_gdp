@@ -5,6 +5,7 @@ from documents.models import Document, Claim
 from tweets.models import Tweet
 from trends.models import Trend
 
+from .article_sentiments import PredictSentiment
 from .dataretrieval import Scraper
 from .dbmanager import DbManager
 
@@ -12,21 +13,22 @@ from .dbmanager import DbManager
 class ViewsHandler:
     db_manager = None
     scraper = Scraper()
+    predict_sentiment = PredictSentiment()
 
     def __init__(self):
         self.db_manager = DbManager()
 
     def read_docs(self, docs) -> [str]:
+        print("docs", docs)
         documents = []
         try:
             docs = literal_eval(docs)
             for d in docs:
                 documents.append(docs[d])
         except:
-            documents.extend(docs) # Object is a File.
+            documents.extend(docs)  # Object is a File.
 
         documents = self.scraper.downloads(documents)
-
         doc_list = []
         for d in documents:
             doc_list.append(documents[d])
@@ -39,7 +41,8 @@ class ViewsHandler:
         for d in documents:
             # _id generated automatically
             d_save.append(Document(uid=uid, content_type=content_type, url=d.url, raw_html=d.raw_html, title=d.title,
-                                   text_body=d.text_body, cleaned_tokens=d.cleaned_tokens, html_links=d.html_links))
+                                   text_body=d.text_body, cleaned_tokens=d.cleaned_tokens, html_links=d.html_links,
+                                   sentiment=self.predict_sentiment.get_article_sentiment_Afinn(d.text_body)))
         return d_save
 
     @staticmethod
