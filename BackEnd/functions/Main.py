@@ -4,12 +4,17 @@ from datetime import datetime
 import cufflinks as cf
 import pandas as pd
 import plotly.express as px
+from csv import DictWriter
 
-from BackEnd.functions.analysis import NLPAnalyser
-from BackEnd.functions.causal import Causal, TrendMap
-from BackEnd.functions.dataretrieval import Crawler, Scraper
-from BackEnd.functions.dbmanager import DbManager
-from BackEnd.functions.textprocessing import TextProcessor
+from analysis import NLPAnalyser
+from causal import Causal, TrendMap
+from dataretrieval import Crawler, Scraper
+from dbmanager import DbManager
+from textprocessing import TextProcessor
+from StanceDetection.pred import PredictStance
+from article_sentiments import PredictSentiment
+
+
 
 NUMBER_OF_KEY_WORDS = 30
 NUMBER_OF_GOOGLE_RESULTS_WANTED = 25
@@ -29,7 +34,7 @@ def generate_manifesto(scraper, text_processor, source_urls, all_sentences, docu
 
         # if there are less than 5 documents, scrape tokens
         if len(source_urls) < 5:
-            all_tokens = [t for s in scraped_data.values() for t in s.tokens]
+            all_tokens = [t for s in scraped_data.values() for t in s.cleaned_tokens]
             key_words_with_scores = TextProcessor.calculate_key_words(all_tokens, NUMBER_OF_KEY_WORDS)
         else:
             all_sentences = " ".join([s.text_body for s in scraped_data.values()])
@@ -98,7 +103,8 @@ def make_sentiment_pie_chart(tweets):
 # Function for the main workflow of the project
 def main(source_urls: [str], claim: str):
     start_t = datetime.now()
-    analyser, crawler, scraper, text_processor, causal = NLPAnalyser(), Crawler(), Scraper(), TextProcessor(), Causal()
+    analyser, crawler, scraper, text_processor, causal, predict_stance, predict_sentiment = NLPAnalyser(), Crawler(),\
+        Scraper(), TextProcessor(), Causal(), PredictStance(), PredictSentiment()
     db_manager = DbManager()
 
     print("-------- RETRIEVING DATA FROM DB MANAGER --------")
@@ -140,7 +146,7 @@ def main(source_urls: [str], claim: str):
 
     # print("-------- EXAMPLE SIMILARITY CHECKING --------")
     # do some similarity checking for the documents so far crawled
-    # Throws errors if links weren't searched 
+    # Throws errors if links weren't searched
     analyser.create_tfidf_model(scraped_data)
 
     print("-------- RECURSIVE CRAWLING --------")
@@ -162,10 +168,37 @@ def main(source_urls: [str], claim: str):
     #trend = TrendMap()
     #trend_map = trend(key_words[:5])
 
+
+    print("-------- TEST DATA PREPARATION --------")
+
+    with open('StanceDetection/test_stances.csv', 'w') as csvfile:
+        fieldnames = ['Headline', 'Body ID']
+        writer = DictWriter(csvfile, fieldnames=fieldnames, lineterminator='\n')
+        writer.writeheader()
+        for index, item in enumerate(list(scraped_data.keys())):
+            writer.writerow({'Headline': claim, 'Body ID': index})
+
+    with open('StanceDetection/test_bodies.csv', 'w', newline='', encoding='utf-8') as csvfile:
+        fieldnames = ['Body ID', 'articleBody']
+        writer = DictWriter(csvfile, fieldnames=fieldnames, lineterminator='\n')
+        writer.writeheader()
+        for index, item in enumerate(list(scraped_data.values())):
+            writer.writerow({'Body ID': index, 'articleBody': item.text_body})
+
+    print("-------- STANCE DETECTION --------")
+
+    predict_stance.getPredictions()
+
+
+    print("-------- SENTIMENT ANALYSIS --------")
+
+    predict_sentiment.getPredictions("StanceDetection/test_bodies.csv")
+
+
     print("-------- STORING --------")
     # db_manager.insert_many('documents_document')  # Collection name for web pages
 
-    db_manager.insert_many('tweets_tweet', crawled_tweets)  # Collection name for tweets
+    # db_manager.insert_many('tweets_tweet', crawled_tweets)  # Collection name for tweets
     # perform analysis on the scraped dataS
 
     # perform data visualisation
@@ -179,6 +212,6 @@ if __name__ == "__main__":
         "https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/",
         "https://www.healthline.com/health/vaccinations/opposition",
         "https://ec.europa.eu/health/sites/health/files/vaccination/docs/2018_vaccine_confidence_en.pdf",
-        "https://www.theguardian.com/world/2020/nov/10/coronavirus-anti-vaxxers-seek-to-discredit-pfizers-vaccine"
-    ]
-    main(sources, "vaccines cause autism")
+        "https://www.theguardian.com/world/2020/nov/10/coronavirus-anti-vaxxers-seek-to-discredit-pfizers-vaccine",
+        "https://www.healthline.com/health/vaccinations/opposition"]
+    main(sources, "vaccines are dangerous")
