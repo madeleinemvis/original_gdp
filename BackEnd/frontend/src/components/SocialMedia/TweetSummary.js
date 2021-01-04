@@ -8,6 +8,7 @@ const TweetSummary = props => {
     const[frequency, setFrequency] = useState(JSON.parse(sessionStorage.getItem('tweetFreq')));
     const[favourites, setFavourites] = useState(JSON.parse(sessionStorage.getItem('tweetFavourites')));
     const[retweets, setRetweets] = useState(JSON.parse(sessionStorage.getItem('retweets')));
+    const[query, setQuery] = useState(JSON.parse(sessionStorage.getItem('query')));
     const[isLoading, setIsLoading] = useState(true);
     const[isError, setIsError] = useState(false);
 
@@ -45,8 +46,15 @@ const TweetSummary = props => {
                 }else{
                     setRetweets(0)
                 }
+
+                if(res.data[3] !== null){
+                    setRetweets(res.data[3])
+                    sessionStorage.setItem('query', JSON.stringify(res.data[2]))
+                }else{
+                    setRetweets(0)
+                }
                 
-                console.log("frequency:", frequency, "favourites:", favourites, "retweets:", retweets)
+                console.log("frequency:", frequency, "favourites:", favourites, "retweets:", retweets, "query:", query)
                 
 
                 setIsLoading(false);
@@ -70,19 +78,35 @@ const TweetSummary = props => {
                     <Col>
                         <Row>
                             <Col>
+                                <h4>Search query:</h4>
+                            </Col>
+                        </Row>
+                        <Row>
+                            {isLoading ?
+                                <Col>
+                                    <Loading/>
+                                </Col>
+                                :
+                                <Col>
+                                    <h1>TODO </h1>
+                                </Col>
+                            }
+                        </Row>
+                        <Row>
+                            <Col>
                                 <h4>Number of Tweets Collected</h4>
                             </Col>
                         </Row>
                         <Row>
-                        {isLoading ?
-                            <Col>
-                                <Loading/>
-                            </Col>
-                            :
-                            <Col>
-                                <h1>{frequency}</h1>
-                            </Col>
-                        }
+                            {isLoading ?
+                                <Col>
+                                    <Loading/>
+                                </Col>
+                                :
+                                <Col>
+                                    <h1>{frequency}</h1>
+                                </Col>
+                            }
                         </Row>
                         <Row>
                             <Col>

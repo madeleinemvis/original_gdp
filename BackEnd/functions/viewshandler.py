@@ -36,13 +36,14 @@ class ViewsHandler:
         return doc_list
 
     @staticmethod
-    def set_documents(uid: str, content_type: str, documents, predictions_dict) -> [Document]:
+    def set_documents(self, uid: str, content_type: str, documents, predictions_dict) -> [Document]:
         d_save = []
         for d in documents:
             # _id generated automatically
             d_save.append(Document(uid=uid, content_type=content_type, url=d.url, raw_html=d.raw_html, title=d.title,
                                    text_body=d.text_body, cleaned_tokens=d.cleaned_tokens, html_links=d.html_links,
-                                   sentiment=self.predict_sentiment.get_article_sentiment_Afinn(d.text_body)))
+                                   sentiment=self.predict_sentiment.get_article_sentiment_Afinn(d.text_body),
+                                   stance=predictions_dict[d.url]))
         return d_save
 
     @staticmethod

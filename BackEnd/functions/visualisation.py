@@ -64,6 +64,7 @@ class DataVisualiser:
         for t in tweets:
             favourites += t['favorite_count']
             retweets += t['retweet_count']
+        # TODO add query in here to the end of the list
         return [no_of_tweets, favourites, retweets]
 
     def get_sentiment_scatter(self, uid: str):
@@ -86,7 +87,6 @@ class DataVisualiser:
         tweets_df = pd.DataFrame(tweets)
         c = Counter(tweets_df['sentiment'].tolist())
         c = dict(c)
-        print("$$$ Pie Chart sentiment counts:", c)
         return c
 
     def get_date_impact(self, uid: str):
