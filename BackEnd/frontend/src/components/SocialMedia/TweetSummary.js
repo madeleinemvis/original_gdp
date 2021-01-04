@@ -12,16 +12,21 @@ const TweetSummary = props => {
     const[isError, setIsError] = useState(false);
 
     useEffect(( ) => {
-        if(frequency === null || favourites === null || retweets === null){
-            fetchData();
-        }else{
-            setIsLoading(false)
-        }
+        // if(frequency == null || favourites == null || retweets == null){
+        //     console.log("tweet summary is fetching data")
+        //     fetchData();
+        // }else{
+        //     console.log("tweet summary not fetching data")
+        //     setIsLoading(false)
+        // }
+        fetchData();
+        console.log("TweetSummary data fetched")
     }, []);
 
     const fetchData = () => {
         const formdata = new FormData();
         formdata.append("uid", props.uid);
+        console.log("TweetSummary LOG")
         http.post('/tweets/tweet_summary', formdata)
             .then(res => {
                 if(res.data[0] !== null){

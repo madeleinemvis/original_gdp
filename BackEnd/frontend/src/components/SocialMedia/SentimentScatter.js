@@ -26,11 +26,15 @@ const SentimentScatter = props => {
     }
 
     useEffect(( ) => {
-        if(data === null){
-            fetchData()
-        }else{
-            setIsLoading(false)
-        }
+        // if(data === null){
+        //     fetchData()
+        //     console.log("sentiment scatter is fetching data")
+        // }else{
+        //     console.log("sentiment scatter ot fetching data")
+        //     setIsLoading(false)
+        // }
+        fetchData()
+        console.log("Sentiment scatter data fetched")
     }, []);
 
     return(

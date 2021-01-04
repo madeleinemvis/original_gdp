@@ -20,14 +20,18 @@ const Tweets = props => {
     const [errorCode, setErrorCode] = useState(201);
 
     useEffect(() => {
-        if(tweets === null){
-            setIsEmpty(true)
-            retrieveTweets();
-        }
-        else{
-            setIsLoading(false)
-            setIsEmpty(false)
-        }
+        // if(tweets == null){
+        //     setIsEmpty(true)
+        //     console.log("tweets is fetching data")
+        //     retrieveTweets();
+        // }
+        // else{
+        //     console.log("tweets not fetching data")
+        //     setIsLoading(false)
+        //     setIsEmpty(false)
+        // }
+        console.log("tweets is fetching data")
+        retrieveTweets();
         
     }, []);
 
