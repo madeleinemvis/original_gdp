@@ -10,8 +10,3 @@ class Tweet(models.Model):
     retweet_count = models.IntegerField(default=0)
     user_location = models.TextField(blank=True, default='')
     sentiment = models.TextField(blank=True, default='')
-
-
-class Query(models.Model):
-    uid = models.TextField(blank=False)
-    query = models.TextField(blank=False, default='')

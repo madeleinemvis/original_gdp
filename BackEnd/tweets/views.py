@@ -24,18 +24,6 @@ def tweets_list(request):
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
 
-@api_view(['POST'])
-def tweet_query(request):
-    if request.method == 'POST':
-        request_form = RequestForm(request.POST)
-        if request_form.is_valid():
-            uid = request_form.cleaned_data['uid']
-            viewshandler = ViewsHandler()
-            query = viewshandler.db_manager.get_query(uid)
-            return JsonResponse(data=query, status=status.HTTP_200_OK, safe=False)
-    return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
-
-
 # Returns tweets with Geo Locations
 @api_view(['GET'])
 def tweets_geo(request):

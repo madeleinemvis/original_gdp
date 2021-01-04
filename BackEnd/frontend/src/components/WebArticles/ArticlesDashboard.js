@@ -3,6 +3,7 @@ import {Row, Col, Container} from "react-bootstrap";
 import TweetFreq from "../SocialMedia/TweetFreq";
 import WordCloud from "./WordCloud";
 import DocumentFreq from "./DocumentFreq";
+import SentimentList from "./SentimentList";
 
 
 const ArticlesDashboard = props => {
@@ -20,6 +21,11 @@ const ArticlesDashboard = props => {
             <Row>
                 <Col className="col-md widget">
                     <WordCloud uid={props.uid} />
+                </Col>
+            </Row>
+            <Row>
+                <Col className="col-md widget">
+                    <SentimentList uid={props.uid} />
                 </Col>
             </Row>
         </Container>

@@ -2,7 +2,7 @@ from ast import literal_eval
 
 from django.utils.datastructures import MultiValueDictKeyError
 from documents.models import Document, Claim
-from tweets.models import Tweet, Query
+from tweets.models import Tweet
 from trends.models import Trend
 
 from .article_sentiments import PredictSentiment
@@ -68,19 +68,15 @@ class ViewsHandler:
         return c_save
 
     @staticmethod
-    def set_query(uid: str, query: str) -> Claim:
-        q_save = Query(uid=uid, query=' '.join(query))
-        return q_save
-
-    @staticmethod
     def set_trends(uid, e, h, p, mc, mt):
-        t_save = [Trend(uid=uid, econ_count=e.value, econ_estimate=e.estimate, econ_random=e.random,
-                        econ_unobserved=e.unobserved, econ_placebo=e.placebo, econ_subset=e.subset,
-                        health_count=h.value, health_estimate=h.estimate, health_random=h.random,
-                        health_unobserved=h.unobserved, health_placebo=h.placebo, health_subset=h.subset,
-                        politics_count=p.value, politics_estimate=p.estimate, politics_random=p.random,
-                        politics_unobserved=p.unobserved, politics_placebo=p.placebo, politics_subset=p.subset,
-                        map_countries=mc, map_trends=mt)]
+        t_save = []
+        t_save.append(Trend(uid=uid, econ_count=e.value, econ_estimate=e.estimate, econ_random=e.random,
+                            econ_unobserved=e.unobserved, econ_placebo=e.placebo, econ_subset=e.subset,
+                            health_count=h.value, health_estimate=h.estimate, health_random=h.random,
+                            health_unobserved=h.unobserved, health_placebo=h.placebo, health_subset=h.subset,
+                            politics_count=p.value, politics_estimate=p.estimate, politics_random=p.random,
+                            politics_unobserved=p.unobserved, politics_placebo=p.placebo, politics_subset=p.subset,
+                            map_countries=mc, map_trends=mt))
         return t_save
 
     @staticmethod
@@ -105,10 +101,6 @@ class ViewsHandler:
     def save_claim(self, uid: str, claim: str):
         c_save = self.set_claim(uid, claim)
         c_save.save()
-
-    def save_query(self, uid: str, keywords: [str]):
-        q_save = self.set_query(uid, keywords)
-        q_save.save()
 
     def save_tweets(self, uid: str, tweets):
         t_save = self.set_tweets(uid, tweets)
