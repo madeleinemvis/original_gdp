@@ -20,8 +20,15 @@ const SentimentList = props => {
 
 
     useEffect(( ) => {
+<<<<<<< HEAD
         console.log(data);
         if(data === null){ 
+=======
+        console.log("Made effect");
+        console.log(data);
+        if(data === null){
+            console.log("Is NULL");
+>>>>>>> a792090f10f8a4b43107ff7ffca600bfc55ed773
             fetchData();
         }else{
             setIsLoading(false)
@@ -33,6 +40,10 @@ const SentimentList = props => {
     const fetchData = () => {
         const formdata = new FormData();
         formdata.append("uid", props.uid);
+<<<<<<< HEAD
+=======
+        console.log('Made fetch');
+>>>>>>> a792090f10f8a4b43107ff7ffca600bfc55ed773
         http.post('/documents/document_list', formdata)
             .then(res => {
                 setData(res.data)
