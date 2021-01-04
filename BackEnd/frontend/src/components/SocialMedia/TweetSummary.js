@@ -11,60 +11,58 @@ const TweetSummary = props => {
     const[query, setQuery] = useState(JSON.parse(sessionStorage.getItem('query')))
     const[isLoading, setIsLoading] = useState(true);
     const[isError, setIsError] = useState(false);
-    console.log("query:", query)
+
 
     useEffect(( ) => {
+        const abortController = new AbortController()
+        const signal = abortController.signal
+
         if(frequency === null || favourites === null || retweets === null || query === null){
-            fetchData();
+            const formdata = new FormData();
+            formdata.append("uid", props.uid);
+            http.post('/tweets/tweet_summary', formdata, {signal: signal})
+                .then(res => {
+                    if(res.data[0] !== null){
+                        setFrequency(res.data[0]);
+                        sessionStorage.setItem('tweetFreq', JSON.stringify(res.data[0]))
+                    }else{
+                        setFrequency(0);
+                    }
+                    if(res.data[1] !== null){
+                        setFavourites(res.data[1])
+                        sessionStorage.setItem('tweetFavourites', JSON.stringify(res.data[1]))
+                    }else{
+                        setFavourites(0)
+                    }
+
+                    if(res.data[2] !== null){
+                        setRetweets(res.data[2])
+                        sessionStorage.setItem('retweets', JSON.stringify(res.data[2]))
+                    }else{
+                        setRetweets(0)
+                    }
+
+                    if(res.data[3] !== null){
+                        setQuery(res.data[3])
+                        sessionStorage.setItem('query', JSON.stringify(res.data[3]))
+                    }else{
+                        setQuery("ERROR QUERY")
+                    }
+                    setIsLoading(false);
+                })
+                .catch(e => {
+                    setIsError(true);
+                    console.log(e)
+                })
         }else{
             setIsLoading(false)
         }
+
+        return function cleanup() {
+            abortController.abort()
+        }
     }, []);
 
-    const fetchData = () => {
-        const formdata = new FormData();
-        formdata.append("uid", props.uid);
-        http.post('/tweets/tweet_summary', formdata)
-            .then(res => {
-                if(res.data[0] !== null){
-                    setFrequency(res.data[0]);
-                    sessionStorage.setItem('tweetFreq', JSON.stringify(res.data[0]))
-                }else{
-                    setFrequency(0);
-
-                }
-
-                if(res.data[1] !== null){
-                    setFavourites(res.data[1])
-                    sessionStorage.setItem('tweetFavourites', JSON.stringify(res.data[1]))
-                }else{
-                    setFavourites(0)
-                }
-
-                if(res.data[2] !== null){
-                    setRetweets(res.data[2])
-                    sessionStorage.setItem('retweets', JSON.stringify(res.data[2]))
-                }else{
-                    setRetweets(0)
-                }
-
-                if(res.data[3] !== null){
-                    setQuery(res.data[3])
-                    sessionStorage.setItem('query', JSON.stringify(res.data[3]))
-                }else{
-                    setQuery("ERROR QUERY")
-                }
-
-
-
-                setIsLoading(false);
-            })
-            .catch(e => {
-                setIsError(true);
-                console.log(e)
-            })
-
-    }
 
     console.log("frequency:", frequency, "favourites:", favourites, "retweets:", retweets, "query:", query)
     return <React.Fragment>

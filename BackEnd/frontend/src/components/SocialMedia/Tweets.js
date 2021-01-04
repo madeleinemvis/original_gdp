@@ -19,10 +19,26 @@ const Tweets = props => {
     const [isEmpty, setIsEmpty] = useState(true);
 
     useEffect(() => {
+        const abortController = new AbortController()
+        const signal = abortController.signal
         if (tweets) {
             if (tweets.length === 0){
                 setIsEmpty(true)
-                retrieveTweets();
+                const formdata = new FormData();
+                formdata.append("uid", props.uid);
+                http.post('/tweets', formdata,  {signal: signal})
+                    .then(res => {
+                        setTweets(res.data)
+                        sessionStorage.setItem('tweets', JSON.stringify(res.data))
+                        if(res.data.length !== 0){
+                            setIsEmpty(false);
+                        }
+                        setIsLoading(false)
+                    })
+                    .catch(e => {
+                        setIsError(true)
+                        console.log(e)
+                    })
             } else {
                 setIsLoading(false)
                 setIsEmpty(false)
@@ -30,6 +46,10 @@ const Tweets = props => {
         } else {
             setIsEmpty(true);
             retrieveTweets();
+        }
+
+        return function cleanup() {
+            abortController.abort()
         }
     }, []);
 

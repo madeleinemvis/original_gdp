@@ -9,27 +9,30 @@ const SentimentScatter = props => {
     const[isLoading, setIsLoading] = useState(true);
     const[isError, setIsError] = useState(false);
 
-    const fetchData = () => {
-        const formdata = new FormData();
-        formdata.append("uid", props.uid);
-        http.post('/tweets/sentiment_scatter', formdata)
-        .then(res => {
-            const tweetsDf = res.data;
-            setData(tweetsDf)
-            sessionStorage.setItem('sentScatterData', JSON.stringify(tweetsDf))
-            setIsLoading(false);
-        })
-        .catch(e => {
-            setIsError(true);
-            console.log(e)
-        })
-    }
 
     useEffect(( ) => {
+        const abortController = new AbortController()
+        const signal = abortController.signal
         if(data === null){
-            fetchData()
+            const formdata = new FormData();
+            formdata.append("uid", props.uid);
+            http.post('/tweets/sentiment_scatter', formdata, {signal: signal})
+            .then(res => {
+                const tweetsDf = res.data;
+                setData(tweetsDf)
+                sessionStorage.setItem('sentScatterData', JSON.stringify(tweetsDf))
+                setIsLoading(false);
+            })
+            .catch(e => {
+                setIsError(true);
+                console.log(e)
+            })
         }else{
             setIsLoading(false)
+        }
+
+        return function cleanup() {
+            abortController.abort()
         }
     }, []);
 
