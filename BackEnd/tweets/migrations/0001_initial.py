@@ -12,6 +12,13 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+            name='Query',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('uid', models.TextField(blank=False)),
+                ('query', models.TextField(blank=False, default='')),
+            ],),
+        migrations.CreateModel(
             name='Tweet',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
