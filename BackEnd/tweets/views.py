@@ -12,6 +12,7 @@ from functions.viewshandler import ViewsHandler
 
 @api_view(['POST'])
 def tweets_list(request):
+    print("callilng tweets")
     if request.method == 'POST':
         request_form = RequestForm(request.POST)
         if request_form.is_valid():

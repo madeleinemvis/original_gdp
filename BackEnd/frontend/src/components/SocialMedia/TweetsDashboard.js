@@ -9,6 +9,7 @@ import DateImpact from "./DateImpact";
 
 
 const TweetsDashboard = props => {
+    console.log("uid in tweets:", props.uid)
     return(
         <Container className="dashboard">
             <Row>

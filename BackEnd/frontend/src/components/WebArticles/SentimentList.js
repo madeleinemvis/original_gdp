@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Row, Col } from 'react-bootstrap';
+import React, {useEffect, useState} from 'react'
+import {Row, Col} from 'react-bootstrap';
 import { 
     Container, Card,CardTitle, 
     CardSubtitle, CardBody,
@@ -11,31 +11,33 @@ import http from '../../http-common'
 import Loading from "../Loading";
 import Error from "../Error";
 
-const Tweets = props => {
-
-    const [tweets, setTweets] = useState(JSON.parse(sessionStorage.getItem('tweets')));
-    const [isLoading, setIsLoading] = useState(true);
-    const [isError, setIsError] = useState(false);
+const SentimentList = props => {
+    const[data, setData] = useState(JSON.parse(sessionStorage.getItem('sentiment')));
     const[isEmpty, setIsEmpty] = useState(true);
+    const[isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        if(tweets.length === 0){
-            setIsEmpty(true)
-            retrieveTweets();
-        } else{
+    const[isError, setIsError] = useState(false);
+
+
+    useEffect(( ) => {
+        console.log(data);
+        if(data === null){ 
+            fetchData();
+        }else{
             setIsLoading(false)
-            setIsEmpty(false)
         }
         
     }, []);
 
-    const retrieveTweets = () => {
+
+    const fetchData = () => {
         const formdata = new FormData();
         formdata.append("uid", props.uid);
-        http.post('/tweets', formdata)
+        http.post('/documents/document_list', formdata)
             .then(res => {
-                setTweets(res.data)
-                sessionStorage.setItem('tweets', JSON.stringify(res.data))
+                setData(res.data)
+                console.log(res.data);
+                sessionStorage.setItem('sentiment', JSON.stringify(res.data))
                 if(res.data.length !== 0){
                     setIsEmpty(false);
                 }
@@ -47,14 +49,12 @@ const Tweets = props => {
             })
     }
 
-    
-    
-    return(
+    return (
         <React.Fragment>
             <Container>
                  <Row>
                     <Col>
-                        <h4>All Tweets Collected: (Sorted by Impact)</h4>
+                        <h4>Document Sentiments:</h4>
                     </Col>
                 </Row>
                 {isError ?
@@ -75,21 +75,14 @@ const Tweets = props => {
                             <p>No Documents Found</p>
                             :
                             <Scrollbar style={{width: "100%", height: 400}}>
-                                {tweets && tweets.map((tw, index) => (
+                                {data && data.map((doc, index) => (
                                     <Card key={index}>
                                         <CardBody>
-                                            <CardTitle tag="h5">@{tw.screen_name}</CardTitle>
+                                            <CardTitle tag="h5">{doc.title}</CardTitle>
                                             <CardSubtitle tag="h6"
-                                                          className="mb-2 text-muted">Sentiment: {tw.sentiment}</CardSubtitle>
-                                            <CardSubtitle tag="h6" className="mb-2 text-muted">Favorite
-                                                Count: {tw.favorite_count}</CardSubtitle>
-                                            <CardSubtitle tag="h6" className="mb-2 text-muted">Retweet
-                                                Count: {tw.retweet_count}</CardSubtitle>
-                                            {(tw.user_location !== "") ?
-                                                <CardSubtitle tag="h6" className="mb-2 text-muted">Tweet
-                                                    Location: {tw.user_location}</CardSubtitle> : null
-                                            }
-                                            <CardText> {tw.text}</CardText>
+                                                          className="mb-2 text-muted">Sentiment: {doc.sentiment}</CardSubtitle>
+                                            <CardSubtitle tag="h6" className="mb-2 text-muted">Stance: {doc.stance}</CardSubtitle>
+                                            <CardSubtitle tag="h6" className="mb-2 text-muted">URL: {doc.url}</CardSubtitle>
                                         </CardBody>
                                     </Card>
                                 ))}
@@ -105,4 +98,4 @@ const Tweets = props => {
     );
 }
 
-export default Tweets;
+export default SentimentList;
