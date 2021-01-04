@@ -67,7 +67,7 @@ class DataVisualiser:
             favourites += t['favorite_count']
             retweets += t['retweet_count']
             query = str(t_query)
-        return [query, no_of_tweets, favourites, retweets]
+        return [no_of_tweets, favourites, retweets, query]
 
     def get_sentiment_scatter(self, uid: str):
         tweets = self.db_manager.get_all_tweets(uid)

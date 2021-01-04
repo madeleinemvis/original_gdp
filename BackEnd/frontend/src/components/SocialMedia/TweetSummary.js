@@ -8,11 +8,13 @@ const TweetSummary = props => {
     const[frequency, setFrequency] = useState(JSON.parse(sessionStorage.getItem('tweetFreq')));
     const[favourites, setFavourites] = useState(JSON.parse(sessionStorage.getItem('tweetFavourites')));
     const[retweets, setRetweets] = useState(JSON.parse(sessionStorage.getItem('retweets')));
+    const[query, setQuery] = useState(JSON.parse(sessionStorage.getItem('query')))
     const[isLoading, setIsLoading] = useState(true);
     const[isError, setIsError] = useState(false);
+    console.log("query:", query)
 
     useEffect(( ) => {
-        if(frequency === null || favourites === null || retweets === null){
+        if(frequency === null || favourites === null || retweets === null || query === null){
             fetchData();
         }else{
             setIsLoading(false)
@@ -26,28 +28,34 @@ const TweetSummary = props => {
             .then(res => {
                 if(res.data[0] !== null){
                     setFrequency(res.data[0]);
-                    sessionStorage.setItem('tweetFreq', JSON.stringify(res.data[0]))  
+                    sessionStorage.setItem('tweetFreq', JSON.stringify(res.data[0]))
                 }else{
                     setFrequency(0);
-                      
+
                 }
 
                 if(res.data[1] !== null){
                     setFavourites(res.data[1])
-                    sessionStorage.setItem('tweetFavourites', JSON.stringify(res.data[1]))  
+                    sessionStorage.setItem('tweetFavourites', JSON.stringify(res.data[1]))
                 }else{
                     setFavourites(0)
                 }
 
                 if(res.data[2] !== null){
-                    setRetweets(res.data[2])   
+                    setRetweets(res.data[2])
                     sessionStorage.setItem('retweets', JSON.stringify(res.data[2]))
                 }else{
                     setRetweets(0)
                 }
-                
-                console.log("frequency:", frequency, "favourites:", favourites, "retweets:", retweets)
-                
+
+                if(res.data[3] !== null){
+                    setQuery(res.data[3])
+                    sessionStorage.setItem('query', JSON.stringify(res.data[3]))
+                }else{
+                    setQuery("ERROR QUERY")
+                }
+
+
 
                 setIsLoading(false);
             })
@@ -58,6 +66,7 @@ const TweetSummary = props => {
 
     }
 
+    console.log("frequency:", frequency, "favourites:", favourites, "retweets:", retweets, "query:", query)
     return <React.Fragment>
             <Container>
                 {isError ?
@@ -68,6 +77,22 @@ const TweetSummary = props => {
                     </Row>
                 :
                     <Col>
+                        <Row>
+                            <Col>
+                                <h4>Twitter search query:</h4>
+                            </Col>
+                        </Row>
+                        <Row>
+                        {isLoading ?
+                            <Col>
+                                <Loading/>
+                            </Col>
+                            :
+                            <Col>
+                                <h1>{query}</h1>
+                            </Col>
+                        }
+                        </Row>
                         <Row>
                             <Col>
                                 <h4>Number of Tweets Collected</h4>
