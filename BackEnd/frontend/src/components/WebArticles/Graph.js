@@ -6,6 +6,8 @@ function drawChart(graph) {
         width = svg.attr("width"),
         height = svg.attr("height");
 
+    const color = d3.scaleOrdinal(d3.schemeCategory10);
+
     const simulation = d3.forceSimulation()
         .force("link", d3.forceLink().id(function (d) {
             return d.id;
@@ -112,14 +114,6 @@ function drawChart(graph) {
             // check all other nodes to see if they're connected
             // to this one. if so, keep the opacity at 1, otherwise
             // fade
-            div.transition()
-                .duration(200)
-                .style("opacity", .9);
-
-            div.html(d.name)
-                .style("left", (d3.event.pageX) + "px")
-                .style("top", (d3.event.pageY - 28) + "px");
-
             node.style("stroke-opacity", function (o) {
                 return isConnected(d, o) ? 1 : opacity;
             });
@@ -143,10 +137,6 @@ function drawChart(graph) {
     }
 
     function mouseOut() {
-        div.transition()
-            .duration(500)
-            .style("opacity", 0);
-
         node.style("stroke-opacity", 1);
         node.style("fill-opacity", 1);
         link.style("stroke-opacity", 1);
@@ -173,7 +163,7 @@ function drawChart(graph) {
 }
 
 export function Graph(props) {
-    return (<div>{drawChart(props.graph)}</div>);
+    drawChart(props.graph);
 }
 
 export default Graph;

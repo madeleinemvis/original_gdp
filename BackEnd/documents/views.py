@@ -130,5 +130,6 @@ def website_graph(request):
     if request.method == "POST":
         uid = request.data['uid']
         graph = datavisualiser.get_website_graph(uid)
+        graph = graph.replace('\'', '"').lower()
         return JsonResponse(data=graph, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)

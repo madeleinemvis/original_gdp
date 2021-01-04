@@ -1,11 +1,11 @@
-import React, {  useState } from 'react';
-import { Redirect } from 'react-router';
+import React, {useState} from 'react';
+import {Redirect} from 'react-router';
 
 import {
     Button,
-    Col, 
-    Row, 
-    Container, 
+    Col,
+    Row,
+    Container,
     Jumbotron
 } from 'react-bootstrap';
 
@@ -24,21 +24,17 @@ const Home = props => {
     const [isLoading, setIsLoading] = useState(false)
     const [suggest, setSuggest] = useState(false)
 
-    const { uid } = props
+    const {uid} = props
     const [claim, setClaim] = useState('')
-    const [links, setLinks] = useState([{url:''}])
-    const [pdfs, setPdfs] = useState([{url:''}])
+    const [links, setLinks] = useState([{url: ''}])
+    const [pdfs, setPdfs] = useState([{url: ''}])
 
     const [isError, setIsError] = useState(false);
 
     const formData = new FormData();
 
-
     // Suggested links
     const [suggestions, setSuggestions] = useState([])
-
-
-
 
     const handleSubmit = suggest => {
         setIsLoading(true)
@@ -47,34 +43,34 @@ const Home = props => {
         formData.append('uid', uid)
 
         formData.delete('claim')
-        formData.append('claim',claim)
+        formData.append('claim', claim)
 
-        if(links[0].url !== ''){
+        if (links[0].url !== '') {
             formData.delete('urls')
             let urls = formatLinks(links)
             formData.append('urls', urls)
         }
-        if(pdfs[0].url !== ''){
+        if (pdfs[0].url !== '') {
             formData.delete('pdfs')
             let pdf_links = formatLinks(pdfs)
             formData.append('pdfs', pdf_links)
         }
 
-        if(suggest){
+        if (suggest) {
             http.post('/documents/suggest', formData)
-            .then(res => {
-                setSuggestions(res.data)
-                setIsLoading(false)
-                setSuggest(suggest)
-            })
-            .catch(e => {
-                setIsError(true)
-                console.log(e)
-            })
-        }else{
+                .then(res => {
+                    setSuggestions(res.data)
+                    setIsLoading(false)
+                    setSuggest(suggest)
+                })
+                .catch(e => {
+                    setIsError(true)
+                    console.log(e)
+                })
+        } else {
             http.post('/documents/upload', formData)
-                .then(res =>{
-                    if(res.status === 201) {
+                .then(res => {
+                    if (res.status === 201) {
                         setIsLoading(false)
                         setRedirect(true)
                     }
@@ -89,7 +85,7 @@ const Home = props => {
     // [{url: ''}] -> "{}"
     const formatLinks = input => {
 
-        if(input[0].url === ''){
+        if (input[0].url === '') {
             return null
         }
         let out = "{";
@@ -98,37 +94,41 @@ const Home = props => {
             const e = input[i];
 
             const link = "'url" + i.toString() + "': '" + e.url + "'";
-            if(i !== (input.length - 1)){
-                out += link +','
-            }else{
-                out += link 
+            if (i !== (input.length - 1)) {
+                out += link + ','
+            } else {
+                out += link
             }
-            
+
         }
         out += "}"
         return out
     }
+
     // functions that will be passed to child components
-    function set_claim(claim){
+    function set_claim(claim) {
         setClaim(claim)
     }
-    function add_links(urls){
+
+    function add_links(urls) {
         let values = [...links]
-        for(const url of urls){
+        for (const url of urls) {
             values.push(url)
 
         }
         setLinks(values)
     }
-    function set_links(links){
+
+    function set_links(links) {
         setLinks(links)
     }
-    function set_pdfs(pdfs){
+
+    function set_pdfs(pdfs) {
         setPdfs(pdfs)
     }
 
     // Source: https://medium.com/@tchiayan/compressing-single-file-or-multiple-files-to-zip-format-on-client-side-6607a1eca662
-    function set_files(e){
+    function set_files(e) {
         formData.delete('files')
         const fs = e.target.files;
 
@@ -137,8 +137,8 @@ const Home = props => {
         }
     }
 
-    if(redirect){
-        return <Redirect to={{ pathname: "/dashboard" }}/>
+    if (redirect) {
+        return <Redirect to={{pathname: "/dashboard"}}/>
     }
 
 
@@ -186,16 +186,17 @@ const Home = props => {
                                 {suggest ?
                                     <Suggestion submit={handleSubmit} suggested={suggestions} addLinks={add_links}/>
                                     :
-                                    <Input uid={uid} submit={handleSubmit} setFiles={set_files} setClaim={set_claim} setLinks={set_links} setPdfs={set_pdfs}/>
+                                    <Input uid={uid} submit={handleSubmit} setFiles={set_files} setClaim={set_claim}
+                                           setLinks={set_links} setPdfs={set_pdfs}/>
                                 }
                             </Col>
                         </Row>
-                    :
-                       <Loading/>
+                        :
+                        <Loading/>
                     }
                 </Container>
             }
-    </React.Fragment> 
+        </React.Fragment>
     )
 }
 export default Home;

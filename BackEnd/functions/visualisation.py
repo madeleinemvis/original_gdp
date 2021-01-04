@@ -1,9 +1,11 @@
 import json
-import pandas as pd
 from collections import Counter
+
+import pandas as pd
 
 from BackEnd.functions.dbmanager import DbManager
 from BackEnd.functions.textprocessing import TextProcessor
+
 
 # class for the data visualisation
 # Each function returns data formatted for a particular visual on the dashboard.

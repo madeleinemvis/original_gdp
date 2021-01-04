@@ -1,11 +1,13 @@
 from ast import literal_eval
+
 from django.utils.datastructures import MultiValueDictKeyError
 
-from BackEnd.documents.models import Document, Claim
+from BackEnd.documents.models import Document, Claim, Graph
+from BackEnd.functions.article_sentiments import PredictSentiment
 from BackEnd.functions.dataretrieval import Scraper
 from BackEnd.functions.dbmanager import DbManager
 from BackEnd.trends.models import Trend
-from BackEnd.tweets.models import Tweet, Query
+from BackEnd.tweets.models import Tweet
 
 
 # Handles all tasks that are used directly used by the end-point
@@ -93,6 +95,11 @@ class ViewsHandler:
     # Takes a request and request form, extracts data
     # Returns the UID, claim, list of URLs, list of PDF URLs and list of Files
     @staticmethod
+    def set_graph(uid: str, g: str) -> Graph:
+        g_save = Graph(uid=uid, graph_json=g)
+        return g_save
+
+    @staticmethod
     def get_objects_from_request(request, request_form):
         uid = request_form.cleaned_data['uid']
         claim = request_form.cleaned_data['claim']
@@ -129,3 +136,7 @@ class ViewsHandler:
     def save_trends(self, uid: str, econ, health, politics, map_countries, map_trends):
         t_save = self.set_trends(uid, econ, health, politics, map_countries, map_trends)
         Trend.objects.bulk_create(t_save)
+
+    def save_graph(self, uid: str, graph: str):
+        g_save = self.set_graph(uid, graph)
+        g_save.save()

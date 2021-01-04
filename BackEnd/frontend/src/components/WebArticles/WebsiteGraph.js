@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from 'react'
-import {Row, Col, Container} from 'react-bootstrap';
+import {Col, Container, Row} from 'react-bootstrap';
 import http from '../../http-common'
 import Loading from "../Loading";
 import Graph from "./Graph";
+import Error from "../Error";
 
 const WebsiteGraph = props => {
     const [graph, setGraph] = useState({});
     const [isLoading, setIsLoading] = useState(true);
+    const [isError, setIsError] = useState(false);
 
     useEffect(() => {
         const fetchData = () => {
@@ -16,13 +18,13 @@ const WebsiteGraph = props => {
                 .then(res => {
                     let tempGraph;
                     tempGraph = res.data;
-
                     let jsonGraph = JSON.parse(tempGraph);
                     setGraph(jsonGraph);
                     setIsLoading(false);
                 })
                 .catch(e => {
-                    console.log(e)
+                    setIsError(true);
+                    console.log(e);
                 })
         }
         fetchData();
@@ -30,29 +32,34 @@ const WebsiteGraph = props => {
 
     return (
         <React.Fragment>
-            {isLoading &&
-            <Container>
-                <Loading/>
-            </Container>
-            }
-            {!isLoading &&
             <Container>
                 <Row>
                     <Col>
-                        <h3>Graph of Discovered Websites</h3>
+                        <h3>Graph of Websites Crawled</h3>
                     </Col>
                 </Row>
+                {isLoading &&
                 <Row>
                     <Col>
-                        {graph === {} ?
-                            <p>No Websites Found</p>
-                            :
+                        <Loading/>
+                    </Col>
+                </Row>
+                }
+                {!isLoading &&
+                <Row>
+                    {isError ?
+                        <Col>
+                            <Error/>
+                        </Col>
+                        :
+                        <Col>
+                            <svg></svg>
                             <Graph graph={graph}/>
-                        }
-                    </Col>
+                        </Col>
+                    }
                 </Row>
+                }
             </Container>
-            }
         </React.Fragment>
     );
 }

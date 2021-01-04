@@ -1,9 +1,9 @@
 import React from "react";
 import {Row, Col, Container} from "react-bootstrap";
-import TweetFreq from "../SocialMedia/TweetFreq";
 import WordCloud from "./WordCloud";
 import DocumentFreq from "./DocumentFreq";
 import SentimentList from "./SentimentList";
+import WebsiteGraph from "./WebsiteGraph";
 
 
 const ArticlesDashboard = props => {
@@ -21,6 +21,11 @@ const ArticlesDashboard = props => {
             <Row>
                 <Col className="col-md widget">
                     <SentimentList uid={props.uid} />
+                </Col>
+            </Row>
+            <Row>
+                <Col className="col-md widget">
+                    <WebsiteGraph uid={props.uid} />
                 </Col>
             </Row>
         </Container>

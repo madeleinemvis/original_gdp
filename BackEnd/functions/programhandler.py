@@ -2,11 +2,13 @@ import json
 import random
 from csv import DictWriter
 
-from functions.StanceDetection.pred import PredictStance
-from functions.analysis import NLPAnalyser
-from functions.causal import Causal, TrendMap
-from functions.dataretrieval import Scraper, Crawler
-from functions.textprocessing import TextProcessor
+from networkx.readwrite import json_graph
+
+from BackEnd.functions.StanceDetection.pred import PredictStance
+from BackEnd.functions.analysis import NLPAnalyser
+from BackEnd.functions.causal import Causal, TrendMap
+from BackEnd.functions.dataretrieval import Scraper, Crawler
+from BackEnd.functions.textprocessing import TextProcessor
 
 
 # Handles the entire process of analysing documents before the dashboard is displayed
@@ -133,8 +135,7 @@ class Handler:
         # viewshandler.db_manager.drop_collection('documents_claim')
         # viewshandler.db_manager.drop_collection('tweets_tweet')
         # viewshandler.db_manager.drop_collection('trends_trend')
-
-        nlpanalyser = NLPAnalyser()
+        nlp_analyser = NLPAnalyser()
 
         print("-------- MANIFESTO --------")
         urls, scraped_data, key_words_with_scores = self.generate_manifesto(documents)
@@ -152,7 +153,7 @@ class Handler:
         scraped_data.update(new_scraped_data)
 
         print("-------- CREATE TF-IDF MODEL --------")
-        nlpanalyser.create_tfidf_model(scraped_data)
+        nlp_analyser.create_tfidf_model(scraped_data)
 
         print("-------- SCRAPING TWITTER --------")
         # crawling with Twitter
@@ -163,9 +164,12 @@ class Handler:
 
         print("-------- RECURSIVE CRAWLING --------")
         # recursively crawl the links upfto certain depth - includes batch checking so these are the final documents
-        nlp_analyser = NLPAnalyser()
         recursive_urls = self.crawler.url_cleaner(urls)
-        final_crawled_urls, graph = self.crawler.recursive_url_crawl(recursive_urls, self.MAXIMUM_URL_CRAWL_DEPTH, nlp_analyser)
+        final_crawled_urls, graph = self.crawler.recursive_url_crawl(recursive_urls, self.MAXIMUM_URL_CRAWL_DEPTH,
+                                                                     nlp_analyser)
+
+        graph_json = json_graph.node_link_data(graph)
+
         scraped_data.update(final_crawled_urls)
 
         print("------- SCRAPE REMAINING URLS -------")
@@ -203,8 +207,11 @@ class Handler:
         predictions_dict = self.predict_stance.getPredictions(stances, bodies, list(scraped_data.values()))
         print("predictions dict:", predictions_dict)
 
+        print("-------- STORING GRAPH --------")
+        viewshandler.save_graph(uid, graph_json)
+
         print("-------- STORING TWEETS --------")
-        viewshandler.save_tweets(uid, crawled_tweets)
+        # viewshandler.save_tweets(uid, crawled_tweets)
 
         print("-------- STORING CLAIM --------")
         viewshandler.save_claim(uid, claim)
@@ -213,7 +220,7 @@ class Handler:
         viewshandler.save_query(uid, keywords[:2])
 
         print("-------- STORING TRENDS --------")
-        viewshandler.save_trends(uid, econ, heath, politics, map_countries, map_trends)
+        # viewshandler.save_trends(uid, econ, heath, politics, map_countries, map_trends)
 
         print("------- STORE NEW DOCUMENTS -------")
         viewshandler.save_documents(uid, 'web-page', scraped_data.values(), predictions_dict)
