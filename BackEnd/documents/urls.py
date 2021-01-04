@@ -7,4 +7,5 @@ urlpatterns = [
     url(r'^api/documents/document_list$', views.document_list),
     url(r'api/documents/wordcloud$', views.keywords_wordcloud),
     url(r'api/documents/freq$', views.document_frequency),
+    url(r'api/documents/pie_chart$', views.document_pie_chart)
 ]

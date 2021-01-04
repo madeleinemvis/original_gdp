@@ -107,3 +107,16 @@ def document_frequency(request):
         frequency = datavisualiser.get_document_frequency(uid)
         return JsonResponse(data=frequency, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
+
+
+# TODO Will
+@api_view(['POST'])
+def document_pie_chart(request):
+    # TODO change
+    datavisualiser = DataVisualiser()
+    if request.method == "POST":
+        uid = request.data['uid']
+        # TODO change
+        frequency = datavisualiser.get_document_frequency(uid)
+        return JsonResponse(data=frequency, status=status.HTTP_200_OK, safe=False)
+    return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
