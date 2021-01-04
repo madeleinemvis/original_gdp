@@ -45,24 +45,28 @@ def tweet_frequency(request):
 
 @api_view(['POST'])
 def tweet_summary(request):
-    datavisualiser = DataVisualiser()
+    print("£££££ Called Tweet Summary")
     if request.method == "POST":
         request_form = RequestForm(request.POST)
         if request_form.is_valid():
+            datavisualiser = DataVisualiser()
             uid = request_form.cleaned_data['uid']
             summary = datavisualiser.get_tweet_summary(uid)
+            print("£££Summary: ", summary)
             return JsonResponse(data=summary, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
 
 @api_view(['POST'])
 def sentiment_scatter(request):
+    print("£££££ Called Sentiment Scatter")
     if request.method == "POST":
         request_form = RequestForm(request.POST)
         if request_form.is_valid():
             datavisualiser = DataVisualiser()
             uid = request_form.cleaned_data['uid']
             tweets = datavisualiser.get_sentiment_scatter(uid)
+            print("£££Tweets: ", tweets)
             tweets = json.loads(json_util.dumps(tweets))
             return JsonResponse(data=tweets, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
@@ -76,6 +80,7 @@ def sentiment_pie_chart(request):
             dataVisualiser = DataVisualiser()
             uid = request_form.cleaned_data['uid']
             sentiments = dataVisualiser.get_sentiment_pie_chart(uid)
+            print("£££Sentiments: ", sentiments)
             sentiments = json.loads(json_util.dumps(sentiments))
             return JsonResponse(data=sentiments, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)

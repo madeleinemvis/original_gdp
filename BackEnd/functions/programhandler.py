@@ -143,7 +143,7 @@ class Handler:
         crawled_tweets = self.crawler.twitter_crawl(uid, keywords, self.NUMBER_OF_TWEETS_RESULTS_WANTED)
 
         print("-------- CAUSAL ANALYSIS --------")
-        econ, heath, politics, map_countries, map_trends = self.trends_analysis(keywords[:5])
+        # econ, heath, politics, map_countries, map_trends = self.trends_analysis(keywords[:5])
 
         # print("-------- RECURSIVE CRAWLING --------")
         # # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
@@ -187,8 +187,8 @@ class Handler:
         print("-------- STORING TWEETS --------")
         viewshandler.save_tweets(uid, crawled_tweets)
 
-        print("-------- STORING TRENDS --------")
-        viewshandler.save_trends(uid, econ, heath, politics, map_countries, map_trends)
+        # print("-------- STORING TRENDS --------")
+        # viewshandler.save_trends(uid, econ, heath, politics, map_countries, map_trends)
 
         print("------- STORE NEW DOCUMENTS -------")
         viewshandler.save_documents(uid, 'web-page', scraped_data.values(), predictions_dict)
