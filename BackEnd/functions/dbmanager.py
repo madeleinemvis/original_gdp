@@ -115,7 +115,8 @@ class DbManager:
             tweets = []
             for t in ini_list:
                 tweets.append(
-                    dict(uid=t['uid'], screen_name=t['screen_name'], created_at=t['created_at'], text=t['text'], favorite_count=t['favorite_count'],
+                    dict(uid=t['uid'], screen_name=t['screen_name'], created_at=t['created_at'], text=t['text'],
+                         favorite_count=t['favorite_count'],
                          retweet_count=t['retweet_count'], user_location=t['user_location'],
                          sentiment=t['sentiment']))
             return ini_list
@@ -143,6 +144,15 @@ class DbManager:
             return claim
         except pymongo.errors.PyMongoError:
             print("No Objects, UID: %s,  Found in Collection, Documents_claim", uid)
+
+    def get_query(self, uid: str):
+        try:
+            q_result = self.database['tweets_query'].find({"uid": uid},
+                                                          {"_id": 0, "query": 1})
+            query = q_result[0]['query']
+            return query
+        except pymongo.errors.PyMongoError:
+            print("No Objects, UID: %s,  Found in Collection, Tweets_Query", uid)
 
     def get_causal(self, uid: str):
         try:

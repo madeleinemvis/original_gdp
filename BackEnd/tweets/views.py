@@ -12,7 +12,6 @@ from functions.viewshandler import ViewsHandler
 
 @api_view(['POST'])
 def tweets_list(request):
-    print("callilng tweets")
     if request.method == 'POST':
         request_form = RequestForm(request.POST)
         if request_form.is_valid():
@@ -21,6 +20,18 @@ def tweets_list(request):
             tweets = viewshandler.db_manager.get_all_tweets(uid)
             tweets = json.loads(json_util.dumps(tweets))
             return JsonResponse(data=tweets, status=status.HTTP_200_OK, safe=False)
+    return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
+
+
+@api_view(['POST'])
+def tweet_query(request):
+    if request.method == 'POST':
+        request_form = RequestForm(request.POST)
+        if request_form.is_valid():
+            uid = request_form.cleaned_data['uid']
+            viewshandler = ViewsHandler()
+            query = viewshandler.db_manager.get_query(uid)
+            return JsonResponse(data=query, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
 
@@ -52,6 +63,7 @@ def tweet_summary(request):
         if request_form.is_valid():
             uid = request_form.cleaned_data['uid']
             summary = datavisualiser.get_tweet_summary(uid)
+            print("summary: ", summary)
             return JsonResponse(data=summary, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 

@@ -187,6 +187,12 @@ class Handler:
         print("-------- STORING TWEETS --------")
         viewshandler.save_tweets(uid, crawled_tweets)
 
+        print("-------- STORING CLAIM --------")
+        viewshandler.save_claim(uid, claim)
+
+        print("-------- STORING QUERY --------")
+        viewshandler.save_query(uid, keywords[:2])
+
         print("-------- STORING TRENDS --------")
         viewshandler.save_trends(uid, econ, heath, politics, map_countries, map_trends)
 
