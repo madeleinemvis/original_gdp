@@ -31,6 +31,7 @@ def upload_documents(request):
                     files = views_handler.read_docs(files)
 
                 documents = [*documents_urls, *documents_pdfs, *files]
+                print("documents:", documents)
                 handler = Handler()
                 start_t = datetime.now()
                 try:
