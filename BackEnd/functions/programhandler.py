@@ -146,16 +146,16 @@ class Handler:
         econ, heath, politics, map_countries, map_trends = self.trends_analysis(keywords[:5])
 
         # print("-------- RECURSIVE CRAWLING --------")
-        # # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
-        # recursive_urls = self.crawler.url_cleaner(urls)
-        # final_crawled_urls = self.crawler.recursive_url_crawl(recursive_urls, self.MAXIMUM_URL_CRAWL_DEPTH, nlpanalyser)
-        # scraped_data.update(final_crawled_urls)
-        # print("------- SCRAPE REMAINING URLS -------")
-        # # retrieve and store all the data about a URL's not yet scraped
-        # urls_to_scrape = [u for u in urls if u not in scraped_data.keys()]
-        # data = self.scraper.downloads(urls_to_scrape)
-        # for k in data.keys():
-        #     scraped_data[k] = data[k]
+        # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
+        recursive_urls = self.crawler.url_cleaner(urls)
+        final_crawled_urls = self.crawler.recursive_url_crawl(recursive_urls, self.MAXIMUM_URL_CRAWL_DEPTH, nlpanalyser)
+        scraped_data.update(final_crawled_urls)
+        print("------- SCRAPE REMAINING URLS -------")
+        # retrieve and store all the data about a URL's not yet scraped
+        urls_to_scrape = [u for u in urls if u not in scraped_data.keys()]
+        data = self.scraper.downloads(urls_to_scrape)
+        for k in data.keys():
+            scraped_data[k] = data[k]
 
         print("-------- TEST DATA PREPARATION --------")
 
