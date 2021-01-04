@@ -127,7 +127,8 @@ class Handler:
         print(f"Top {self.NUMBER_OF_KEY_WORDS} keywords from manifesto: {keywords}")
 
         print("-------- CRAWLING GOOGLE --------")
-        urls_google = self.crawl_google(keywords)
+        #urls_google = self.crawl_google(keywords)
+        urls_google = ['https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/', 'https://www.healthline.com/health/vaccinations/opposition', 'https://www.theguardian.com/world/2020/nov/10/coronavirus-anti-vaxxers-seek-to-discredit-pfizers-vaccine']
         
         print("-------- SCRAPING GOOGLE URLS --------")
         # retrieve and store all the data about a URL
@@ -140,10 +141,10 @@ class Handler:
 
         print("-------- SCRAPING TWITTER --------")
         # crawling with Twitter
-        crawled_tweets = self.crawler.twitter_crawl(uid, keywords, self.NUMBER_OF_TWEETS_RESULTS_WANTED)
+        #crawled_tweets = self.crawler.twitter_crawl(uid, keywords, self.NUMBER_OF_TWEETS_RESULTS_WANTED)
 
         print("-------- CAUSAL ANALYSIS --------")
-        econ, heath, politics, map_countries, map_trends = self.trends_analysis(keywords[:5])
+        #econ, heath, politics, map_countries, map_trends = self.trends_analysis(keywords[:5])
 
         # print("-------- RECURSIVE CRAWLING --------")
         # # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
@@ -185,10 +186,10 @@ class Handler:
         print("predictions dict:", predictions_dict)
 
         print("-------- STORING TWEETS --------")
-        viewshandler.save_tweets(uid, crawled_tweets)
+        #viewshandler.save_tweets(uid, crawled_tweets)
 
         print("-------- STORING TRENDS --------")
-        viewshandler.save_trends(uid, econ, heath, politics, map_countries, map_trends)
+        #viewshandler.save_trends(uid, econ, heath, politics, map_countries, map_trends)
 
         print("------- STORE NEW DOCUMENTS -------")
         viewshandler.save_documents(uid, 'web-page', scraped_data.values(), predictions_dict)
