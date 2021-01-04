@@ -114,10 +114,10 @@ class Handler:
 
     def run_program(self, viewshandler, uid: str, claim: str, documents):
         print("------- CLEARING OUT THE DATABASE --------)")
-        viewshandler.db_manager.drop_collection('documents_document')
-        viewshandler.db_manager.drop_collection('documents_claim')
-        viewshandler.db_manager.drop_collection('tweets_tweet')
-        viewshandler.db_manager.drop_collection('trends_trend')
+        # viewshandler.db_manager.drop_collection('documents_document')
+        # viewshandler.db_manager.drop_collection('documents_claim')
+        # viewshandler.db_manager.drop_collection('tweets_tweet')
+        # viewshandler.db_manager.drop_collection('trends_trend')
         nlpanalyser = NLPAnalyser()
 
         print("-------- MANIFESTO --------")
@@ -145,17 +145,17 @@ class Handler:
         print("-------- CAUSAL ANALYSIS --------")
         econ, heath, politics, map_countries, map_trends = self.trends_analysis(keywords[:5])
 
-        print("-------- RECURSIVE CRAWLING --------")
-        # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
-        recursive_urls = self.crawler.url_cleaner(urls)
-        final_crawled_urls = self.crawler.recursive_url_crawl(recursive_urls, self.MAXIMUM_URL_CRAWL_DEPTH, nlpanalyser)
-        scraped_data.update(final_crawled_urls)
-        print("------- SCRAPE REMAINING URLS -------")
-        # retrieve and store all the data about a URL's not yet scraped
-        urls_to_scrape = [u for u in urls if u not in scraped_data.keys()]
-        data = self.scraper.downloads(urls_to_scrape)
-        for k in data.keys():
-            scraped_data[k] = data[k]
+        # print("-------- RECURSIVE CRAWLING --------")
+        # # recursively crawl the links upto certain depth - includes batch checking so these are the final documents
+        # recursive_urls = self.crawler.url_cleaner(urls)
+        # final_crawled_urls = self.crawler.recursive_url_crawl(recursive_urls, self.MAXIMUM_URL_CRAWL_DEPTH, nlpanalyser)
+        # scraped_data.update(final_crawled_urls)
+        # print("------- SCRAPE REMAINING URLS -------")
+        # # retrieve and store all the data about a URL's not yet scraped
+        # urls_to_scrape = [u for u in urls if u not in scraped_data.keys()]
+        # data = self.scraper.downloads(urls_to_scrape)
+        # for k in data.keys():
+        #     scraped_data[k] = data[k]
 
         print("-------- TEST DATA PREPARATION --------")
 
@@ -182,7 +182,7 @@ class Handler:
         print("-------- STANCE DETECTION --------")
 
         predictions_dict = self.predict_stance.getPredictions(stances, bodies, list(scraped_data.keys()))
-        print(predictions_dict)
+        print("predictions dict:", predictions_dict)
 
         print("-------- STORING TWEETS --------")
         viewshandler.save_tweets(uid, crawled_tweets)

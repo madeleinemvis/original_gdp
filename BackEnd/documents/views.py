@@ -39,7 +39,7 @@ def upload_documents(request):
                 try:
                     handler.run_program(views_handler, uid, claim, documents)
                 except Exception as e:
-                    print("e:", e)
+                    print("views.py e:", e)
                 print("TOTAL TIME TAKEN:", datetime.now() - start_t)
                 return JsonResponse(data=uid, status=status.HTTP_201_CREATED, safe=False)
     return JsonResponse(data=request.data, status=status.HTTP_400_BAD_REQUEST, safe=False)
