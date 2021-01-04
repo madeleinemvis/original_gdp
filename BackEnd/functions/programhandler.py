@@ -182,7 +182,7 @@ class Handler:
         print("-------- STANCE DETECTION --------")
 
         predictions_dict = self.predict_stance.getPredictions(stances, bodies, list(scraped_data.keys()))
-        print(predictions_dict)
+        print("predictions dict:", predictions_dict)
 
         print("-------- STORING TWEETS --------")
         viewshandler.save_tweets(uid, crawled_tweets)

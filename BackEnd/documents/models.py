@@ -12,7 +12,7 @@ class Document(models.Model):
     cleaned_tokens = JSONField()
     html_links = JSONField()
     sentiment = models.TextField(blank=True, default='')
-
+    stance = models.TextField(blank=True, default='')
 
 class Claim(models.Model):
     uid = models.TextField(blank=False, default='')

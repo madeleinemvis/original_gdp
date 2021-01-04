@@ -101,5 +101,6 @@ class DataVisualiser:
         documents = self.db_manager.get_all_documents(uid)
         doc_list = []
         for d in documents:
-            doc_list.append(dict({'title': d['title'], 'url': d['url'], 'sentiment': d['sentiment']}))
+            doc_list.append(dict({'title': d['title'], 'url': d['url'], 'sentiment': d['sentiment'],
+                                  'stance': d['stance']}))
         return doc_list
