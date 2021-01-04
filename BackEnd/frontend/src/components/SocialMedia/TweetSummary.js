@@ -12,7 +12,7 @@ const TweetSummary = props => {
     const[isError, setIsError] = useState(false);
 
     useEffect(( ) => {
-        if(frequency === null || favourites === null || retweets === null){
+        if(frequency === null || favourites === null || retweets === null || query === null){
             fetchData();
         }else{
             setIsLoading(false)
@@ -22,8 +22,10 @@ const TweetSummary = props => {
     const fetchData = () => {
         const formdata = new FormData();
         formdata.append("uid", props.uid);
+        console.log("£$£")
         http.post('/tweets/tweet_summary', formdata)
             .then(res => {
+                console.log("£££1")
                 if(res.data[0] !== null){
                     setFrequency(res.data[0]);
                     sessionStorage.setItem('tweetFreq', JSON.stringify(res.data[0]))  
@@ -31,6 +33,7 @@ const TweetSummary = props => {
                     setFrequency(0);
                       
                 }
+                console.log("£££2")
 
                 if(res.data[1] !== null){
                     setFavourites(res.data[1])
@@ -38,6 +41,7 @@ const TweetSummary = props => {
                 }else{
                     setFavourites(0)
                 }
+                console.log("£££2")
 
                 if(res.data[2] !== null){
                     setRetweets(res.data[2])
@@ -47,12 +51,13 @@ const TweetSummary = props => {
                     console.log("Retweets not collected")
                     setRetweets(0)
                 }
+                console.log("£££3")
 
                 if(res.data[3] !== null){
-                    setRetweets(res.data[3])
+                    setQuery(res.data[3])
                     sessionStorage.setItem('query', JSON.stringify(res.data[3]))
                 }else{
-                    setRetweets(0)
+                    setQuery("ERROR ON QUERY")
                 }
                 
                 console.log("frequency:", frequency, "favourites:", favourites, "retweets:", retweets, "query:", query)
@@ -61,6 +66,7 @@ const TweetSummary = props => {
                 setIsLoading(false);
             })
             .catch(e => {
+                console.log("£££6")
                 setIsError(true);
                 console.log(e)
             })
@@ -89,7 +95,7 @@ const TweetSummary = props => {
                                 </Col>
                                 :
                                 <Col>
-                                    <h1>TODO </h1>
+                                    <h1>{query}</h1>
                                 </Col>
                             }
                         </Row>

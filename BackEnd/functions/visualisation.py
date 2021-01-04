@@ -58,14 +58,15 @@ class DataVisualiser:
 
     def get_tweet_summary(self, uid: str):
         tweets = self.db_manager.get_all_tweets(uid)
+        print("Got tweets")
         query = self.db_manager.get_query(uid)
+        print("Got query")
         favourites = 0
         retweets = 0
         no_of_tweets = len(tweets)
         for t in tweets:
             favourites += t['favorite_count']
             retweets += t['retweet_count']
-        # TODO add query in here to the end of the list
         print("Vis tweet summary", no_of_tweets, favourites, retweets, query)
         return [no_of_tweets, favourites, retweets, query]
 

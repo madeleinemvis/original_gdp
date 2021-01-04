@@ -17,7 +17,6 @@ const SentimentScatter = props => {
             const tweetsDf = res.data;
             setData(tweetsDf)
             sessionStorage.setItem('sentScatterData', JSON.stringify(tweetsDf))
-            console.log("$$$ DATA")
             console.log(tweetsDf)
             setIsLoading(false);
         })

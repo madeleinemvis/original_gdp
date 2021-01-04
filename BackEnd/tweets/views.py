@@ -45,14 +45,19 @@ def tweet_frequency(request):
 
 @api_view(['POST'])
 def tweet_summary(request):
+    print("Tweet summary view call reached")
     if request.method == "POST":
+        print("Request method == Post")
         request_form = RequestForm(request.POST)
         if request_form.is_valid():
+            print("Request form is valid")
             datavisualiser = DataVisualiser()
             uid = request_form.cleaned_data['uid']
+            print("About to create summary")
             summary = datavisualiser.get_tweet_summary(uid)
             print("Tweet summary = ", summary)
             return JsonResponse(data=summary, status=status.HTTP_200_OK, safe=False)
+    print("RETURNING HTTP 400 BAD REQUEST")
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
 
