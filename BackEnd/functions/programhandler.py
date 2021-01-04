@@ -128,7 +128,7 @@ class Handler:
 
         print("-------- CRAWLING GOOGLE --------")
         #urls_google = self.crawl_google(keywords)
-        urls_google = ['https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/', 'https://www.healthline.com/health/vaccinations/opposition']
+        urls_google = ['https://theirishsentinel.com/2020/08/10/depopulation-through-forced-vaccination-the-zero-carbon-solution/', 'https://www.healthline.com/health/vaccinations/opposition', 'https://www.theguardian.com/world/2020/nov/10/coronavirus-anti-vaxxers-seek-to-discredit-pfizers-vaccine']
         
         print("-------- SCRAPING GOOGLE URLS --------")
         # retrieve and store all the data about a URL

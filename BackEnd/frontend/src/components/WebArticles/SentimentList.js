@@ -20,7 +20,8 @@ const SentimentList = props => {
 
 
     useEffect(( ) => {
-        if(data === null){
+        console.log(data);
+        if(data === null){ 
             fetchData();
         }else{
             setIsLoading(false)
@@ -32,11 +33,10 @@ const SentimentList = props => {
     const fetchData = () => {
         const formdata = new FormData();
         formdata.append("uid", props.uid);
-        console.log('Made')
         http.post('/documents/document_list', formdata)
             .then(res => {
                 setData(res.data)
-                console.log(res.data)
+                console.log(res.data);
                 sessionStorage.setItem('sentiment', JSON.stringify(res.data))
                 if(res.data.length !== 0){
                     setIsEmpty(false);
@@ -75,10 +75,14 @@ const SentimentList = props => {
                             <p>No Documents Found</p>
                             :
                             <Scrollbar style={{width: "100%", height: 400}}>
-                                {data['sentiment'] && data['sentiment'].map((doc, index) => (
+                                {data && data.map((doc, index) => (
                                     <Card key={index}>
                                         <CardBody>
-                                            <CardTitle tag="h5">@{doc.key}</CardTitle>
+                                            <CardTitle tag="h5">{doc.title}</CardTitle>
+                                            <CardSubtitle tag="h6"
+                                                          className="mb-2 text-muted">Sentiment: {doc.sentiment}</CardSubtitle>
+                                            <CardSubtitle tag="h6" className="mb-2 text-muted">Stance: {doc.stance}</CardSubtitle>
+                                            <CardSubtitle tag="h6" className="mb-2 text-muted">URL: {doc.url}</CardSubtitle>
                                         </CardBody>
                                     </Card>
                                 ))}
