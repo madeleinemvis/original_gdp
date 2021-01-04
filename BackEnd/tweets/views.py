@@ -63,7 +63,6 @@ def tweet_summary(request):
         if request_form.is_valid():
             uid = request_form.cleaned_data['uid']
             summary = datavisualiser.get_tweet_summary(uid)
-            print("summary: ", summary)
             return JsonResponse(data=summary, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
@@ -76,6 +75,7 @@ def sentiment_scatter(request):
             datavisualiser = DataVisualiser()
             uid = request_form.cleaned_data['uid']
             tweets = datavisualiser.get_sentiment_scatter(uid)
+            print("tweets:", tweets)
             tweets = json.loads(json_util.dumps(tweets))
             return JsonResponse(data=tweets, status=status.HTTP_200_OK, safe=False)
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)

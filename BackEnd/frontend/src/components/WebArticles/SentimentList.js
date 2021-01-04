@@ -20,9 +20,10 @@ const SentimentList = props => {
 
 
     useEffect(( ) => {
-        console.log(data);
+        console.log("data before:", data)
         if(data === null){ 
             fetchData();
+            console.log("data after:", data)
         }else{
             setIsLoading(false)
         }

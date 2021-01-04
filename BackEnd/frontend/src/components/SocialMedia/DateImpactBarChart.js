@@ -16,7 +16,9 @@ const DateImpactBarChart = props => {
         width: '100%',
         autosize: true,
         title: 'Daily Tweet Engagements',
-        labels: {"x":"Date","y":"Total Tweet Engagments"}
+        labels: {"x":"Date","y":"Total Tweet Engagments"},
+        paper_bgcolor : '#f9f9f9',
+        plot_bgcolor : '#f9f9f9'
     };
 
     const config = {

@@ -26,7 +26,9 @@ const PieChart = props => {
     const layout = {
         width: '100%',
         autosize: true,
-        showlegend: false
+        showlegend: false,
+        paper_bgcolor : '#f9f9f9',
+        plot_bgcolor : '#f9f9f9'
     };
 
     const config = {
