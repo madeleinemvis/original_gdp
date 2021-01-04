@@ -19,7 +19,7 @@ const Tweets = props => {
     const[isEmpty, setIsEmpty] = useState(true);
 
     useEffect(() => {
-        if(tweets.length === 0){
+        if(tweets === null || tweets.length === 0){
             setIsEmpty(true)
             retrieveTweets();
         } else{
