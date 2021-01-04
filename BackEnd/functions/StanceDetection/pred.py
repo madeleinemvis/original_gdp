@@ -34,7 +34,7 @@ class PredictStance:
         file_train_instances = "functions/StanceDetection/train_stances.csv"
         file_train_bodies = "functions/StanceDetection/train_bodies.csv"
         file_test_instances = stances
-        file_test_bodies =  bodies
+        file_test_bodies = bodies
 
         raw_train = FNCData(file_train_instances, file_train_bodies)
         raw_test = FNCData(file_test_instances, file_test_bodies)
