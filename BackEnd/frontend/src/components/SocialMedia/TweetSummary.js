@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {Container, Spinner, Row, Col} from 'react-bootstrap';
 import Error from "../Error";
-
 import http from '../../http-common'
 import Loading from "../Loading";
 const TweetSummary = props => {
@@ -41,15 +40,17 @@ const TweetSummary = props => {
                 }
 
                 if(res.data[2] !== null){
-                    setRetweets(res.data[2])   
+                    setRetweets(res.data[2])
+                    console.log("Retweets collected")
                     sessionStorage.setItem('retweets', JSON.stringify(res.data[2]))
                 }else{
+                    console.log("Retweets not collected")
                     setRetweets(0)
                 }
 
                 if(res.data[3] !== null){
                     setRetweets(res.data[3])
-                    sessionStorage.setItem('query', JSON.stringify(res.data[2]))
+                    sessionStorage.setItem('query', JSON.stringify(res.data[3]))
                 }else{
                     setRetweets(0)
                 }

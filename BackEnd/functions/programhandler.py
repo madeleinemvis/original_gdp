@@ -127,16 +127,16 @@ class Handler:
         print(f"Top {self.NUMBER_OF_KEY_WORDS} keywords from manifesto: {keywords}")
 
         print("-------- CRAWLING GOOGLE --------")
-        urls_google = self.crawl_google(keywords)
+        # urls_google = self.crawl_google(keywords)
         
         print("-------- SCRAPING GOOGLE URLS --------")
         # retrieve and store all the data about a URL
-        new_urls, new_scraped_data = self.scrape_google_results(urls_google)
-        urls.update(new_urls)
-        scraped_data.update(new_scraped_data)
+        # new_urls, new_scraped_data = self.scrape_google_results(urls_google)
+        # urls.update(new_urls)
+        # scraped_data.update(new_scraped_data)
 
-        print("-------- CREATE TF-IDF MODEL --------")
-        nlpanalyser.create_tfidf_model(scraped_data)
+        # print("-------- CREATE TF-IDF MODEL --------")
+        # nlpanalyser.create_tfidf_model(scraped_data)
 
         print("-------- SCRAPING TWITTER --------")
         # crawling with Twitter
@@ -157,32 +157,32 @@ class Handler:
         # for k in data.keys():
         #     scraped_data[k] = data[k]
 
-        print("-------- TEST DATA PREPARATION --------")
-
-        name = "functions/StanceDetection/test_stances_" + uid
-        stances = "%s.csv" % name
-
-        with open(stances, 'w') as csvfile:
-            fieldnames = ['Headline', 'Body ID']
-            writer = DictWriter(csvfile, fieldnames=fieldnames, lineterminator='\n')
-            writer.writeheader()
-            for index, item in enumerate(list(scraped_data.keys())):
-                writer.writerow({'Headline': claim, 'Body ID': index})
-
-        name = "functions/StanceDetection/test_bodies_" + uid
-        bodies = "%s.csv" % name
-
-        with open(bodies, 'w', newline='', encoding='utf-8') as csvfile:
-            fieldnames = ['Body ID', 'articleBody']
-            writer = DictWriter(csvfile, fieldnames=fieldnames, lineterminator='\n')
-            writer.writeheader()
-            for index, item in enumerate(list(scraped_data.values())):
-                writer.writerow({'Body ID': index, 'articleBody': item.text_body})
-
-        print("-------- STANCE DETECTION --------")
-
-        predictions_dict = self.predict_stance.getPredictions(stances, bodies, list(scraped_data.keys()))
-        print("predictions dict:", predictions_dict)
+        # print("-------- TEST DATA PREPARATION --------")
+        #
+        # name = "functions/StanceDetection/test_stances_" + uid
+        # stances = "%s.csv" % name
+        #
+        # with open(stances, 'w') as csvfile:
+        #     fieldnames = ['Headline', 'Body ID']
+        #     writer = DictWriter(csvfile, fieldnames=fieldnames, lineterminator='\n')
+        #     writer.writeheader()
+        #     for index, item in enumerate(list(scraped_data.keys())):
+        #         writer.writerow({'Headline': claim, 'Body ID': index})
+        #
+        # name = "functions/StanceDetection/test_bodies_" + uid
+        # bodies = "%s.csv" % name
+        #
+        # with open(bodies, 'w', newline='', encoding='utf-8') as csvfile:
+        #     fieldnames = ['Body ID', 'articleBody']
+        #     writer = DictWriter(csvfile, fieldnames=fieldnames, lineterminator='\n')
+        #     writer.writeheader()
+        #     for index, item in enumerate(list(scraped_data.values())):
+        #         writer.writerow({'Body ID': index, 'articleBody': item.text_body})
+        #
+        # print("-------- STANCE DETECTION --------")
+        #
+        # predictions_dict = self.predict_stance.getPredictions(stances, bodies, list(scraped_data.keys()))
+        # print("predictions dict:", predictions_dict)
 
         print("-------- STORING TWEETS --------")
         viewshandler.save_tweets(uid, crawled_tweets)
@@ -190,5 +190,5 @@ class Handler:
         # print("-------- STORING TRENDS --------")
         # viewshandler.save_trends(uid, econ, heath, politics, map_countries, map_trends)
 
-        print("------- STORE NEW DOCUMENTS -------")
-        viewshandler.save_documents(uid, 'web-page', scraped_data.values(), predictions_dict)
+        # print("------- STORE NEW DOCUMENTS -------")
+        # viewshandler.save_documents(uid, 'web-page', scraped_data.values(), predictions_dict)

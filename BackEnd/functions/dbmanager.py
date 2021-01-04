@@ -144,6 +144,15 @@ class DbManager:
         except pymongo.errors.PyMongoError:
             print("No Objects, UID: %s,  Found in Collection, Documents_claim", uid)
 
+    def get_query(self, uid: str):
+        try:
+            q_result = self.database['tweets_query'].find({"uid": uid},
+                                                          {"_id": 0, "query": 1})
+            query = q_result[0]['query']
+            return query
+        except pymongo.errors.PyMongoError:
+            print("No Objects, UID: %s,  Found in Collection, Tweets_query", uid)
+
     def get_causal(self, uid: str):
         try:
             causal = self.database['trends_trend'].find({"uid": uid})
