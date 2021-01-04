@@ -38,6 +38,7 @@ const Tweets = props => {
             .then(res => {
                 setTweets(res.data)
                 sessionStorage.setItem('tweets', JSON.stringify(res.data))
+                console.log("data: ", res.data)
                 if(res.data.length !== 0){
                     setIsEmpty(false);
                 }
