@@ -20,7 +20,10 @@ const SentimentList = props => {
 
 
     useEffect(( ) => {
+        console.log("Made effect");
+        console.log(data);
         if(data === null){
+            console.log("Is NULL");
             fetchData();
         }else{
             setIsLoading(false)
@@ -32,11 +35,11 @@ const SentimentList = props => {
     const fetchData = () => {
         const formdata = new FormData();
         formdata.append("uid", props.uid);
-        console.log('Made')
+        console.log('Made fetch');
         http.post('/documents/document_list', formdata)
             .then(res => {
                 setData(res.data)
-                console.log(res.data)
+                console.log(res.data);
                 sessionStorage.setItem('sentiment', JSON.stringify(res.data))
                 if(res.data.length !== 0){
                     setIsEmpty(false);
