@@ -12,19 +12,17 @@ import Loading from "../Loading";
 import Error from "../Error";
 
 const Tweets = props => {
-    
+
     const [tweets, setTweets] = useState(JSON.parse(sessionStorage.getItem('tweets')));
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
     const[isEmpty, setIsEmpty] = useState(true);
-    const [errorCode, setErrorCode] = useState(201);
 
     useEffect(() => {
-        if(tweets === null){
+        if(tweets.length === 0){
             setIsEmpty(true)
             retrieveTweets();
-        }
-        else{
+        } else{
             setIsLoading(false)
             setIsEmpty(false)
         }
@@ -38,7 +36,6 @@ const Tweets = props => {
             .then(res => {
                 setTweets(res.data)
                 sessionStorage.setItem('tweets', JSON.stringify(res.data))
-                console.log("data: ", res.data)
                 if(res.data.length !== 0){
                     setIsEmpty(false);
                 }
