@@ -16,17 +16,21 @@ const Tweets = props => {
     const [tweets, setTweets] = useState(JSON.parse(sessionStorage.getItem('tweets')));
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
-    const[isEmpty, setIsEmpty] = useState(true);
+    const [isEmpty, setIsEmpty] = useState(true);
 
     useEffect(() => {
-        if(tweets === null || tweets.length === 0){
-            setIsEmpty(true)
-            retrieveTweets();
-        } else{
-            setIsLoading(false)
-            setIsEmpty(false)
-        }
-        
+        if (tweets) {
+			if (tweets.length === 0){
+				setIsEmpty(true)
+				retrieveTweets();
+			} else {
+				setIsLoading(false)
+				setIsEmpty(false)
+			}
+		} else {
+			setIsEmpty(true);
+			retrieveTweets();
+		}
     }, []);
 
     const retrieveTweets = () => {
