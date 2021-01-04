@@ -20,17 +20,17 @@ const Tweets = props => {
 
     useEffect(() => {
         if (tweets) {
-			if (tweets.length === 0){
-				setIsEmpty(true)
-				retrieveTweets();
-			} else {
-				setIsLoading(false)
-				setIsEmpty(false)
-			}
-		} else {
-			setIsEmpty(true);
-			retrieveTweets();
-		}
+            if (tweets.length === 0){
+                setIsEmpty(true)
+                retrieveTweets();
+            } else {
+                setIsLoading(false)
+                setIsEmpty(false)
+            }
+        } else {
+            setIsEmpty(true);
+            retrieveTweets();
+        }
     }, []);
 
     const retrieveTweets = () => {
