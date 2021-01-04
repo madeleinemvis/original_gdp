@@ -91,7 +91,9 @@ class Handler:
         google_urls = self.crawl_google_suggested(keywords)
         if len(google_urls) < self.NUMBER_OF_SUGGESTED:
             suggestions = list(google_urls)
-            return suggestions.extend(random.choices(list(urls), k=self.NUMBER_OF_SUGGESTED - len(google_urls)))
+            random_list = random.choices(list(urls), k=(self.NUMBER_OF_SUGGESTED - len(google_urls)))
+            suggestions.extend(random_list)
+            return suggestions
         else:
             return list(google_urls)[:self.NUMBER_OF_SUGGESTED]
 
