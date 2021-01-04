@@ -8,6 +8,5 @@ urlpatterns = [
     url(r'^api/tweets/sentiment_scatter$', views.sentiment_scatter),
     url(r'^api/tweets/sentiment_pie_chart$', views.sentiment_pie_chart),
     url(r'^api/tweets/tweet_summary$', views.tweet_summary),
-    url(r'^api/tweets/tweet_query$', views.tweet_query),
     url(r'^api/tweets/date_impact_bar$', views.date_impact_bar)
 ]
