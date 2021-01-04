@@ -1,12 +1,15 @@
-import json
 import random
+import json
 from csv import DictWriter
 
-from functions.StanceDetection.pred import PredictStance
-from functions.analysis import NLPAnalyser
-from functions.causal import Causal, TrendMap
+
+import csv
 from functions.dataretrieval import Scraper, Crawler
+from functions.analysis import NLPAnalyser
 from functions.textprocessing import TextProcessor
+from functions.causal import Causal, TrendMap
+from functions.StanceDetection.pred import PredictStance
+from functions.article_sentiments import PredictSentiment
 
 
 class Handler:
@@ -114,7 +117,6 @@ class Handler:
         # viewshandler.db_manager.drop_collection('documents_document')
         # viewshandler.db_manager.drop_collection('documents_claim')
         # viewshandler.db_manager.drop_collection('tweets_tweet')
-        # viewshandler.db_manager.drop_collection('tweets_query')
         # viewshandler.db_manager.drop_collection('trends_trend')
         nlpanalyser = NLPAnalyser()
 
@@ -181,12 +183,6 @@ class Handler:
 
         predictions_dict = self.predict_stance.getPredictions(stances, bodies, list(scraped_data.keys()))
         print("predictions dict:", predictions_dict)
-
-        print("-------- STORING CLAIM --------")
-        viewshandler.save_claim(uid, claim)
-
-        print("-------- STORING TWITTER QUERY --------")
-        viewshandler.save_query(uid, keywords[:2])
 
         print("-------- STORING TWEETS --------")
         viewshandler.save_tweets(uid, crawled_tweets)

@@ -14,7 +14,6 @@ class Document(models.Model):
     sentiment = models.TextField(blank=True, default='')
     stance = models.TextField(blank=True, default='')
 
-
 class Claim(models.Model):
     uid = models.TextField(blank=False, default='')
     claim = models.TextField(blank=False, default='')

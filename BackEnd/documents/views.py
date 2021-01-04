@@ -23,6 +23,7 @@ def upload_documents(request):
             views_handler.set_claim(uid, claim)
             # FAILS if no documents attached
             if not (documents_urls is None and documents_pdfs is None and files is None):
+                views_handler.save_claim(uid, claim)
                 if documents_urls:
                     documents_urls = views_handler.read_docs(documents_urls)
                 if documents_pdfs:
