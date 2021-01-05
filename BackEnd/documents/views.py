@@ -31,6 +31,7 @@ def upload_documents(request):
                     files = views_handler.read_docs(files)
 
                 documents = [*documents_urls, *documents_pdfs, *files]
+                print("documents:", documents)
                 handler = Handler()
                 start_t = datetime.now()
                 try:
@@ -61,6 +62,7 @@ def suggest_urls(request):
             documents = [*documents_urls, *documents_pdfs, *files]
             handler = Handler()
             suggested_urls = handler.generate_suggested_urls(documents)
+            print("posting suggested: ", suggested_urls)
             return JsonResponse(data=suggested_urls, status=status.HTTP_201_CREATED, safe=False)
     return JsonResponse(data=request.data, status=status.HTTP_400_BAD_REQUEST, safe=False)
 

@@ -19,7 +19,7 @@ const SentimentList = props => {
     const[isError, setIsError] = useState(false);
 
 
-    useEffect(( ) => {
+    /*useEffect(( ) => {
         console.log("data before:", data)
         if(data === null){ 
             fetchData();
@@ -28,6 +28,20 @@ const SentimentList = props => {
             setIsLoading(false)
         }
         
+    }, []); */
+    useEffect(() => {
+        if (data) {
+            if (data.length === 0){
+                setIsEmpty(true)
+                fetchData();
+            } else {
+                setIsLoading(false)
+                setIsEmpty(false)
+            }
+        } else {
+            setIsEmpty(true);
+            fetchData();
+        }
     }, []);
 
 

@@ -338,6 +338,7 @@ class Scraper:
 
     # method for getting raw text and cleaned tokens from a file, which can be a pdf or text file
     def get_data_from_path(self, path):
+        print("get data frm path: ", path)
 
         if path.content_type is None:
             return None
