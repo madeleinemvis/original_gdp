@@ -4,6 +4,7 @@
 from csv import DictReader
 from csv import DictWriter
 import numpy as np
+from io import StringIO
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -73,7 +74,9 @@ class FNCData:
 
         # Process file, add [errors='ignore'] when trying to test some news.
         with open(filename, "r", encoding='utf-8-sig', errors='ignore') as table:
-            r = DictReader(table)
+            data = table.read()
+            data = data.replace('\x00', '?')
+            r = DictReader(StringIO(data))
             for line in r:
                 rows.append(line)
 
