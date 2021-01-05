@@ -99,8 +99,8 @@ class DataVisualiser:
     def get_date_impact(self, uid: str):
         tweets = self.db_manager.get_all_tweets(uid)
         tweets_df = pd.DataFrame(tweets)
-        tweets_df['date'] = tweets_df['created_at'].apply(lambda x: str(x.day) + "/" + str(x.month))
-        dates = sorted(tweets_df['date'].tolist(), key=lambda x: (int(x.split("/")[1]), int(x.split("/")[0])))
+        tweets_df['date'] = tweets_df['created_at'].apply(lambda x: str(x.day) + "/" + str(x.month) + "/" + str(x.year))
+        dates = sorted(tweets_df['date'].tolist(), key=lambda x: (int(x.split("/")[2]), int(x.split("/")[1]), int(x.split("/")[0])))
         impact = [sum(i) for i in zip(tweets_df['retweet_count'].tolist(), tweets_df['favorite_count'].tolist())]
         return [dates, impact]
 
