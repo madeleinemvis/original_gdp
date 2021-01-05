@@ -12,13 +12,8 @@ const ArticlesDashboard = props => {
         <Container className="dashboard">
             <Row>
                 <Col className="col-md widget">
-                    <TweetFreq uid={props.uid}/>
-                </Col>
-                <Col className="col-md widget">
                     <DocumentFreq uid={props.uid}/>
                 </Col>
-            </Row>
-            <Row>
                 <Col className="col-md widget">
                     <WordCloud uid={props.uid} />
                 </Col>

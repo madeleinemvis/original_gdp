@@ -36,6 +36,7 @@ const SentimentScatter = props => {
         }
     }, []);
 
+    console.log("sentiment data: ", data)
     return(
         <React.Fragment>
             <Container>
