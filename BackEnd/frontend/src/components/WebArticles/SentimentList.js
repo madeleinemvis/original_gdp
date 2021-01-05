@@ -69,7 +69,7 @@ const SentimentList = props => {
             <Container>
                  <Row>
                     <Col>
-                        <h4>Document Sentiments:</h4>
+                        <h4>Document Sentiment and Stances:</h4>
                     </Col>
                 </Row>
                 {isError ?
@@ -107,7 +107,13 @@ const SentimentList = props => {
                     
                     }</Row>
                 }
-
+                <Row>
+                    <Col>
+                        <h6><br />List of analysed articles and their respective stance and sentiment categories.<br />
+                        Sentiment Categories: Positive, Negative, Neutral.<br />
+                        Stance Categories: Agree, Disagree, Discuss.</h6>
+                    </Col>
+                </Row>
             </Container>
         </React.Fragment>
     );
