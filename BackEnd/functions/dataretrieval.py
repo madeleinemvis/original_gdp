@@ -374,5 +374,5 @@ class Scraper:
         tokens = TextProcessor.create_tokens_from_text(processed_text)
         cleaned_tokens = self.processor.clean_tokens(tokens)
 
-        return Data(uid='', content_type=content_type, url='', raw_html='', title='',
+        return Data(uid='', content_type=content_type, url=path, raw_html='', title='',
                     text_body=processed_text, cleaned_tokens=cleaned_tokens, html_links=urls, sentiment="", stance="")

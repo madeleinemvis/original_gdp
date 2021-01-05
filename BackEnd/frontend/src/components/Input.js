@@ -127,7 +127,7 @@ const Input = props => {
                 <Form.Check 
                     type="checkbox"
                     id={`suggest`}
-                    label={`Suggest urls?`}
+                    label={`Suggest URLs?`}
                     value={suggest}
                     onChange={() => setSuggest(!suggest)}
                 />

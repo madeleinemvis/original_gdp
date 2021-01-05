@@ -162,13 +162,23 @@ const Home = props => {
                                     <p className="jumbotron-p">Our system is here to show you how a particular theme of
                                         propaganda has spread!</p>
                                     <hr/>
-                                    <p className="jumbotron-p">Add a link to be analysed. More than one link can be
-                                        added.</p>
-                                    <p>
-                                        <Button variant="primary" size="lg">
-                                            Learn More
-                                        </Button>
-                                    </p>
+                                    <p className="jumbotron-p">On this page, you can add links and files that you wish to be analysed.
+                                    These files will be used to generate a manifesto about the propaganda theme that you wish to investigate.
+                                    Please read and understand what each component does before inputting, to allow the system to work optimally:</p>
+                                    <br/>
+                                    <ul>
+                                        <li className="jumbotron-p">Claim:
+                                            The phrase that will summarise your propaganda theme. Please keep the length of the claim minimal, such that the system can collect more documents related to the topic.
+                                            Furthermore, the claim should also be relevant to the documents that you will be uploading. You can add more URLs with the '+' button and delete URLs with the '-' button.</li>
+                                        <li className="jumbotron-p">Links:
+                                            Should be URLs that link to web-pages or web-articles. Our system's quality increases with the number of documents uploaded, so please try to include
+                                            as many as you can.</li>
+                                        <li className="jumbotron-p">PDF Links: Should all be URLs that link to PDF pages.</li>
+                                        <li className="jumbotron-p">File: Upload any PDF files that are related to the propaganda theme. All PDF files must be added simultaneously, but as separate files.</li>
+                                    </ul>
+                                    <br/>
+                                    <p className="jumbotron-p">Suggesting URLs: If you are struggling to find documents to upload, you can select our 'Suggest URLs?' checkbox. Our system will then return a list of URLs for you to
+                                    look through and choose from, to increase the collection of documents, and therefore increase the quality of the system.</p>
                                 </Jumbotron>
                             </Col>
                             <span className="vertical-line"/>
