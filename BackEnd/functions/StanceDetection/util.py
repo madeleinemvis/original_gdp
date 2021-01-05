@@ -236,7 +236,7 @@ def pipeline_test(dataset_number, test, bow_vectorizer, tfreq_vectorizer, tfidf_
             else:
                 body_mutual_information = body_mutual_track[body_id]
 
-        # =================contatenating feature vectors==============.
+        # =================concatenating feature vectors==============.
         if dataset_number == 1:
             feat_vec = np.squeeze(np.c_[head_tf, body_tf, tfidf_cos])
             test_set.append(feat_vec)
