@@ -264,7 +264,7 @@ def save_predictions(pred):
 def get_predictions(pred, urls):
     predictions = {}
     for index, instance in enumerate(pred):
-        predictions[urls[index]] = label_ref_rev[instance]
+        predictions[urls[index].url] = label_ref_rev[instance]
 
     return predictions
 
