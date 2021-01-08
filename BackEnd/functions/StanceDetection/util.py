@@ -1,5 +1,4 @@
-# Adapted from https://github.com/uclmr/fakenewschallenge/blob/master/pred.py
-# Original credit - @jaminriedel
+# Adapted from amazingclaude/Fake_News_Stance_Detection
 
 from csv import DictReader
 from csv import DictWriter
