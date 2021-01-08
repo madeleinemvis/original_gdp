@@ -1,5 +1,5 @@
-# Adapted from https://github.com/uclmr/fakenewschallenge/blob/master/pred.py
-# Original credit - @jaminriedel
+# Adapted from @amazingclaude/Fake_News_Stance_Detection
+
 
 from .util import FNCData, bow_train, pipeline_test, get_predictions, save_predictions
 import random
