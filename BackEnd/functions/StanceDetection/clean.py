@@ -1,5 +1,4 @@
-# Adapted from https://github.com/amazingclaude/Fake_News_Stance_Detection
-# Original credit - @amazingclaude
+# Adapted from @amazingclaude/Fake_News_Stance_Detection
 
 import nltk
 import re
