@@ -1,4 +1,4 @@
-# Adapted from amazingclaude/Fake_News_Stance_Detection
+# Adapted from @amazingclaude/Fake_News_Stance_Detection
 
 from csv import DictReader
 from csv import DictWriter
