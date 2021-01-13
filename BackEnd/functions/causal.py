@@ -24,10 +24,12 @@ class Causal:
     def __init__(self):
         pass
 
+    # Test function to make gauge showing number of tests passed
     def gauge(self, title: str, val: int = -1):
 
         threshold = 210
 
+        # Set cases for if tests pass or fail or if no data
         if val < 0:
             colour = 'white'
             causal = 'Data Unavailable'
@@ -56,6 +58,7 @@ class Causal:
 
         return fig
 
+    # Test function to make bar chart showing causal estimates
     def bar(self, title: str, values: [int] = [0, 0, 0, 0, 0]):
 
         tests = ['Estimate', 'Random', 'Unobserved', 'Placebo', 'Subset']
@@ -72,9 +75,11 @@ class Causal:
 
         return fig
 
+    # Function to get google trends data depending on input keywords
     def get_keyword_trends(self, keywords: [str], country: str = 'GB'):
         pytrend = TrendReq()
 
+        # Query each keywords
         for i in range(len(keywords)):
             try:
                 pytrend.build_payload(kw_list=[keywords[i]], geo=country)
@@ -88,6 +93,7 @@ class Causal:
                 print("Warning: Couldn't connect to Google Trends")
                 return
 
+        # Drop uneccessary data and take a mean value of all keyword values
         if 'isPartial' in df.columns:
             df = df.drop('isPartial', axis=1)
         df['metric'] = df.mean(axis=1)
@@ -95,7 +101,8 @@ class Causal:
         trend_data = self.dates(df, 'trend', 'metric')
 
         return trend_data
-
+    
+    # Get economic data method
     def get_economic_data(self, country: str = 'GB', timeframe: str = '5y'):
         tickers = {
             "GB": "^FTSE", "FR": "^FCHI", "CA": "^GSPTSE", "DE": "^GDAXI", "US": "^DJI", "JP": "^N225",
@@ -109,6 +116,7 @@ class Causal:
             print("Error: No ticker available for", country)
             return
 
+        # Query Yahoo finance
         ticker = tickers[country]
         try:
             YF = yf.Ticker(ticker)
@@ -117,20 +125,24 @@ class Causal:
             print("Warning: Couldn't connect to Yahoo Finance")
             return
 
+        # Resample to get weekly values
         df = df.resample('W').mean()
 
         econ_data = self.dates(df, 'econ', 'Close')
 
         return econ_data
 
+    # Get health data method
     def get_health_data(self, country: str):
-
+        
+        # Query google trends
         health_keywords = ['depression', 'anxiety', 'doctor', 'drugs', 'medication']
         health_data = self.get_keyword_trends(health_keywords, country)
         health_data.rename(columns={'trend': 'health'}, inplace=True)
 
         return health_data
-
+    
+    # Get political data method
     def get_political_data(self, country: str):
         urls = {'GB': 'https://yougov.co.uk/_pubapis/v5/uk/trackers/government-approval/download/',
                 'US': 'https://today.yougov.com/_pubapis/v5/us/trackers/us-congress-approval-rating/download/'}
@@ -147,16 +159,19 @@ class Causal:
             print("Warning: Couldn't connect to YouGov")
             return
 
+        # Read in returned excel sheet
         df = pd.read_excel(r.content, engine='openpyxl')
         df.columns.values[0] = ''
         df = df.set_index('')
 
+        # Resample depending on categories
         for val in df.index:
             if val not in ['Approve', 'Somewhat approve', 'Strongly approve']:
                 df.drop(val, inplace=True)
 
         df = df.transpose()
 
+        # Resample to get weekly values
         months = {'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', 'Jun': '06',
                   'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'}
         dates = []
@@ -191,8 +206,8 @@ class Causal:
 
         return politics_data
 
+    # Resample dates to use in casusal analysis (Make sure all data can line up)
     def dates(self, df, target: str, source: str):
-
         date = []
         for i in range(len(df)):
             year = str(df.index[i].year)
@@ -204,6 +219,7 @@ class Causal:
 
         return data
 
+    # Min Max scale
     def scale(self, data):
 
         return_list = []
@@ -213,9 +229,11 @@ class Causal:
 
         return return_list
 
+    # Causal analysis
     def dowhy(self, data, indicator: str):
         flag = 0
         runtime = 300  # Adjust if slow
+        # Supress info prints
         np.warnings.filterwarnings('ignore', category=np.VisibleDeprecationWarning)
 
         esti_total = 0
@@ -224,6 +242,7 @@ class Causal:
         plac_total = 0
         subs_total = 0
 
+        # Run tests and take means
         for i in range(runtime):
             treatment_name = ['trend']  # v0
             outcome_name = indicator  # y
@@ -258,6 +277,7 @@ class Causal:
             plac = res_placebo.new_effect
             subs = res_subset.new_effect
 
+            # Account for if dowhy returns tuple
             if type(esti) == tuple:
                 esti = esti.item()
             if type(rand) == tuple:
@@ -274,6 +294,7 @@ class Causal:
             fifteen_percent = five_percent * 3
             twenty_percent = five_percent * 4
 
+            # Checks to state whether test has passed
             if (esti - five_percent <= rand <= esti + five_percent) or (
                     esti - five_percent >= rand >= esti + five_percent):
                 if (esti - ten_percent <= unob <= esti + ten_percent) or (
@@ -307,7 +328,8 @@ class Causal:
             return flag, bar_vals
 
         return 0, bar_vals
-
+    
+    # Main function
     def analyse(self, keywords: [str], country: str = 'United Kingdom'):
         matplotlib.use('TkAgg')
         print('Country:', country)
@@ -329,6 +351,7 @@ class Causal:
 
         trends['trend'] = self.scale(trends['trend'])
 
+        # Get outcome data 
         econ = self.get_economic_data(country_key)
         health = self.get_health_data(country_key)
         politics = self.get_political_data(country_key)
@@ -337,6 +360,7 @@ class Causal:
         health_result = 0
         politics_result = 0
 
+        # Analyse economic data
         if isinstance(econ, pd.DataFrame):
             econ = pd.merge(trends, econ, on='date', sort=False).dropna()
             econ['econ'] = self.scale(econ['econ'])
@@ -348,6 +372,7 @@ class Causal:
         else:
             econ_values = CausalValues(-1, 0, 0, 0, 0, 0)
 
+        # Analyse health data
         if isinstance(health, pd.DataFrame):
             health = pd.merge(trends, health, on='date', sort=False).dropna()
             health['health'] = self.scale(health['health'])
@@ -359,6 +384,7 @@ class Causal:
         else:
             health_values = CausalValues(-1, 0, 0, 0, 0, 0)
 
+        # Analyse political data
         if isinstance(politics, pd.DataFrame):
             politics = pd.merge(trends, politics, on='date', sort=False).dropna()
             politics['politics'] = self.scale(politics['politics'])
@@ -379,7 +405,8 @@ class TrendMap:
 
     def __init__(self):
         pass
-
+    
+    # Test for trends map graphic
     def map_maker(self, keywords: [str]):
         pytrend = TrendReq()
         for i in range(len(keywords)):
