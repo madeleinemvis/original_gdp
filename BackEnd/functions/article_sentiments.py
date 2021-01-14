@@ -49,7 +49,7 @@ class PredictSentiment:
         else:
             return 'negative'
 
-    # loops throuh a dictionary of text bodies, get each body's sentiment and writes it to a csv file (not currently used)
+    # loops throuh a dictionary of text bodies, gets each text body's sentiment and writes it to a csv file (not currently used)
     def getPredictions(self, file):
         bodies_read=self.readBodies(file)
         with open('./sentiment_predictions.csv', 'w', newline='', encoding='utf-8') as csvfile:
