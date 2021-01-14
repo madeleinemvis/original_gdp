@@ -9,6 +9,7 @@ from functions.dataretrieval import Scraper, Crawler
 from functions.textprocessing import TextProcessor
 
 
+# Handles the entire process of analysing documents before the dashboard is displayed
 class Handler:
     NUMBER_OF_KEY_WORDS = 25
     NUMBER_OF_SUGGESTED = 15
@@ -29,15 +30,16 @@ class Handler:
     def generate_manifesto(self, documents):
         urls = set()
         scraped_data = {}
+        # Extracts URLs from within each document
         for d in documents:
             scraped_data[d.url] = d
             urls.update(d.html_links)
 
-        # if there are less than 5 documents, scrape tokens
-        if len(documents) < 5:
+        # Calculating keywords
+        if len(documents) < 5:  # if there are less than 5 documents, calculate frequency of keywords
             all_tokens = [t for d in documents for t in d.cleaned_tokens]
             keywords = TextProcessor.calculate_key_words(all_tokens, self.NUMBER_OF_KEY_WORDS)
-        else:
+        else:  # otherwise, calculate keywords with the TextRank algorithm
             all_sentences = " ".join([d.text_body for d in documents])
             keywords = self.text_processor.calculate_keywords_with_text_rank(all_sentences,
                                                                              self.NUMBER_OF_KEY_WORDS)
@@ -56,9 +58,11 @@ class Handler:
             return [t[0] for t in
                     self.text_processor.calculate_keywords_with_text_rank(all_sentences, self.NUMBER_OF_KEY_WORDS)]
 
-    # {documents} are only source documents.
+    # {documents} are only source documents. Formatted as a Document object from the Document model
+    # documents/models.py
+    # Returns a list of URLs found within the Document's contents
     @staticmethod
-    def get_all_html_links(documents):  # TODO: is documents Document from model?
+    def get_all_html_links(documents):
         urls = set()
         # Get all HTML links
         for d in documents:
@@ -68,6 +72,8 @@ class Handler:
         print(f"Sources found in manifesto sources: {len(urls)}")
         return urls
 
+    # Returns a list of Google search results
+    # Length determined by NUMBER_OF_GOOGLE_RESULTS_WANTED and whether URLs returned are valid
     def crawl_google(self, keywords):
         urls_google = self.crawler.crawl_google(keywords, self.NUMBER_OF_GOOGLE_RESULTS_WANTED)
         print(f"Top {self.NUMBER_OF_GOOGLE_RESULTS_WANTED} Google Results from Keywords ({keywords[:5]}):")
@@ -75,6 +81,8 @@ class Handler:
             print(f"[{i + 1}]: {url}")
         return urls_google
 
+    # Returns a list of Google search results
+    # Length determined by NUMBER_OF_SUGGESTED
     def crawl_google_suggested(self, keywords):
         urls_google = self.crawler.crawl_google(keywords, self.NUMBER_OF_SUGGESTED)
         print(f"Top {self.NUMBER_OF_SUGGESTED} Google Results from Keywords ({keywords[:5]}):")
@@ -82,9 +90,10 @@ class Handler:
             print(f"[{i + 1}]: {url}")
         return urls_google
 
+    # Returns a list of suggested URLs
+    # Uses the Google crawl function, if the number of URLs falls short, random URLs are chosen from the manifesto
+    # documents' html links previously scraped
     def generate_suggested_urls(self, documents):
-        # planning on asking for the approval on the google search results first and then if we want more suggestions,
-        # we can add in random ones from the urls seem in the original documents
         keywords = self.get_all_keywords(documents)
         urls = self.get_all_html_links(documents)
         google_urls = self.crawl_google_suggested(keywords)
@@ -96,6 +105,8 @@ class Handler:
         else:
             return list(google_urls)[:self.NUMBER_OF_SUGGESTED]
 
+    # Extracts content from each Google search result, returns a list of URLs (html_links)
+    # and a dictionary of Document objects (key = URL, value = Document)
     def scrape_google_results(self, google_urls):
         data = self.scraper.downloads(google_urls)
         new_urls = set()
@@ -106,6 +117,7 @@ class Handler:
                 new_urls.update(data[k].html_links)
         return new_urls, new_scraped_data
 
+    # Returns causal analysis data of all sectors
     def trends_analysis(self, keywords):
         econ, health, politics = self.causal.analyse(keywords[:5])
         map_data = self.trend_map.map_maker(keywords[:5])
@@ -113,12 +125,15 @@ class Handler:
         map_trends = json.dumps(map_data.trends)
         return econ, health, politics, map_countries, map_trends
 
+    # Runs the entire process, before the dashboard is displayed
     def run_program(self, viewshandler, uid: str, claim: str, documents):
         print("------- CLEARING OUT THE DATABASE --------)")
+        # These lines are here if MongoDB becomes full, only run the code once with these uncommented
         # viewshandler.db_manager.drop_collection('documents_document')
         # viewshandler.db_manager.drop_collection('documents_claim')
         # viewshandler.db_manager.drop_collection('tweets_tweet')
         # viewshandler.db_manager.drop_collection('trends_trend')
+
         nlpanalyser = NLPAnalyser()
 
         print("-------- MANIFESTO --------")
@@ -151,14 +166,16 @@ class Handler:
         recursive_urls = self.crawler.url_cleaner(urls)
         final_crawled_urls = self.crawler.recursive_url_crawl(recursive_urls, self.MAXIMUM_URL_CRAWL_DEPTH, nlpanalyser)
         scraped_data.update(final_crawled_urls)
+
         print("------- SCRAPE REMAINING URLS -------")
         # retrieve and store all the data about a URL's not yet scraped
+        # They may not be scraped due to timeouts, or fail to connect, we try again in case it was a one off
         urls_to_scrape = [u for u in urls if u not in scraped_data.keys()]
         data = self.scraper.downloads(urls_to_scrape)
         for k in data.keys():
             scraped_data[k] = data[k]
 
-        print("-------- TEST DATA PREPARATION --------")
+        print("-------- TEST DATA PREPARATION FOR CLASSIFICATION --------")
 
         name = "functions/StanceDetection/test_stances_" + uid
         stances = "%s.csv" % name
