@@ -34,8 +34,12 @@ python manage.py runserver
 
 
 ### Admin Page
-
+While running the server admin page can be accessed from:
+```bash
+http://127.0.0.1:8000/admin
+```
 Login details:
-
+```bash
 username: gdp
 password gdp
+```
