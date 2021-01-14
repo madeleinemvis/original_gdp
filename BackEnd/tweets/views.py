@@ -10,9 +10,12 @@ from tweets.serializers import TweetSerializer
 from functions.viewshandler import ViewsHandler
 
 
+# Returns  JsonResponse wih all the Tweets under a specific UID as a dictionary
+# The UID is passed into this function
 @api_view(['POST'])
 def tweets_list(request):
     if request.method == 'POST':
+        # validates all attachments match form
         request_form = RequestForm(request.POST)
         if request_form.is_valid():
             uid = request_form.cleaned_data['uid']
@@ -23,9 +26,12 @@ def tweets_list(request):
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
 
+# Returns a JsonResponse with the query that was used to search the Tweets during the Crawling Process
+# The UID is passed into this function
 @api_view(['POST'])
 def tweet_query(request):
     if request.method == 'POST':
+        # validates all attachments match form
         request_form = RequestForm(request.POST)
         if request_form.is_valid():
             uid = request_form.cleaned_data['uid']
@@ -35,18 +41,13 @@ def tweet_query(request):
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
 
-# Returns tweets with Geo Locations
-@api_view(['GET'])
-def tweets_geo(request):
-    tweets = Tweet.objects.exclude(user_location__exact='')
-    twitter_serializer = TweetSerializer(tweets, many=True)
-    return JsonResponse(twitter_serializer.data, safe=False)
-
-
+# Returns a JsonResponse of the number of Tweets collected under the UID
+# The UID is passed into this function
 @api_view(['POST'])
 def tweet_frequency(request):
     datavisualiser = DataVisualiser()
     if request.method == "POST":
+        # validates all attachments match form
         request_form = RequestForm(request.POST)
         if request_form.is_valid():
             uid = request_form.cleaned_data['uid']
@@ -55,10 +56,13 @@ def tweet_frequency(request):
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
 
+# Returns a JsonResponse with a summary of all Tweets under the UID: retweets, favourites and query used
+# The UID is passed into this function
 @api_view(['POST'])
 def tweet_summary(request):
     datavisualiser = DataVisualiser()
     if request.method == "POST":
+        # validates all attachments match form
         request_form = RequestForm(request.POST)
         if request_form.is_valid():
             uid = request_form.cleaned_data['uid']
@@ -67,9 +71,12 @@ def tweet_summary(request):
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
 
+# Returns a JsonResponse with a dictionary of Tweets with: favourites, retweets and sentiments
+# The UID is passed into this function
 @api_view(['POST'])
 def sentiment_scatter(request):
     if request.method == "POST":
+        # validates all attachments match form
         request_form = RequestForm(request.POST)
         if request_form.is_valid():
             datavisualiser = DataVisualiser()
@@ -81,9 +88,12 @@ def sentiment_scatter(request):
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
 
+# Returns a JsonResponse with a dictionary of Tweets with sentiments
+# The UID is passed into this function
 @api_view(['POST'])
 def sentiment_pie_chart(request):
     if request.method == "POST":
+        # validates all attachments match form
         request_form = RequestForm(request.POST)
         if request_form.is_valid():
             dataVisualiser = DataVisualiser()
@@ -94,9 +104,12 @@ def sentiment_pie_chart(request):
     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, safe=False)
 
 
+# Returns a JsonResponse with the combined retweets and favourites for the last 9 days
+# The UID is passed into this function
 @api_view(['POST'])
 def date_impact_bar(request):
     if request.method == "POST":
+        # validates all attachments match form
         request_form = RequestForm(request.POST)
         if request_form.is_valid():
             dataVisualiser = DataVisualiser()

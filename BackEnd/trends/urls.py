@@ -1,6 +1,7 @@
 from django.conf.urls import url 
 from trends import views
- 
+
+# All Trend related URLs that the web-page can call, with the respective function to be called in trends/views.py
 urlpatterns = [
     url(r'^api/trends/econ_gauge$', views.econ_gauge),
     url(r'^api/trends/econ_bar$', views.econ_bar),

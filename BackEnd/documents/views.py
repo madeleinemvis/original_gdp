@@ -17,7 +17,7 @@ def upload_documents(request):
     # Checks request method
     if request.method == 'POST':
         views_handler = ViewsHandler()
-        # Forms are explained in the report, validates all attachments match form
+        # validates all attachments match form
         request_form = RequestForm(request.POST, request.FILES)
         if request_form.is_valid():
             # extracts data from request
@@ -53,7 +53,7 @@ def suggest_urls(request):
     # Checks request method
     if request.method == 'POST':
         views_handler = ViewsHandler()
-        # Forms are explained in the report, validates all attachments match form
+        # validates all attachments match form
         request_form = RequestForm(request.POST)
         if request_form.is_valid():
             # extracts data from request
