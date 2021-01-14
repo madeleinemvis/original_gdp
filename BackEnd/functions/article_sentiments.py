@@ -8,7 +8,7 @@ from afinn import Afinn
 
 class PredictSentiment:
 
-
+    # making sure really long csv fields could be read and processed
     maxInt = sys.maxsize
 
     while True:
@@ -21,7 +21,7 @@ class PredictSentiment:
         except OverflowError:
             maxInt = int(maxInt / 10)
 
-
+    # reads in a csv file
     def read(self, filename):
         rows = []
         with open(filename, "r", encoding='utf-8-sig',errors='ignore') as table:
@@ -30,7 +30,7 @@ class PredictSentiment:
                 rows.append(line)
         return rows
 
-
+    # extracts the text bodies from a csv file and puts them in a dictionary
     def readBodies(self,file_bodies):
         bodies_read = {}
         bodies = self.read(file_bodies)
@@ -38,7 +38,7 @@ class PredictSentiment:
             bodies_read[int(float(body['Body ID']))] = body['articleBody']
         return bodies_read
 
-
+    # returns a predicted sentiment for an input text 
     def get_article_sentiment_Afinn(self, article: str) -> str:
         af = Afinn()
         analysisPol = af.score(article)
@@ -49,7 +49,7 @@ class PredictSentiment:
         else:
             return 'negative'
 
-
+    # loops throuh a dictionary of text bodies, get each body's sentiment and writes it to a csv file (not currently used)
     def getPredictions(self, file):
         bodies_read=self.readBodies(file)
         with open('./sentiment_predictions.csv', 'w', newline='', encoding='utf-8') as csvfile:
