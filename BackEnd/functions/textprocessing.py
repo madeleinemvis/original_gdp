@@ -27,8 +27,7 @@ class TextProcessor:
             for line in lines:
                 self.stop_words.add(line.rstrip())
 
-    # Maddy
-    # returns presence of tags in returned text, to be removed from main body
+    # returns if there is a presence of tags in returned text, to be removed from main body
     @staticmethod
     def tag_visible(texts) -> bool:
         if texts.parent.name in ['style', 'script', 'head', 'title', 'meta', '[document]']:
@@ -49,7 +48,6 @@ class TextProcessor:
         else:
             return str(title.text), body
 
-    # Alex Ll
     # Method for extracting all of the useful URLs from a HTML document
     @staticmethod
     def extract_urls_from_html(html_string: str) -> [str]:
@@ -77,7 +75,7 @@ class TextProcessor:
 
         return valid_urls
 
-    # Clean tweet text by removing links, special characters
+    # Returns a clean tweet text-body
     @staticmethod
     def clean_tweet(tweet: str) -> str:
         return ' '.join(re.sub(r"(@[A-Za-z0-9]+)|([^0-9A-Za-z \t]) |(\w+:\/\/\S+)", " ", tweet).split())

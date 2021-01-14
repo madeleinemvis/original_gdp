@@ -1,15 +1,12 @@
-import random
 import json
+import random
 from csv import DictWriter
 
-
-import csv
-from functions.dataretrieval import Scraper, Crawler
-from functions.analysis import NLPAnalyser
-from functions.textprocessing import TextProcessor
-from functions.causal import Causal, TrendMap
 from functions.StanceDetection.pred import PredictStance
-from functions.article_sentiments import PredictSentiment
+from functions.analysis import NLPAnalyser
+from functions.causal import Causal, TrendMap
+from functions.dataretrieval import Scraper, Crawler
+from functions.textprocessing import TextProcessor
 
 
 class Handler:
@@ -27,6 +24,8 @@ class Handler:
         self.trend_map = TrendMap()
         self.predict_stance = PredictStance()
 
+    # Returns all URLs scraped from the documents passed in, the text-bodies of these documents
+    # and the keywords extracted
     def generate_manifesto(self, documents):
         urls = set()
         scraped_data = {}
@@ -130,7 +129,7 @@ class Handler:
 
         print("-------- CRAWLING GOOGLE --------")
         urls_google = self.crawl_google(keywords)
-        
+
         print("-------- SCRAPING GOOGLE URLS --------")
         # retrieve and store all the data about a URL
         new_urls, new_scraped_data = self.scrape_google_results(urls_google)
