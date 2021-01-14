@@ -6,6 +6,8 @@ import json
 
 
 # class for the data visualisation
+# Each function returns data formatted for a particular visual on the dashboard.
+# All visuals are processed in this class
 class DataVisualiser:
     db_manager = None
     text_processor = None
@@ -14,27 +16,31 @@ class DataVisualiser:
         self.db_manager = DbManager()
         self.text_processor = TextProcessor()
 
-    # Returns a list of 20 common words that appeared throughout the texts
+    # Returns a list of 25 most common words that appeared throughout the texts
     def word_cloud(self, uid: str):
         # Get all keywords from mongodb (big big string) need UID
-        # use TextProcessor method calculate_key_words we want approx 25 words
+        # use TextProcessor method calculate_key_words
         tokens = self.db_manager.get_all_cleaned_tokens(uid)
         keywords_with_values = self.text_processor.calculate_key_words(tokens, 25)
         return dict(keywords_with_values)
 
+    # Returns the number of documents that have been stored under the specified UID
     def get_document_frequency(self, uid: str):
         count = self.db_manager.count_all_documents(uid)
         return count
 
+    # Returns the number of tweets that have been stored under the specified UID
     def get_tweet_frequency(self, uid: str):
         count = self.db_manager.count_all_tweets(uid)
         return count
 
+    # Returns a dictionary of the number of tests passed for the econ, health and politics causal analysis
     def get_causal_gauge(self, uid: str):
         c = self.db_manager.get_causal(uid)
         causal = dict({'econ': c['econ_count'], 'health': c['health_count'], 'politics': c['politics_count']})
         return causal
 
+    # Returns a dictionary of countries and their respective trend value from the causal data
     def get_trend_map(self, uid: str):
         c = self.db_manager.get_causal(uid)
         countries = json.loads(c['map_countries'])
@@ -42,6 +48,7 @@ class DataVisualiser:
         causal = dict({'countries': countries, 'trends': trends})
         return causal
 
+    # Returns a dictionary of all causal data for each sector for the bar-graph visuals
     def get_causal_bar(self, uid: str):
         c = self.db_manager.get_causal(uid)
         causal = dict({'econ_estimate': c['econ_estimate'], 'econ_random': c['econ_random'],
@@ -56,6 +63,7 @@ class DataVisualiser:
                        })
         return causal
 
+    # Returns a list containing the Tweet's query, total favourites and total retweets, under a UID
     def get_tweet_summary(self, uid: str):
         tweets = self.db_manager.get_all_tweets(uid)
         t_query = self.db_manager.get_query(uid)
@@ -73,6 +81,7 @@ class DataVisualiser:
         q = "\"" + q + "\""
         return [no_of_tweets, favourites, retweets, q]
 
+    # Returns a dictionary of all Tweets retweets, favourites, separated by their sentiment, under a UID
     def get_sentiment_scatter(self, uid: str):
         tweets = self.db_manager.get_all_tweets(uid)
         positive = []
@@ -88,14 +97,15 @@ class DataVisualiser:
 
         return dict({'positive': positive, 'neutral': neutral, 'negative': negative})
 
+    # Returns a dictionary with the counts of Tweet's sentiments under a UID
     def get_sentiment_pie_chart(self, uid: str):
         tweets = self.db_manager.get_all_tweets(uid)
         tweets_df = pd.DataFrame(tweets)
         c = Counter(tweets_df['sentiment'].tolist())
         c = dict(c)
-        print("$$$ Pie Chart sentiment counts:", c)
         return c
 
+    # Returns a list of dates of Tweets published, with their impact (sum of favourites & retweets for each day)
     def get_date_impact(self, uid: str):
         tweets = self.db_manager.get_all_tweets(uid)
         tweets_df = pd.DataFrame(tweets)
@@ -104,6 +114,7 @@ class DataVisualiser:
         impact = [sum(i) for i in zip(tweets_df['retweet_count'].tolist(), tweets_df['favorite_count'].tolist())]
         return [dates, impact]
 
+    # Returns a list of dictionaries, representing the documents.
     def get_all_documents(self, uid: str):
         documents = self.db_manager.get_all_documents(uid)
         doc_list = []
