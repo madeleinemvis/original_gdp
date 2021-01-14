@@ -9,28 +9,29 @@ class Migration(migrations.Migration):
     dependencies = [
     ]
 
-
-operations = [
-    migrations.CreateModel(
-        name='Claim',
-        fields=[
-            ('uid', models.TextField(blank=False)),
-            ('claim', models.TextField(blank=False, default='')),
-        ]
-    ),
-    migrations.CreateModel(
-        name='Document',
-        fields=[
-            ('uid', models.TextField(blank=False)),
-            ('content_type', models.TextField(blank=False, default='')),
-            ('url', models.TextField(default='')),
-            ('raw_html', models.TextField(blank=True, default='')),
-            ('title', models.TextField(blank=True, default='')),
-            ('text_body', models.TextField(blank=True, default='')),
-            ('cleaned_tokens', jsonfield.fields.JSONField()),
-            ('html_links', jsonfield.fields.JSONField()),
-            ('sentiment', models.TextField(blank=True, default='')),
-            ('stance', models.TextField(blank=True, default=''))
-        ],
-    ),
-]
+    operations = [
+        migrations.CreateModel(
+            name='Claim',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('uid', models.TextField(default='')),
+                ('claim', models.TextField(default='')),
+            ]
+        ),
+        migrations.CreateModel(
+            name='Document',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('uid', models.TextField(default='')),
+                ('content_type', models.TextField(default='')),
+                ('url', models.TextField(default='')),
+                ('raw_html', models.TextField(blank=True, default='')),
+                ('title', models.TextField(blank=True, default='')),
+                ('text_body', models.TextField(blank=True, default='')),
+                ('cleaned_tokens', jsonfield.fields.JSONField()),
+                ('html_links', jsonfield.fields.JSONField()),
+                ('sentiment', models.TextField(blank=True, default='')),
+                ('stance', models.TextField(blank=True, default=''))
+            ],
+        ),
+    ]
