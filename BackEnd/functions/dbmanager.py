@@ -1,31 +1,18 @@
-# file for handling API, left blank for now
 from ast import literal_eval
 
 import pymongo
 
 
+# Handles all interactions with the database
 class DbManager:
     database = None
 
     def __init__(self):
+        # Client instantiation with the MongoDB Client
         self.client = pymongo.MongoClient(
             "mongodb+srv://gdp:gdp@propaganda.m00hm.mongodb.net/Trilateral?retryWrites=true&w=majority")
+        # Sets the database to our Trilateral Database in the MongoDB Client
         self.database = self.client.Trilateral
-
-    # Inserts a single document into a specified collection
-    def insert_one(self, collection, document):
-        try:
-            self.database[collection].insert_one(document)
-        except pymongo.errors.PyMongoError:
-            print("No Collection, %s,  Found in Database", collection)
-
-    # Inserts a list of documents (documents must be separate dictionaries) into a specified collection
-    def insert_many(self, collection, document_list):
-        try:
-            print(collection, document_list)
-            self.database[collection].insert_many(document_list)
-        except pymongo.errors.PyMongoError:
-            print("No Collection, %s,  Found in Database", collection)
 
     # Deletes an entire collection
     def drop_collection(self, collection):
@@ -36,29 +23,6 @@ class DbManager:
         except pymongo.errors.PyMongoError:
             print("No Collection, %s,  Found in Database", collection)
 
-    def drop_documents(self, uid: str):
-        try:
-            self.database['documents_document'].remove({"uid": uid})
-            self.database['documents_claim'].remove({"uid": uid})
-        except pymongo.errors.PyMongoError:
-            print("No Objects, UID: %s,  Found in Collection, Documents_Document", uid)
-
-    # Deletes any record that holds true to the query
-    def delete_with_query(self, collection: str, query: str):
-        try:
-            self.database[collection].delete_many(query)
-        except pymongo.errors.PyMongoError:
-            print("No Object, %s,  Found in Collection, %s", query, collection)
-
-    # Example values passed in ("WebURLs", "body" "vaccin*"))
-    def find_documents(self, uid: str, collection: str, query: str):
-        try:
-            query_uid = ("uid:%s, ".join(query), uid)
-            documents = self.database[collection].find({query_uid})
-            return documents
-        except pymongo.errors.PyMongoError:
-            print("No Objects, UID: %s,  Found in Collection, %s", uid, collection)
-
     # Returns all documents of a specific collection
     def get_all_documents(self, uid: str):
         try:
@@ -66,24 +30,21 @@ class DbManager:
         except pymongo.errors.PyMongoError:
             print("No Collection Documents_Document,  Found in Database")
 
+    # Returns the number of documents in the collection under the specified uid
     def count_all_documents(self, uid: str):
         try:
             return self.database['documents_document'].find({"uid": uid}).count()
         except pymongo.errors.PyMongoError:
             print("Returns no documents, uid %s,  Found in Database", uid)
 
+    # Returns the number of tweets in the collection under the specified uid
     def count_all_tweets(self, uid: str):
         try:
             return self.database['tweets_tweet'].find({"uid": uid}).count()
         except pymongo.errors.PyMongoError:
             print("Returns no tweets, uid %s,  Found in Database", uid)
 
-    def get_all_collections(self):
-        try:
-            return self.database.getCollectionNames
-        except pymongo.errors.PyMongoError:
-            print("No Collections Found in Database")
-
+    # Returns a list of cleaned tokens from all the Documents under the specified UID
     def get_all_cleaned_tokens(self, uid: str):
         try:
             ini_list = list(self.database['documents_document'].find({"uid": uid},
@@ -97,6 +58,7 @@ class DbManager:
         except pymongo.errors.PyMongoError:
             print("No Collection, Documents_Document Found in Database")
 
+    # Returns all the text-bodies from each Document under the specified UID
     def get_all_main_texts(self, uid: str):
         try:
             ini_list = list(self.database['documents_document'].find({"uid": uid},
@@ -109,6 +71,7 @@ class DbManager:
         except pymongo.errors.PyMongoError:
             print("No Collection, Documents_document  Found in Database")
 
+    # Returns all Tweets under the specified UID
     def get_all_tweets(self, uid: str):
         try:
             ini_list = list(self.database['tweets_tweet'].find({"uid": uid}))
@@ -123,6 +86,7 @@ class DbManager:
         except pymongo.errors.PyMongoError:
             print("No Collection, Tweets_tweet Found in Database")
 
+    # Returns a list of html_links from each Document under the specified UID
     def get_all_html_links(self, uid: str):
         try:
             ini_list = list(self.database['documents_document'].find({"uid": uid},
@@ -136,6 +100,7 @@ class DbManager:
         except pymongo.errors.PyMongoError:
             print("No Objects, UID: %s,  Found in Collection, Documents_document", uid)
 
+    # Returns a claim under the specified UI
     def get_claim(self, uid: str):
         try:
             c_result = self.database['documents_claim'].find({"uid": uid},
@@ -145,6 +110,7 @@ class DbManager:
         except pymongo.errors.PyMongoError:
             print("No Objects, UID: %s,  Found in Collection, Documents_claim", uid)
 
+    # Returns a query under the specified UID
     def get_query(self, uid: str):
         try:
             q_result = self.database['tweets_query'].find({"uid": uid},
@@ -154,6 +120,7 @@ class DbManager:
         except pymongo.errors.PyMongoError:
             print("No Objects, UID: %s,  Found in Collection, Tweets_Query", uid)
 
+    # Returns all causal data with a specified UID
     def get_causal(self, uid: str):
         try:
             causal = self.database['trends_trend'].find({"uid": uid})

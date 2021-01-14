@@ -50,8 +50,8 @@ class Crawler:
                     url_depth.append(url)
         return url_depth
 
-    # Maddy
-    # not sure how we want to use this method yet
+    # Takes keywords and number of URLs returned, queries the Google Search API with the top 5 keywords
+    # Returns a set of URLs
     def crawl_google(self, key_words: [str], urls_returned: int) -> [str]:
         query = ' '.join(key_words[:5])
         google_result = search(query, tld="com", lang="en", num=urls_returned, start=0, stop=urls_returned, pause=1)
@@ -62,7 +62,6 @@ class Crawler:
                 new_results.add(defrag_url)
         return new_results
 
-    # Alex Ll
     # recursively crawl a set of URLs with batch checking similarities
     def recursive_url_crawl(self, urls: [str], max_depth: int, analyser: NLPAnalyser) -> dict:
         scraper = Scraper()
@@ -125,6 +124,9 @@ class Crawler:
             final_dict.update(response)
         return final_dict
 
+    # Instantiates the Twitter API with the correct credentials, these credentials need to be updated as they are
+    # under a team member's account
+    # credentials found in: Data/twitter_credentials.json
     @staticmethod
     def twitter_init():
         with open(Path(__file__).parent.parent.parent / 'Data' / "twitter_credentials.json", "r") as file:
@@ -164,6 +166,8 @@ class Crawler:
 
         return countries, country_abbreviations, states, state_abbreviations
 
+    # Queries the Twitter API with the top 2 keywords
+    # Returns a list of parsed Tweets with added sentiment analysis
     def twitter_crawl(self, uid: str, keywords: [str], tweets_returned: int):
         api = self.twitter_init()
         # Retrieves all tweets with given keywords and count
@@ -187,6 +191,7 @@ class Crawler:
         return tweets
 
 
+# The structure documents should adhere to, this matches the Documents model in BackEnd/documents/models.py
 Data = namedtuple('Data', 'uid content_type url raw_html title text_body cleaned_tokens html_links sentiment stance')
 
 
