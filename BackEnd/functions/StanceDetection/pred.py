@@ -1,7 +1,7 @@
 # Adapted from @amazingclaude/Fake_News_Stance_Detection
 
 
-from .util import FNCData, bow_train, pipeline_test, get_predictions, save_predictions
+from .util import FNCData, bow_train, pipeline_test, get_predictions
 import random
 import tensorflow as tf
 import numpy as np
@@ -11,6 +11,8 @@ import os
 
 
 class PredictStance:
+
+    # making sure really long csv fields can be read and processed
     maxInt = sys.maxsize
 
     while True:
@@ -81,6 +83,7 @@ class PredictStance:
 
         return test_pred
 
+    # returns a dictionary in the form {url1: stance1, url2: stance2...}
     def getPredictions(self, stances, bodies, urls):
         # Define the weight for different class if needed
         weight_pred_1 = np.diag(np.ones(4))
