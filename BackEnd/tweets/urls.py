@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from tweets import views
- 
+
+# All Tweet related URLs that the web-page can call, with the respective function to be called in tweets/views.py
 urlpatterns = [
     url(r'^api/tweets$', views.tweets_list),
     url(r'^api/tweets/tweet_query', views.tweet_query),
