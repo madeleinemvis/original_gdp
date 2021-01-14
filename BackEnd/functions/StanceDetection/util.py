@@ -67,7 +67,7 @@ class FNCData:
 
         rows = []
 
-        # Process file, add [errors='ignore'] when trying to test some news.
+        # reads in from a file, if the file contains text from pdf, all the null bytes are removed 
         with open(filename, "r", encoding='utf-8-sig', errors='ignore') as table:
             data = table.read()
             data = data.replace('\x00', '?')
