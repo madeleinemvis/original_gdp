@@ -10,31 +10,36 @@ from .dataretrieval import Scraper
 from .dbmanager import DbManager
 
 
+# Handles all tasks that are used directly used by the end-point
+# Setting/saving objects and reading request attachments
 class ViewsHandler:
     db_manager = None
-    scraper = Scraper()
-    predict_sentiment = PredictSentiment()
+    scraper = Scraper()  # Extracts contents from files and URLs
+    predict_sentiment = PredictSentiment()  # Extracts sentiment from Documents
 
     def __init__(self):
-        self.db_manager = DbManager()
+        self.db_manager = DbManager()  # Handles interactions with the Database
 
+    # Scrapes a list of documents
+    # Returns a list of Document objects from the Document model
     def read_docs(self, docs) -> [str]:
-        print("docs", docs)
         documents = []
         try:
-            docs = literal_eval(docs)
+            docs = literal_eval(docs)  # Converts String into array of URLs
             for d in docs:
                 documents.append(docs[d])
         except:
-            documents.extend(docs)  # Object is a File.
+            documents.extend(docs)  # Appends list of files
 
-        documents = self.scraper.downloads(documents)
+        documents = self.scraper.downloads(documents)  # Scrapes list of documents, returns a dictionary
         doc_list = []
-        for d in documents:
-            doc_list.append(documents[d])
+        for d in documents:  # For each document URL (d is the URL)
+            doc_list.append(documents[d])  # For each documents, return the Data object (The Document)
 
         return doc_list
 
+    # Returns Document object with Document model
+    # Sets the UID, content_type, sentiment and stance prediction here as cannot be determined during scraping
     def set_documents(self, uid: str, content_type: str, documents, predictions_dict) -> [Document]:
         d_save = []
         for d in documents:
@@ -51,6 +56,7 @@ class ViewsHandler:
 
         return d_save
 
+    # Returns a list of Tweet objects with Tweet model
     @staticmethod
     def set_tweets(uid: str, tweets) -> [Tweet]:
         t_save = []
@@ -62,16 +68,19 @@ class ViewsHandler:
                                 sentiment=t['sentiment']))
         return t_save
 
+    # Returns Claim object with Claim model
     @staticmethod
     def set_claim(uid: str, claim: str) -> Claim:
         c_save = Claim(uid=uid, claim=claim)
         return c_save
 
+    # Returns the Query object with Query model
     @staticmethod
     def set_query(uid: str, query: str) -> Query:
         q_save = Query(uid=uid, query=query)
         return q_save
 
+    # Returns the Trend object with Trend model
     @staticmethod
     def set_trends(uid, e, h, p, mc, mt):
         t_save = [Trend(uid=uid, econ_count=e.value, econ_estimate=e.estimate, econ_random=e.random,
@@ -83,6 +92,8 @@ class ViewsHandler:
                         map_countries=mc, map_trends=mt)]
         return t_save
 
+    # Takes a request and request form, extracts data
+    # Returns the UID, claim, list of URLs, list of PDF URLs and list of Files
     @staticmethod
     def get_objects_from_request(request, request_form):
         uid = request_form.cleaned_data['uid']
@@ -96,24 +107,27 @@ class ViewsHandler:
             pass
         return uid, claim, document_urls, document_pdfs, files
 
+    # Stores all set Document objects into the database
     def save_documents(self, uid: str, content_type: str, documents, predictions_dict):
-        print("documents length", len(documents))
-        print("predictions length", len(predictions_dict))
         d_save = self.set_documents(uid, content_type, documents, predictions_dict)
         Document.objects.bulk_create(d_save)
 
+    # Stores the set Claim objects into the database
     def save_claim(self, uid: str, claim: str):
         c_save = self.set_claim(uid, claim)
         c_save.save()
 
+    # Stores the set Query objects into the database
     def save_query(self, uid: str, query: str):
         q_save = self.set_query(uid, query)
         q_save.save()
 
+    # Stores all set Tweets objects into the database
     def save_tweets(self, uid: str, tweets):
         t_save = self.set_tweets(uid, tweets)
         Tweet.objects.bulk_create(t_save)
 
+    # Stores the set Trend objects into the database
     def save_trends(self, uid: str, econ, health, politics, map_countries, map_trends):
         t_save = self.set_trends(uid, econ, health, politics, map_countries, map_trends)
         Trend.objects.bulk_create(t_save)

@@ -27,11 +27,11 @@ def upload_documents(request):
             if not (documents_urls is None and documents_pdfs is None and files is None):
                 # Convert each file into Document model object with views.handler.read_docs()
                 if documents_urls:
-                    documents_urls = views_handler.read_docs(documents_urls)
+                    documents_urls = views_handler.read_docs(documents_urls)  # List of inputted URLs
                 if documents_pdfs:
-                    documents_pdfs = views_handler.read_docs(documents_pdfs)
+                    documents_pdfs = views_handler.read_docs(documents_pdfs)  # List of inputted PDF URLs
                 if files:
-                    files = views_handler.read_docs(files)
+                    files = views_handler.read_docs(files)  # List of inputted Django.TemporaryUploadedFile objects
 
                 documents = [*documents_urls, *documents_pdfs, *files]
                 handler = Handler()
