@@ -94,6 +94,7 @@ class PredictStance:
         test_prediction2 = self.restore_model(2, stances, bodies)
         test_prediction3 = self.restore_model(3, stances, bodies)
 
+        # ensemble the final outputs of the models using a summation rule
         final_pred = np.matmul(test_prediction1, weight_pred_1) + np.matmul(test_prediction2,
                                                                             weight_pred_2) + np.matmul(test_prediction3,
                                                                                                        weight_pred_3)
