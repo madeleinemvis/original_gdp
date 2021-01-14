@@ -44,11 +44,7 @@ stop_words = [
 
 # Define data class
 class FNCData:
-    """
 
-    Define class for Fake News Challenge data
-
-    """
 
     def __init__(self, file_instances, file_bodies):
         self.instances = self.read(file_instances)
@@ -136,9 +132,6 @@ def bow_train(train, test, lim_unigram):
             test_bodies_track[body_id] = 1
             test_body_ids.append(body_id)
 
-    # Create reference dictionary
-    # for i, elem in enumerate(heads + body_ids):
-    #    id_ref[elem] = i
 
     # Create vectorizers and BOW and TF arrays for train set
     bow_vectorizer = CountVectorizer(max_features=lim_unigram, stop_words=stop_words)
@@ -171,7 +164,7 @@ def pipeline_test(dataset_number, test, bow_vectorizer, tfreq_vectorizer, tfidf_
 
     """
 
-    # Initialise
+    
     feat_vec = []
     test_set = []
 
@@ -250,7 +243,7 @@ def pipeline_test(dataset_number, test, bow_vectorizer, tfreq_vectorizer, tfidf_
             test_set.append(feat_vec)
     return test_set
 
-
+# writes the stance predictions next to ech text body ID into a csv file (not currently used)
 def save_predictions(pred):
     with open('./stance_predictions.csv', 'w', newline='', encoding='utf-8') as csvfile:
         fieldnames = ['Body ID', 'Stance']
@@ -259,7 +252,7 @@ def save_predictions(pred):
         for index, instance in enumerate(pred):
             writer.writerow({'Body ID': index, 'Stance': label_ref_rev[instance]})
 
-
+# returns a dictionary in the form {url1: stance1, url2: stance2...}
 def get_predictions(pred, urls):
     predictions = {}
     for index, instance in enumerate(pred):
