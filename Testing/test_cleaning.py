@@ -2,6 +2,8 @@ import pytest
 from BackEnd.functions.textprocessing import TextProcessor
 from BackEnd.functions.dataretrieval import Crawler
 
+# ALL TESTS WERE IMPLEMENTED DURING THE IMPLEMENTATION STAGE, ONCE WE IMPLEMENTED OUR APP WITH DJANGO
+# THESE TESTS NO LONGER RUN SUCCESSFULLY
 
 @pytest.fixture
 def get_processor():

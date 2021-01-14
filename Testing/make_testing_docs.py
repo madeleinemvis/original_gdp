@@ -4,6 +4,8 @@ import os
 from pathlib import Path
 import requests
 
+# ALL TESTS WERE IMPLEMENTED DURING THE IMPLEMENTATION STAGE, ONCE WE IMPLEMENTED OUR APP WITH DJANGO
+# THESE TESTS NO LONGER RUN SUCCESSFULLY
 
 def create_text_file_from_html(url, file_path):
     re_url = re.compile(r"https?://(www\.)?")
