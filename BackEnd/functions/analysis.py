@@ -23,6 +23,7 @@ class NLPAnalyser:
             self.stopwords = stopwords
         pass
 
+    # Performs Textual NLP analysis and returns the sentiment of a Tweet
     @staticmethod
     def get_tweet_sentiment(tweet: str) -> str:
         analysis = TextBlob(TextProcessor.clean_tweet(tweet))
