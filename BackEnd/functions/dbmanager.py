@@ -15,13 +15,17 @@ class DbManager:
         self.database = self.client.Trilateral
 
     # Deletes an entire collection
-    def drop_collection(self, collection):
+    def drop_collections(self):
         try:
-            self.database[collection].drop()
-            response = self.database.drop_collection(collection)
-            print('\n', 'drop_collection() response: ', response)
+            self.database['documents_document'].drop()
+            self.database['documents_claim'].drop()
+            self.database['documents_graph'].drop()
+            self.database['tweets_tweet'].drop()
+            self.database['tweets_query'].drop()
+            self.database['trends_trend'].drop()
+
         except pymongo.errors.PyMongoError:
-            print("No Collection, %s,  Found in Database", collection)
+            print("Collection not found Found in Database")
 
     # Returns all documents of a specific collection
     def get_all_documents(self, uid: str):
