@@ -1,4 +1,4 @@
-# Adapted from @amazingclaude/Fake_News_Stance_Detection
+# The functions have been taken from @amazingclaude/Fake_News_Stance_Detection
 
 import nltk
 import re
