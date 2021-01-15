@@ -1,4 +1,4 @@
-# Adapted from @amazingclaude/Fake_News_Stance_Detection
+# The functions have been taken from from @amazingclaude/Fake_News_Stance_Detection
 
 from .clean import clean
 
