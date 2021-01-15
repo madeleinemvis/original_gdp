@@ -16,6 +16,7 @@ except ImportError:
     from collections import Counter, OrderedDict
 
 
+# class used to process text that is used by the system
 class TextProcessor:
     def __init__(self):
         # create lemmatizer, object lock, and stop words objects

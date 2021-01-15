@@ -9,24 +9,20 @@ from textblob import TextBlob
 from functions.textprocessing import TextProcessor
 
 
+# A class to enable natural language processing based analysis
+# Has methods for collecting tweet sentiment and the creation and use of the TF-IDF similarity model
 class NLPAnalyser:
+    # Create the id2word, TF-IDF, and similarity model
     def __init__(self):
         self.id2word = None
         self.sim_model = None
         self.tf_idf = None
-
-        with open(Path(__file__).parent.parent.parent / 'Data' / 'stopwords.txt') as f:
-            stopwords = set()
-            lines = f.readlines()
-            for line in lines:
-                stopwords.add(line.rstrip())
-            self.stopwords = stopwords
         pass
 
+    # Method to collect the sentiment of the tweet given its polarity value
     @staticmethod
     def get_tweet_sentiment(tweet: str) -> str:
         analysis = TextBlob(TextProcessor.clean_tweet(tweet))
-        # set sentiment
         if analysis.sentiment.polarity > 0:
             return 'positive'
         elif analysis.sentiment.polarity == 0:
@@ -44,12 +40,18 @@ class NLPAnalyser:
         self.sim_model = gensim.similarities.SparseMatrixSimilarity(self.tf_idf[corpus],
                                                                     num_features=len(self.id2word))
 
+    # Method to check the similarity of a given document to the TF-IDF similarity model created
     def check_similarity(self, document):
         if document is None:
             return 0
+        # collect the cleaned tokens from the document
         cleaned_tokens = [document.cleaned_tokens]
+
+        # create a bag of words with the cleaned tokens and collect TF-IDF representation
         test_corpus = [self.id2word.doc2bow(cleaned_tokens[0])]
         query_test_words = self.tf_idf[test_corpus]
+
+        # check the maximum similarity for the document
         for doc in query_test_words:
             max_sim = max(self.sim_model[doc])
         return max_sim

@@ -202,6 +202,7 @@ class Crawler:
 Data = namedtuple('Data', 'uid content_type url raw_html title text_body cleaned_tokens html_links sentiment stance')
 
 
+# class that contains methods to scrape urls and files
 class Scraper:
     def __init__(self):
         # create threading lock object, text processor object, and url regex pattern
