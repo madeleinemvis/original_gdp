@@ -11,7 +11,6 @@ import os
 
 
 class PredictStance:
-
     # making sure really long csv fields can be read and processed
     maxInt = sys.maxsize
 
@@ -25,7 +24,8 @@ class PredictStance:
             maxInt = int(maxInt / 10)
 
     # taken from  @amazingclaude/Fake_News_Stance_Detection
-    def restore_model(self, model_num, stances, bodies):
+    @staticmethod
+    def restore_model(model_num, stances, bodies):
 
         r = random.Random()
         r.seed(123)
@@ -37,7 +37,7 @@ class PredictStance:
         file_train_instances = "functions/StanceDetection/train_stances.csv"
         file_train_bodies = "functions/StanceDetection/train_bodies.csv"
         file_test_instances = stances
-        file_test_bodies =  bodies
+        file_test_bodies = bodies
 
         raw_train = FNCData(file_train_instances, file_train_bodies)
         raw_test = FNCData(file_test_instances, file_test_bodies)
@@ -84,6 +84,7 @@ class PredictStance:
 
         return test_pred
 
+    # Uses the files created to test our model and predict the data
     # returns a dictionary in the form {url1: stance1, url2: stance2...}
     def getPredictions(self, stances, bodies, urls):
         # Define the weight for different class if needed

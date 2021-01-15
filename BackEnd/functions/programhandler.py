@@ -129,10 +129,7 @@ class Handler:
     def run_program(self, viewshandler, uid: str, claim: str, documents):
         print("------- CLEARING OUT THE DATABASE --------)")
         # These lines are here if MongoDB becomes full, only run the code once with these uncommented
-        # viewshandler.db_manager.drop_collection('documents_document')
-        # viewshandler.db_manager.drop_collection('documents_claim')
-        # viewshandler.db_manager.drop_collection('tweets_tweet')
-        # viewshandler.db_manager.drop_collection('trends_trend')
+        viewshandler.db_manager.drop_collections()
 
         nlpanalyser = NLPAnalyser()
 
