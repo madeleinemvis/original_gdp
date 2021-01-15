@@ -4,7 +4,7 @@ Welcome to the repository for developing the project.
 The following steps are to help you set up your IDE environment.
 ## Environment
 ### Requirements for the Environment
-The package Tensorflow==1.8.0 is required in this project. This package only works with Python==3.6.
+The package Tensorflow==1.8.0 is required in this project. This package only works up to Python~=3.6.
 
 Note: Installing Tensorflow==1.8.0 automatically updates DoWhy==0.2 --> 0.5. 
 After installing Tensorflow, reinstall Dowhy to match the requirements (DoWhy==0.2)
