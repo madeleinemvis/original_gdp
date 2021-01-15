@@ -1,6 +1,5 @@
 import re
 import string
-from datetime import datetime
 from pathlib import Path
 from threading import Lock
 from typing import Tuple, List
@@ -19,6 +18,7 @@ except ImportError:
 
 class TextProcessor:
     def __init__(self):
+        # create lemmatizer, object lock, and stop words objects
         self.lemmatizer = WordNetLemmatizer()
         self.lock = Lock()
         self.stop_words = set()
@@ -80,6 +80,7 @@ class TextProcessor:
     def clean_tweet(tweet: str) -> str:
         return ' '.join(re.sub(r"(@[A-Za-z0-9]+)|([^0-9A-Za-z \t]) |(\w+:\/\/\S+)", " ", tweet).split())
 
+    # method to remove emojis from strings by removing characters with hexadecimal unicode regex pattern
     @staticmethod
     def remove_emoji(location: str):
         emoji_pattern = re.compile("["
@@ -92,30 +93,37 @@ class TextProcessor:
                                    "]+", flags=re.UNICODE)
         return emoji_pattern.sub(r' ', location).strip()
 
+    # clean a location given a list of countries, us states, and their respective abbreviations
     @staticmethod
     def clean_location(location, countries, country_abbreviations, states, state_abbreviations) -> str:
         if location is None:
             return ""
 
+        # get rid of emoji
         clean_location = TextProcessor.remove_emoji(location)
 
         punctuation = string.punctuation.replace(',', '').replace('.', '')
         punctuation += "1234567890"
+        # if there are three or less words in the location and there is no abnormal punctuation, continue
         if len(clean_location.split(' ')) < 4 and not any(elem in clean_location for elem in punctuation):
             clean_location = clean_location.lower().strip()
 
             if ',' in clean_location:
                 place = clean_location.split(',')[1].strip()
+                # if clean_location contains a country or state, return clean_location
                 if any(map(place.__contains__, states)) or any(map(place.__contains__, countries)):
                     return clean_location
                 else:
+                    # if clean_location contains a country or state abbreviation, return clean_location
                     for word in clean_location.split(" "):
                         if word in state_abbreviations or word in country_abbreviations:
                             return clean_location
             else:
+                # if clean_location is a country, return
                 if clean_location in countries or clean_location == "united states":
                     return clean_location
 
+        # if no matches, return empty string
         return ""
 
     # method for taking an input string a return all the tokens
@@ -143,7 +151,7 @@ class TextProcessor:
         # removing all tokens that are just digits
         stripped = [s for s in stripped if not re.search(r'\d', s)]
 
-        # lemmatizing the remaining tokens
+        # lemmatising the remaining tokens
         # nltk is not thread safe - must use lock
         self.lock.acquire()
         try:
@@ -153,6 +161,7 @@ class TextProcessor:
 
         return stripped
 
+    # calculate the key words by getting the 'number_of_key_words' most used words in the tokens
     @staticmethod
     def calculate_key_words(tokens: [str], number_of_key_words: int) -> List[Tuple[str, float]]:
         if number_of_key_words < 1:
