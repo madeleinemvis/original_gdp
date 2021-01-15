@@ -79,6 +79,7 @@ class FNCData:
 
 
 # Define tf, tf-idf functions
+# taken from  @amazingclaude/Fake_News_Stance_Detection
 def bow_train(train, test, lim_unigram):
     """
 
@@ -146,7 +147,7 @@ def bow_train(train, test, lim_unigram):
 
     return bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer
 
-
+# taken from  @amazingclaude/Fake_News_Stance_Detection
 def pipeline_test(dataset_number, test, bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer):
     """
 
