@@ -24,6 +24,7 @@ class PredictStance:
         except OverflowError:
             maxInt = int(maxInt / 10)
 
+    # taken from  @amazingclaude/Fake_News_Stance_Detection
     def restore_model(self, model_num, stances, bodies):
 
         r = random.Random()
