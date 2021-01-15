@@ -19,7 +19,7 @@ class NLPAnalyser:
         self.tf_idf = None
         pass
 
-    # Method to collect the sentiment of the tweet given its polarity value
+    # Performs textual NLP analysis and returns the sentiment of a Tweet
     @staticmethod
     def get_tweet_sentiment(tweet: str) -> str:
         analysis = TextBlob(TextProcessor.clean_tweet(tweet))

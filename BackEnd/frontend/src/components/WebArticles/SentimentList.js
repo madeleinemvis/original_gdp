@@ -97,7 +97,7 @@ const SentimentList = props => {
                                             <CardSubtitle tag="h6"
                                                           className="mb-2 text-muted">Sentiment: {doc.sentiment}</CardSubtitle>
                                             <CardSubtitle tag="h6" className="mb-2 text-muted">Stance: {doc.stance}</CardSubtitle>
-                                            <CardSubtitle tag="h6" className="mb-2 text-muted">URL: {doc.url}</CardSubtitle>
+                                            <CardSubtitle tag="h6" className="mb-2 text-muted">URL: <a href={doc.url}>{doc.url}</a></CardSubtitle>
                                         </CardBody>
                                     </Card>
                                 ))}
