@@ -29,6 +29,7 @@ MAX_THREADS = 50
 # class for crawling and scraping the internet
 class Crawler:
     def __init__(self):
+        # set similarity threshold and collect blacklist
         self.THRESHOLD = 0.25
         with open(Path(__file__).parent.parent.parent / 'Data' / 'blacklist.txt') as f:
             regexes = []
@@ -38,10 +39,12 @@ class Crawler:
             self.BLACKLIST_REGEX = '(?:%s)' % '|'.join(regexes)
         pass
 
+    # Method to clean a list of urls
     def url_cleaner(self, urls: [str]) -> [str]:
         parent = []
         url_depth = []
         for url in urls:
+            # If the given url does not match blacklist regex and parent has not been seen, add to list
             if not re.match(self.BLACKLIST_REGEX, url):
                 link = urlparse(url)
                 net = link.netloc
@@ -72,6 +75,7 @@ class Crawler:
         for url in urls:
             # Create list of searched URL's for use by the program
             url_depth[0].append(url)
+
         # Loop through all URLs in url_depth
         for depth_index in range(0, max_depth):
             urls = url_depth[depth_index]
@@ -92,11 +96,13 @@ class Crawler:
                 if analyser.check_similarity(data) < self.THRESHOLD:
                     continue
 
+                # For the links found in the URL
                 new_links = data.html_links
                 for url_new in new_links:
-                    # if link empty, continue
+                    # If link empty, continue
                     if url_new is None:
                         continue
+
                     flag = False  # Flag is true if website has been searched before
                     parsed_url = urlparse(url_new)
                     new_link = parsed_url.netloc + parsed_url.path
@@ -137,6 +143,7 @@ class Crawler:
         api = tweepy.API(auth, wait_on_rate_limit=True)
         return api
 
+    # Initiate list of locations - countries, US states, and their respective abbreviations
     @staticmethod
     def location_lists_init():
         with open(Path(__file__).parent.parent.parent / 'Data' / 'countries.txt', newline='', encoding='utf8') as f:
@@ -197,16 +204,20 @@ Data = namedtuple('Data', 'uid content_type url raw_html title text_body cleaned
 
 class Scraper:
     def __init__(self):
+        # create threading lock object, text processor object, and url regex pattern
         self.lock = Lock()
         self.processor = TextProcessor()
         self.url_regex = r"(https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}(?:[-a-zA-Z0-9(" \
                          r")@:%_\+.~#?&//=]*))"
 
+    # Method to asynchronously download data
     def downloads(self, docs) -> Dict[str, Data]:
         responses = {}
         threads = min(MAX_THREADS, len(docs))
+        # With 'threads' workers, download the contents of the docs specified asynchronously
         with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
             result = executor.map(self.get_data_from_source, docs)
+        # For every result, push the output into a dictionary the links the doc location to the data
         for r in result:
             url = r[0]
             data = r[1]
@@ -364,7 +375,6 @@ class Scraper:
                     print("Error:", e)
             finally:
                 self.lock.release()
-
         else:
             content_type = "text/plain"
             with open(path) as f:
